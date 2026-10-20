@@ -1,0 +1,24 @@
+/* Tendina con le caselle del modulo delle notizie (TendinaCaselle.jsx): un
+ * popover nativo agganciato al comando, allineato al suo bordo sinistro e
+ * largo quanto lui, come una select. Posizione da lib/popoverAncorato.js.
+ *
+ * Il display si da' solo da aperto: un display sulla classe vincerebbe sul
+ * display: none con cui il browser nasconde il popover chiuso, e il pannello
+ * resterebbe sempre a schermo, fermo dov'era, anche dopo Escape o un clic
+ * fuori. */
+.notizie-gruppi__pannello {
+  @apply fixed m-0 border border-bordo rounded-riquadro bg-superficie text-testo shadow-popover overflow-y-auto overscroll-contain;
+  --distanza-popover: --spacing(1);
+  padding: --spacing(1.5);
+  inset: auto;
+  width: var(--larghezza-comando, 16rem);
+}
+.notizie-gruppi__pannello:popover-open {
+  display: grid;
+  gap: --spacing(0.5);
+}
+
+/* «Filtri» nella testata della pagina Notizie (FiltriElenco), accanto a
+ * «Sezioni» e «+ Nuova»: largo quanto il testo, con l'icona da 16 come loro. */
+.pagina-notizie .filtri-elenco__comando { width: auto; line-height: normal; }
+.pagina-notizie .filtri-elenco__comando svg { @apply size-4 shrink-0; }
