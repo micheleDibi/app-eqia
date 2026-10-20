@@ -46,12 +46,14 @@ def openssl(*argomenti):
 
 def certificati(shared):
     tls = shared / "db-tls"
+    tls.mkdir(mode=0o750, exist_ok=True)
+    tls.chmod(0o750)
+    os.chown(tls, 0, 999)
     if (tls / "server.cnf").exists():
         for nome in ("ca.crt", "server.crt", "server.key"):
             if not (tls / nome).is_file():
                 raise SystemExit("Configurazione TLS incompleta.")
         return
-    tls.mkdir(mode=0o750, exist_ok=True)
     if any(tls.iterdir()):
         raise SystemExit("Materiale TLS parziale: verificare prima di ripetere l'installazione.")
     ca_key = shared / "db-ca.key"
