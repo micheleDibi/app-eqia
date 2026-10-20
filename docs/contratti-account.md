@@ -33,6 +33,51 @@ la scheda anagrafica non replica OTP, consegna credenziali o recupero.
 Concordare la firma del servizio e le props nella prima PR di V1, prima che M1
 colleghi la creazione definitiva: i due pacchetti possono proseguire sulle parti indipendenti.
 
+## Firma del servizio (V1)
+
+```python
+from src.account.creazione import crea_account
+
+utente_id = crea_account(db, nome=..., cognome=..., autore_id=...)
+```
+
+- Crea solo la riga `utenti`: disattivata (`0`), con una password provvisoria
+  casuale che non viene comunicata a nessuno; quella vera viene generata
+  all'attivazione e inviata via email.
+- Nome utente: nome e cognome con la sola iniziale
+  maiuscola, uniti (`MarioRossi`), senza spazi né apostrofi (`Anna Maria De
+  Luca` → `AnnamariaDeluca`, `D'Amico` → `Damico`); se già usato, numero in
+  coda da 2. Il controllo dei doppioni segue la regola del
+  login: maiuscole, minuscole e accenti non contano.
+- `utente_padre`, `utente_created_by` e `utente_updated_by` valgono `autore_id`.
+  Il padre entra nella regola di visibilità: da confermare con M1.
+- Non assegna ruoli, non crea l'anagrafica né l'attesa di attivazione, non fa
+  commit. `ValueError` se nome e cognome sono vuoti.
+
+Il chiamante, nella stessa transazione: salva l'anagrafica con `utente_id` e
+ruolo, aggiunge `Attivazione(utente_id, cliente_id)`, poi fa commit.
+
+Limite noto: `utente_username` non ha un vincolo UNIQUE; due creazioni nello
+stesso istante con lo stesso nominativo potrebbero ricevere lo stesso nome.
+
+## Sezione account nel frontend (V1)
+
+```jsx
+import SezioneAccount from "../account/SezioneAccount.jsx";
+
+<SezioneAccount clienteId={id} valori={{ email, cellulare }} permessi={{ statoAccount: nazionale }} />
+```
+
+- Si monta su un'anagrafica già salvata. Mostra stato dell'account, email e
+  cellulare con "Verifica" o "Verificata"; la verifica apre la finestra del
+  codice. I valori dei contatti si modificano nella scheda, non qui.
+- `valori` (facoltativo): i contatti come sono a video; se diversi da quelli
+  salvati compare "Salva le modifiche per verificare questo contatto.".
+- `permessi.statoAccount`: mostra Attiva/Disattiva. Lo stato lo cambia solo
+  il Nazionale (`PUT /clienti/{id}/account/stato`, 403
+  per gli altri): il cambio chiude l'attesa di attivazione e l'attivazione a
+  mano non spedisce credenziali.
+
 ## Criteri di integrazione
 
 - Fallimento creazione: nessuna anagrafica/account orfano.
