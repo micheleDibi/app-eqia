@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+iptables -w -C DOCKER-USER -p tcp -s @proxyIp@/32 \
+  -m conntrack --ctorigdst @serverIp@ --ctorigdstport @webPort@ -j ACCEPT 2>/dev/null ||
+iptables -w -A DOCKER-USER -p tcp -s @proxyIp@/32 \
+  -m conntrack --ctorigdst @serverIp@ --ctorigdstport @webPort@ -j ACCEPT
+iptables -w -C DOCKER-USER -p tcp \
+  -m conntrack --ctorigdst @serverIp@ --ctorigdstport @webPort@ -j DROP 2>/dev/null ||
+iptables -w -A DOCKER-USER -p tcp \
+  -m conntrack --ctorigdst @serverIp@ --ctorigdstport @webPort@ -j DROP

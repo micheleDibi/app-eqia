@@ -21,11 +21,11 @@ from pymysql.constants import CLIENT
 from sqlalchemy.engine import make_url
 
 
-def esegui_file_sql(url_database: str, percorso: Path) -> None:
-    esegui_sql(url_database, percorso.read_text(encoding="utf-8"))
+def esegui_file_sql(url_database: str, percorso: Path, connect_args=None) -> None:
+    esegui_sql(url_database, percorso.read_text(encoding="utf-8"), connect_args)
 
 
-def esegui_sql(url_database: str, sql: str) -> None:
+def esegui_sql(url_database: str, sql: str, connect_args=None) -> None:
     url = make_url(url_database)
     connessione = pymysql.connect(
         host=url.host,
@@ -36,6 +36,7 @@ def esegui_sql(url_database: str, sql: str) -> None:
         charset="utf8mb4",
         client_flag=CLIENT.MULTI_STATEMENTS,
         autocommit=True,
+        **(connect_args or {}),
     )
     try:
         with connessione.cursor() as cursore:

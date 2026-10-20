@@ -79,6 +79,8 @@ voluti: non aggiungere le migrazioni escluse del gestionale di origine.
 Il DDL MariaDB non è interamente transazionale: in caso di errore di
 migrazione, verificare lo stato prima di riprovare. Questo bootstrap è locale;
 non costituisce una procedura di rilascio o rollback dello staging.
+Il deploy riusa il medesimo motore e registro, attraverso un ingresso distinto
+con controlli sulla destinazione e sul TLS; vedere [deploy.md](deploy.md).
 
 ## Verifiche
 
@@ -113,7 +115,7 @@ indipendenti, isolamento delle migrazioni e assenza delle rotte fuori perimetro.
 La prova browser locale copre accesso OTP, dashboard, menu compatto, profilo,
 schermata sicurezza, EduNews e logout.
 
-Verifica della base del 20 ottobre 2026: 26 test backend e 2 test frontend
+Verifica del 20 ottobre 2026, inclusi i confini del deploy: 37 test backend e 2 test frontend
 superati, lint senza errori e build Vite completata. Prova browser eseguita
 con un account sintetico, email su file e sorgente EduNews in memoria.
 
@@ -124,8 +126,7 @@ Notizie sono ancora sezioni da completare.
 
 ## Staging
 
-Destinazione prevista: `https://eqiastaging.ersaf.it`.
-`backend/.env.staging.example` contiene i riferimenti al dominio, senza segreti.
-Non è stato eseguito alcun deploy. Database nuovo, credenziali, SMTP/SMS,
-accesso EduNews e instradamento HTTPS/API vanno predisposti e verificati
-nell'attività di rilascio. Non usare i servizi o i segreti di Università.
+Destinazione: `https://eqiastaging.ersaf.it`. Il contratto operativo unico è
+`deploy/staging.json`; i file contenenti segreti vengono generati sul server.
+Comandi di rilascio, isolamento, provider e ripristino in [deploy.md](deploy.md).
+Lo staging usa un database nuovo; non usare servizi o segreti di Università.

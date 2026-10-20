@@ -1,0 +1,70 @@
+x-servizio: &servizio
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+services:
+  db:
+    <<: *servizio
+    image: mariadb:10.11.14
+    env_file: ${EQIA_BASE}/shared/db.env
+    command: [--character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --event-scheduler=ON]
+    volumes:
+      - ${EQIA_BASE}/state/mariadb:/var/lib/mysql
+      - ${EQIA_BASE}/shared/db-tls:/run/secrets/db:ro
+      - ${EQIA_BASE}/shared/db-tls/server.cnf:/etc/mysql/conf.d/99-eqia-tls.cnf:ro
+      - ${EQIA_BASE}/shared/client.cnf:/run/secrets/client.cnf:ro
+    networks: [dati]
+    mem_limit: 1g
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  api:
+    <<: *servizio
+    image: ${EQIA_PROJECT}/api:${EQIA_RELEASE}
+    build: {context: .., dockerfile: backend/Dockerfile}
+    env_file: ${EQIA_BASE}/shared/api.env
+    environment: {EQIA_AMBIENTE: staging}
+    volumes:
+      - ${EQIA_BASE}/state/email:/app/backend/var/email
+      - ${EQIA_BASE}/state/sms:/app/backend/var/sms
+      - ${EQIA_BASE}/state/accesso:/app/backend/var/accesso
+      - ${EQIA_BASE}/shared/db-tls/ca.crt:/run/secrets/db-ca.crt:ro
+    networks: [dati, applicazione]
+    depends_on: {db: {condition: service_healthy}}
+    read_only: true
+    tmpfs: [/tmp:rw,noexec,nosuid,size=32m]
+    cap_drop: [ALL]
+    mem_limit: 512m
+
+  web:
+    <<: *servizio
+    image: ${EQIA_PROJECT}/web:${EQIA_RELEASE}
+    build: {context: .., dockerfile: frontend/Dockerfile}
+    environment:
+      EQIA_DOMAIN: ${EQIA_DOMAIN}
+      EQIA_PROXY_IP: ${EQIA_PROXY_IP}
+      NGINX_ENVSUBST_FILTER: ^EQIA_
+      NGINX_ENVSUBST_OUTPUT_DIR: /tmp/conf
+    command: [nginx, -g, "daemon off;", -c, /tmp/nginx.conf]
+    entrypoint: [/bin/sh, -c, "mkdir -p /tmp/conf; sed 's@/etc/nginx/conf.d@/tmp/conf@g' /etc/nginx/nginx.conf > /tmp/nginx.conf; exec /docker-entrypoint.sh \"$$@\"", --]
+    ports:
+      - "127.0.0.1:${EQIA_WEB_PORT}:8080"
+      - "${EQIA_SERVER_IP}:${EQIA_WEB_PORT}:8080"
+    networks: [applicazione, ingresso]
+    depends_on: {api: {condition: service_healthy}}
+    read_only: true
+    tmpfs: [/tmp:rw,noexec,nosuid,size=32m]
+    cap_drop: [ALL]
+    mem_limit: 128m
+
+networks:
+  dati: {internal: true}
+  applicazione: {internal: true}
+  ingresso: {}

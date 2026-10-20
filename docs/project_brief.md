@@ -32,6 +32,7 @@ e completare con Vincenzo.
 | `frontend/src/components`, `hooks`, `lib` | UI, coordinamento e trasporto API |
 | `db/migrations` | Schema iniziale e migrazioni conservate per l'accesso |
 | `scripts`, `compose.yml` | Ambiente locale e verifiche |
+| `deploy/staging.json`, `deploy/remote`, `scripts/deploy.ps1` | Contratto centrale e rilascio dello staging dedicato |
 
 ```mermaid
 flowchart LR
@@ -51,7 +52,7 @@ flowchart LR
 - Tema e icone centralizzati; niente copie locali dei controlli comuni.
 - Dataset locali sintetici; email e SMS su file, nessun invio reale nelle verifiche.
 - Nessun modulo pratiche, pagamenti, ricevute, formazione, chat o accesso Universo.
-- Nessuna configurazione di deploy ereditata.
+- Staging dedicato: database, reti, segreti e release indipendenti; procedura in [deploy.md](deploy.md).
 
 Comandi e stato delle verifiche in [development.md](development.md);
 responsabilità in [collaborazione.md](collaborazione.md).

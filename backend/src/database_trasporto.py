@@ -26,7 +26,7 @@ def opzioni(indirizzo, impostazioni):
         write_timeout=10,
         init_command="SET SESSION sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
     )
-    if impostazioni.ersaf_env != "produzione":
+    if impostazioni.ersaf_env != "produzione" and not impostazioni.database_ca_file:
         return args
     modo = getattr(impostazioni, "database_trasporto", "verify-full")
     ca = getattr(impostazioni, "database_ca_file", "")

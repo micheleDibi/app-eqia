@@ -1,0 +1,11 @@
+{
+  "project": "ersaf-eqia-staging",
+  "sshHost": "ersaf-12",
+  "base": "/srv/ersaf-eqia",
+  "domain": "eqiastaging.ersaf.it",
+  "serverIp": "192.168.40.12",
+  "proxyIp": "192.168.40.10",
+  "webPort": 18083,
+  "databaseName": "eqia_staging",
+  "databaseUser": "eqia_app"
+}
