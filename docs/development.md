@@ -130,3 +130,8 @@ Destinazione: `https://eqiastaging.ersaf.it`. Il contratto operativo unico è
 `deploy/staging.json`; i file contenenti segreti vengono generati sul server.
 Comandi di rilascio, isolamento, provider e ripristino in [deploy.md](deploy.md).
 Lo staging usa un database nuovo; non usare servizi o segreti di Università.
+
+Ambiente pubblicato e verificato il 20 ottobre 2026: HTTPS, login con OTP,
+profilo, logout, cookie/CSRF e database TLS. Installazione, nuovo deploy e
+rollback applicativo verificati; release e limiti delle prove in
+[deploy.md](deploy.md#stato-verificato-il-20-ottobre-2026).

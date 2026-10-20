@@ -125,3 +125,31 @@ senza intervenire sugli host degli altri applicativi.
 quattro ruoli e regola firewall. Va completato con verifica HTTPS dal client,
 accesso e logout nel browser, controllo del cookie e confronto dei servizi
 preesistenti. La sola rotta `/salute` non prova database, provider o login.
+
+## Stato verificato il 20 ottobre 2026
+
+Staging pubblicato su `https://eqiastaging.ersaf.it`, con redirect HTTP 301
+verso HTTPS e certificato Let's Encrypt valido. Release attiva
+`20261020-095530-c99ae9df`, sorgente
+`c99ae9df1b3f2e01a7a3713a4809b4b912f93a89`.
+
+I tre container sono sani; il database nuovo contiene 15 migrazioni, quattro
+ruoli e un solo account sintetico. La connessione MariaDB usa TLS verificato
+(`TLS_AES_256_GCM_SHA384`). API e database non espongono porte sull'host;
+la porta web sulla LAN è raggiungibile solo dal reverse proxy.
+
+Verificati installazione, deploy ripetuto senza riapplicare le migrazioni,
+backup compressi con impronta e rollback applicativo tra due release dello
+stesso commit. Il rollback non costituisce una prova di ripristino dei dati
+né di compatibilità con un futuro schema diverso.
+
+Nel browser sono passati login con OTP, dashboard, lettura del profilo e
+logout. Verifica HTTP aggiuntiva: sessione autenticata 200, cookie
+`__Host-eqia_sessione` Secure/HttpOnly/SameSite=Lax senza Domain, logout
+senza CSRF rifiutato con 403, logout con CSRF 204 e sessione successiva 401.
+Il certificato HTTPS e il redirect sono stati verificati dal client.
+
+I servizi Università e Universo preesistenti sono rimasti operativi.
+Email/SMS restano su file e l'integrazione EduNews esterna resta disabilitata,
+come indicato sopra. Le prove riguardano l'ambiente e l'accesso iniziale;
+non completano i pacchetti funzionali ancora aperti.
