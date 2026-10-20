@@ -57,8 +57,10 @@ utente_id = crea_account(db, nome=..., cognome=..., autore_id=...)
 Il chiamante, nella stessa transazione: salva l'anagrafica con `utente_id` e
 ruolo, aggiunge `Attivazione(utente_id, cliente_id)`, poi fa commit.
 
-Limite noto: `utente_username` non ha un vincolo UNIQUE; due creazioni nello
-stesso istante con lo stesso nominativo potrebbero ricevere lo stesso nome.
+La migrazione 018 impone l'unicità di `utente_username` con la collation del
+login. In caso di creazioni contemporanee il servizio riprova il suffisso
+in un savepoint, senza annullare la transazione del chiamante. Il nome completo,
+compreso il suffisso, rispetta il limite di 255 caratteri.
 
 ## Sezione account nel frontend (V1)
 
@@ -76,7 +78,8 @@ import SezioneAccount from "../account/SezioneAccount.jsx";
 - `permessi.statoAccount`: mostra Attiva/Disattiva. Lo stato lo cambia solo
   il Nazionale (`PUT /clienti/{id}/account/stato`, 403
   per gli altri): il cambio chiude l'attesa di attivazione e l'attivazione a
-  mano non spedisce credenziali.
+  mano non spedisce credenziali. La disattivazione revoca le sessioni: una
+  successiva riattivazione richiede un nuovo accesso.
 
 ## Criteri di integrazione
 

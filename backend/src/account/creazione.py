@@ -10,6 +10,7 @@ email e cellulare (otp/attivazione.py).
 import secrets
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.auth.models import DISATTIVO
@@ -33,6 +34,17 @@ def _usato(db: Session, username: str) -> bool:
     return db.scalar(select(Utente.utente_id).where(Utente.utente_username == username).limit(1)) is not None
 
 
+def _candidati(nome: str, cognome: str):
+    base = f"{_parte(nome)}{_parte(cognome)}"
+    if not base:
+        raise ValueError(NOME_MANCANTE)
+    numero = 1
+    while True:
+        suffisso = str(numero) if numero > 1 else ""
+        yield f"{base[:255 - len(suffisso)]}{suffisso}"
+        numero += 1
+
+
 def genera_username(db: Session, nome: str, cognome: str) -> str:
     """Nome e cognome, ciascuno con la sola iniziale maiuscola, uniti e senza
     spazi ne' apostrofi ("mario", "ROSSI" -> "MarioRossi"; "Anna Maria",
@@ -42,17 +54,31 @@ def genera_username(db: Session, nome: str, cognome: str) -> str:
     Il controllo dei doppioni non distingue maiuscole e minuscole: un
     "Mariorossi" gia' presente fa nascere "MarioRossi2", non un secondo nome
     che il login non saprebbe distinguere.
-    Limite noto: utente_username non ha un vincolo UNIQUE, quindi due
-    creazioni nello stesso istante potrebbero scegliere lo stesso nome.
+    Il vincolo UNIQUE protegge anche dalle creazioni contemporanee.
+    Il servizio di creazione riprova il suffisso se la prima scelta è occupata.
     """
-    base = f"{_parte(nome)}{_parte(cognome)}"
-    if not base:
-        raise ValueError(NOME_MANCANTE)
-    candidato, numero = base, 2
-    while _usato(db, candidato):
-        candidato = f"{base}{numero}"
-        numero += 1
-    return candidato
+    return next(candidato for candidato in _candidati(nome, cognome) if not _usato(db, candidato))
+
+
+def _utente(username: str, password_hash: str, autore_id: int) -> Utente:
+    return Utente(
+        utente_username=username, utente_password="",
+        utente_password_hash=password_hash, utente_password_algo="bcrypt",
+        utente_attivoSN=DISATTIVO, utente_padre=autore_id,
+        utente_created_by=autore_id, utente_updated_by=autore_id,
+    )
+
+
+def _inserisci(db: Session, utente: Utente) -> int | None:
+    try:
+        with db.begin_nested():
+            db.add(utente)
+            db.flush()
+        return utente.utente_id
+    except IntegrityError as errore:
+        if errore.orig.args[0] != 1062 or "uq_utenti_username" not in str(errore.orig):
+            raise
+        return None
 
 
 def crea_account(db: Session, *, nome: str, cognome: str, autore_id: int) -> int:
@@ -67,16 +93,10 @@ def crea_account(db: Session, *, nome: str, cognome: str, autore_id: int) -> int
 
     Non fa commit.
     """
-    utente = Utente(
-        utente_username=genera_username(db, nome, cognome),
-        utente_password="",
-        utente_password_hash=hash_password(secrets.token_urlsafe(32)),
-        utente_password_algo="bcrypt",
-        utente_attivoSN=DISATTIVO,
-        utente_padre=autore_id,
-        utente_created_by=autore_id,
-        utente_updated_by=autore_id,
-    )
-    db.add(utente)
-    db.flush()  # genera utente_id
-    return utente.utente_id
+    password_hash = hash_password(secrets.token_urlsafe(32))
+    for candidato in _candidati(nome, cognome):
+        if _usato(db, candidato):
+            continue
+        utente_id = _inserisci(db, _utente(candidato, password_hash, autore_id))
+        if utente_id is not None:
+            return utente_id

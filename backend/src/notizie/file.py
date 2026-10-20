@@ -86,6 +86,8 @@ def nome_allegato(originale: str, esistenti: set[str], adesso: datetime) -> str:
     alle 15:30 del 16 ottobre 2026 diventa "Circolare_20261016-1530.pdf"."""
     nome = PurePosixPath((originale or "").replace("\\", "/")).name
     nome = "".join(c for c in nome if ord(c) >= 32 and ord(c) != 127).strip()
+    if nome in ("", ".", ".."):
+        nome = NOME_PREDEFINITO
     percorso = PurePosixPath(nome or NOME_PREDEFINITO)
     radice, estensione = percorso.stem[:150].strip() or NOME_PREDEFINITO, percorso.suffix[:20]
     nome = f"{radice}{estensione}"
@@ -121,7 +123,7 @@ def _leggi_archivio(db: Session, archivio: Archivio, percorso: Optional[str], vu
         return archivio.leggi(percorso)
     except FileNonTrovato:
         raise HTTPException(status.HTTP_404_NOT_FOUND, FILE_ASSENTE) from None
-    except ArchivioNonDisponibile as errore:
+    except (ArchivioNonDisponibile, OSError) as errore:
         raise errore_archivio(errore) from None
 
 
