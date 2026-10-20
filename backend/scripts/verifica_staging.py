@@ -9,11 +9,27 @@ from src.ambiente_staging import verifica_staging
 from src.config import get_impostazioni, verifica_configurazione
 from src.contratti import leggi_catalogo
 from src.database import engine
+from src.notizie.archivio import ConfigArchivio, get_archivio
+from uuid import uuid4
+
+
+def verifica_archivio():
+    config = ConfigArchivio()
+    config.verifica()
+    assert config.ftp_backend == "cartella", "Archivio staging non persistente."
+    nome = f"/verifica-{uuid4().hex}"
+    archivio = get_archivio()
+    try:
+        archivio.scrivi(nome, b"verifica archivio")
+        assert archivio.leggi(nome) == b"verifica archivio"
+    finally:
+        (config.dir_cartella / nome.lstrip("/")).unlink(missing_ok=True)
 
 if __name__ == "__main__":
     imp = get_impostazioni()
     verifica_staging(imp)
     verifica_configurazione(imp)
+    verifica_archivio()
     with engine.connect() as conn:
         cipher = conn.execute(text("SHOW SESSION STATUS LIKE 'Ssl_cipher'")).one()[1]
         assert cipher, "Connessione MariaDB priva di TLS."

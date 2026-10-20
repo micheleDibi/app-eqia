@@ -30,11 +30,15 @@ services:
     image: ${EQIA_PROJECT}/api:${EQIA_RELEASE}
     build: {context: .., dockerfile: backend/Dockerfile}
     env_file: ${EQIA_BASE}/shared/api.env
-    environment: {EQIA_AMBIENTE: staging}
+    environment:
+      EQIA_AMBIENTE: staging
+      FTP_BACKEND: cartella
+      FTP_DIR_CARTELLA: var/notizie
     volumes:
       - ${EQIA_BASE}/state/email:/app/backend/var/email
       - ${EQIA_BASE}/state/sms:/app/backend/var/sms
       - ${EQIA_BASE}/state/accesso:/app/backend/var/accesso
+      - ${EQIA_BASE}/state/notizie:/app/backend/var/notizie
       - ${EQIA_BASE}/shared/db-tls/ca.crt:/run/secrets/db-ca.crt:ro
     networks: [dati, applicazione]
     depends_on: {db: {condition: service_healthy}}

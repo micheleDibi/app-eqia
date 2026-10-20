@@ -1,20 +1,14 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import Dialogo from "../shared/Dialogo.jsx";
 import AlertMessage from "../AlertMessage.jsx";
-import { Plus, X } from "../../config/icone.js";
+import { X } from "../../config/icone.js";
 import { pillola } from "../../config/styles/pillola.js";
-import { pulsante } from "../../config/styles/pulsante.js";
 import { STILI_NOTIZIE as stili } from "../../config/styles/notizie.js";
 import { TESTI_GESTIONE_TAG as testi } from "../../config/testi/notizie.js";
 import { aggiungiSottotag, aggiungiTag, leggiTag, statoSottotag, statoTag } from "../../lib/notizie.js";
+import Interruttore from "./StatoTag.jsx";
+import NuovoNome from "./NuovoNomeTag.jsx";
 
-/**
- * Finestra "Sezioni e argomenti", solo per il Nazionale: le sezioni con i
- * loro argomenti, anche disattivati. Si aggiunge una sezione o un argomento
- * e si disattiva o riattiva; niente si rinomina o si cancella
- * (backend/src/notizie/tag.py). Il chiamante la monta solo da aperta, cosi'
- * riparte vuota; alla chiusura `onChiudi(cambiati)` dice se rileggere le sezioni.
- */
 export default function GestioneTag({ onChiudi }) {
   const [tag, setTag] = useState(null);
   const [messaggio, setMessaggio] = useState(null);
@@ -94,41 +88,5 @@ export default function GestioneTag({ onChiudi }) {
         )}
       </div>
     </Dialogo>
-  );
-}
-
-function Interruttore({ attivo, nome, disattivo, onCambia }) {
-  return (
-    <button type="button" className={`${pulsante("discreto", "minimo")} ml-auto`} disabled={disattivo}
-      aria-label={attivo ? testi.disattivaNome(nome) : testi.riattivaNome(nome)} onClick={() => onCambia(!attivo)}>
-      {attivo ? testi.disattiva : testi.riattiva}
-    </button>
-  );
-}
-
-/** Campo del nome con "Aggiungi"; Invio aggiunge, e il campo si svuota se e' andata. */
-function NuovoNome({ etichetta, disattivo, piccolo = false, onAggiungi }) {
-  const id = useId();
-  const [nome, setNome] = useState("");
-  const [errore, setErrore] = useState("");
-  const aggiungi = async (evento) => {
-    evento.preventDefault();
-    if (!nome.trim()) { setErrore(testi.nomeVuoto); return; }
-    setErrore("");
-    if (await onAggiungi(nome.trim())) setNome("");
-  };
-  return (
-    <form onSubmit={aggiungi} className={piccolo ? stili.nuovoSottotag : stili.nuovoTag} noValidate>
-      <label htmlFor={id} className={piccolo ? "sr-only" : stili.etichettaNuovo}>{etichetta}</label>
-      <div className={stili.rigaNuovo}>
-        <input id={id} type="text" maxLength={255} value={nome} placeholder={piccolo ? etichetta : undefined}
-          onChange={(e) => { setNome(e.target.value); setErrore(""); }} className={stili.campoNuovo}
-          aria-invalid={Boolean(errore)} aria-describedby={errore ? `${id}-errore` : undefined} />
-        <button type="submit" className={pulsante(piccolo ? "contorno" : "primario", "piccolo")} disabled={disattivo}>
-          <Plus aria-hidden="true" className="size-4" />{testi.aggiungi}
-        </button>
-      </div>
-      {errore && <p id={`${id}-errore`} className={stili.erroreNuovo}>{errore}</p>}
-    </form>
   );
 }

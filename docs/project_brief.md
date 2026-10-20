@@ -10,10 +10,11 @@ Accesso, recupero password, sessioni, verifica contatti e secondo fattore riutil
 i flussi del gestionale di origine. Creazione account interna: nessuna iscrizione pubblica.
 Nazionale conserva il secondo fattore obbligatorio; gli altri ruoli accedono con password.
 
-La prima base rende utilizzabili accesso, profilo e sicurezza; predispone la navigazione
-delle anagrafiche e conserva EduNews. Il completamento di elenchi e schede anagrafiche
-è la successiva tranche di Matteo. Notizie è una sezione distinta da EduNews, da definire
-e completare con Vincenzo.
+La base rende utilizzabili accesso, profilo e sicurezza; predispone la navigazione
+delle anagrafiche e conserva EduNews. V1 aggiunge servizio di creazione e componente
+account, da collegare alle schede M1. Notizie consente al Nazionale di gestire
+sezioni, argomenti, destinatari per ruolo, immagini e allegati; gli altri ruoli
+vedono i contenuti loro assegnati e il conteggio delle notizie da leggere.
 
 ## Struttura
 
@@ -26,7 +27,7 @@ e completare con Vincenzo.
 | `backend/src/account` | Funzioni comuni del ciclo account |
 | `backend/src/clienti`, `utenti`, `aziende`, `ruolo` | Modelli anagrafici comuni |
 | `backend/src/edunews24`, `profilo`, `notifiche` | Informazione, profilo e invio messaggi |
-| `backend/src/notizie`, `frontend/src/components/notizie` | Ingressi collegati per la tranche Notizie, ancora da implementare |
+| `backend/src/notizie`, `frontend/src/components/notizie` | Notizie, destinatari, letture e archivio di immagini/allegati |
 | `frontend/src/App.jsx` | Composizione delle rotte |
 | `frontend/src/config` | URL, icone, testi, tema, token e stili |
 | `frontend/src/components`, `hooks`, `lib` | UI, coordinamento e trasporto API |

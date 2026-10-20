@@ -17,12 +17,13 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from src.auth.dipendenze import get_current_utente
-from src.auth.models import ATTIVO, DISATTIVO
+from src.auth.models import ATTIVO, DISATTIVO, MotivoRevoca
 from src.auth.visibilita import Visibilita, cliente_visibile_o_404, visibilita_corrente
 from src.database import get_db
 from src.otp.contatti import NON_TROVATA, stato_contatti
 from src.otp.models import Attivazione
 from src.otp.servizio import blocca_cliente
+from src.security.sessioni import revoca_sessioni_utente
 from src.utenti.models import Utente
 
 SOLO_NAZIONALE = "Solo il Nazionale può eseguire questa operazione."
@@ -45,6 +46,8 @@ def cambia_stato(cliente_id: int, corpo: StatoAccount, db: Session = Depends(get
     if utente.utente_attivoSN != nuovo:
         utente.utente_attivoSN = nuovo
         utente.utente_updated_by = autore.utente_id
+        if nuovo == DISATTIVO:
+            revoca_sessioni_utente(db, utente.utente_id, MotivoRevoca.UTENTE_DISATTIVATO)
         attesa = db.get(Attivazione, utente.utente_id)
         if attesa is not None:
             db.delete(attesa)

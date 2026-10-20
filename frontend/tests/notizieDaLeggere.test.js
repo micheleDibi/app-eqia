@@ -175,7 +175,7 @@ test("il pallino della notizia e' rosso e tondo", () => {
 test("pallino nell'elenco e nel riquadro, solo per le notizie con letta falso", () => {
   const pallino = readFileSync(new URL("../src/components/notizie/PallinoDaLeggere.jsx", import.meta.url), "utf8");
   assert.match(pallino, /if \(notizia\.letta !== false\) return null;/);
-  for (const file of ["PaginaNotizie.jsx", "RiquadroNotizie.jsx"]) {
+  for (const file of ["VoceNotizia.jsx", "RiquadroNotizie.jsx"]) {
     const codice = readFileSync(new URL(`../src/components/notizie/${file}`, import.meta.url), "utf8");
     assert.match(codice, /<PallinoDaLeggere notizia=\{notizia\} \/>\{notizia\.notizia_titolo\}/, file);
   }
@@ -184,6 +184,6 @@ test("pallino nell'elenco e nel riquadro, solo per le notizie con letta falso", 
 test("menu e scheda: contatore sulla voce Notizie e rilettura dopo l'apertura", () => {
   const menu = readFileSync(new URL("../src/components/shell/MenuNavigazione.jsx", import.meta.url), "utf8");
   assert.match(menu, /const contatore = rotta === ROTTE\.notizie \? contatoreNotizie : "";/);
-  const scheda = readFileSync(new URL("../src/components/notizie/SchedaNotizia.jsx", import.meta.url), "utf8");
+  const scheda = readFileSync(new URL("../src/components/notizie/ContenutoSchedaNotizia.jsx", import.meta.url), "utf8");
   assert.match(scheda, /setStato\(\{ scheda, loading: false, errore: null \}\);\s*\/\/[^\n]*\n\s*aggiornaNotizieDaLeggere\(\);/);
 });

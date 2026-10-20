@@ -14,6 +14,9 @@ la porta web sulla LAN accetta soltanto il reverse proxy. Una unit systemd
 riapplica le due regole dedicate dopo il riavvio di Docker.
 
 Il database usa TLS con verifica di CA e nome `db`; la CA privata è autonoma.
+Immagini e allegati Notizie usano la cartella persistente `state/notizie`,
+montata sull'API. Il Compose dello staging imposta esplicitamente il backend
+`cartella`; nessun collegamento FTP esterno è richiesto.
 Il certificato database dura due anni: sostituirlo prima della scadenza,
 conservando la CA o coordinando anche la sostituzione della fiducia nell'API.
 Il certificato HTTPS pubblico è gestito e rinnovato da Nginx Proxy Manager.
@@ -23,6 +26,8 @@ Il certificato HTTPS pubblico è gestito e rinnovato da Nginx Proxy Manager.
 Prerequisiti: Git, OpenSSH, PowerShell e alias SSH `ersaf-12` autorizzato
 sul server. Per le verifiche locali valgono i prerequisiti di development.md.
 Lo script non modifica chiavi SSH o autorizzazioni degli sviluppatori.
+Il trasferimento usa il protocollo SCP su SSH (`scp -O`): nella verifica
+dell'ambiente il trasferimento con SFTP non terminava.
 
 ```powershell
 # Verifiche del codice prima del rilascio
@@ -54,6 +59,9 @@ completo, identificativo della release e ora UTC.
 Il server compila immagini API/web separate, avvia il solo database Equia,
 ferma l'eventuale API/web precedente, salva e verifica un backup compresso,
 applica le migrazioni mancanti e verifica l'avvio prima di aggiornare `current`.
+Il backup comprende anche un archivio separato degli allegati Notizie, con
+verifica gzip e SHA-256. Prima dell'attivazione viene verificata la lettura e
+scrittura della cartella tramite l'API.
 Il blocco esclusivo impedisce due deploy contemporanei.
 Non sono previste pulizie automatiche di immagini, volumi, release o backup.
 
@@ -108,9 +116,10 @@ Leggerli solo tramite accesso server autorizzato; non copiarli in Git o ticket.
 | `shared` | Segreti e certificati; accesso riservato |
 | `state/mariadb` | Dati persistenti del solo database Equia |
 | `state/email`, `state/sms`, `state/accesso` | Materiale riservato di collaudo |
+| `state/notizie` | Immagini e allegati persistenti; accesso tramite API autorizzate |
 | `releases` | Sorgenti e metadati dei rilasci |
 | `current`, `previous` | Release confermata e precedente |
-| `snapshots` | Backup SQL compressi e relative impronte |
+| `snapshots` | Backup SQL e allegati compressi, con relative impronte |
 | `incoming` | Archivi di rilascio trasferiti |
 
 ## Reverse proxy e verifica pubblica

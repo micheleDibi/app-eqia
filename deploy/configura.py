@@ -100,7 +100,7 @@ def main():
     os.umask(0o077)
     ambiente(base / "shared")
     certificati(base / "shared")
-    for nome in ("email", "sms", "accesso"):
+    for nome in ("email", "sms", "accesso", "notizie"):
         percorso = base / "state" / nome
         percorso.mkdir(mode=0o700, exist_ok=True)
         os.chown(percorso, 10001, 10001)

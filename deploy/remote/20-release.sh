@@ -33,6 +33,13 @@ backup_db() {
     mv "$snapshot.partial" "$snapshot"
     sha256sum "$snapshot" > "$snapshot.sha256"
     log "Backup verificato: $snapshot"
+    if [[ -d "$BASE/state/notizie" ]]; then
+        tar -C "$BASE/state" -czf "$snapshot.files.tar.gz.partial" notizie
+        gzip -t "$snapshot.files.tar.gz.partial"
+        mv "$snapshot.files.tar.gz.partial" "$snapshot.files.tar.gz"
+        sha256sum "$snapshot.files.tar.gz" > "$snapshot.files.tar.gz.sha256"
+        log "Archivio allegati verificato: $snapshot.files.tar.gz"
+    fi
 }
 
 verify_release() {
