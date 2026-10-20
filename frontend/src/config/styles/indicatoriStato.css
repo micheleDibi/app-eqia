@@ -1,0 +1,24 @@
+/* Etichette di verifica dei clienti. Verificato e non verificato si
+ * distinguono anche senza colore: il primo ha la spunta e il bordo pieno. */
+.indicatori-stato { @apply inline-flex flex-wrap items-center gap-1.5 align-middle; }
+/* Nella tabella il contenitore e' un blocco, come nel design: in linea
+ * starebbe nella riga di testo da 20px della cella e scenderebbe di un terzo
+ * di pixel. La scheda da schermo stretto resta in linea. */
+.elenco-adattivo__tabella .indicatori-stato { @apply flex; }
+/* Pillola come quelle di config/styles/pillola.js, ma con misure proprie
+ * (12/500, rientri 2/9) e scritta qui perche' le classi sono CSS. La spunta
+ * sta a 2px dall'etichetta, come "✓ Email" nel design. */
+.indicatori-stato__etichetta {
+  @apply inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border border-bordo-controllo-tenue bg-superficie px-2.25 py-0.5 text-xs leading-[normal] font-medium text-testo-attenuato;
+}
+.indicatori-stato__etichetta[data-attivo="true"] { @apply border-positivo-bordo bg-positivo-tenue text-positivo; }
+/* La spunta del design e' un glifo di 9 x 6,5px con il tratto di 1,5px: la
+ * Check da 12px ha lo stesso ingombro, con il tratto ingrossato da 2 a 3. */
+.indicatori-stato__spunta { @apply size-3 shrink-0; stroke-width: 3; }
+/* Variante della finestra di scelta dello studente (prop `negativi`): il dato
+ * mancante e' rosso con la X, come "✕ Diploma" nel design. Il glifo del
+ * design e' largo 7,5px con il tratto sottile e il testo parte 12,4px dopo:
+ * la X da 14px (tratto 2) con i margini negativi ha lo stesso inchiostro e
+ * occupa 10,5px, piu' i 2px dello spazio fra icona e testo. */
+.indicatori-stato__etichetta[data-tono="negativo"] { @apply border-negativo-contorno bg-negativo-sfondo text-negativo-scuro; }
+.indicatori-stato__x { @apply -mr-[0.5px] -ml-[3px] size-3.5 shrink-0; stroke-width: 2; }

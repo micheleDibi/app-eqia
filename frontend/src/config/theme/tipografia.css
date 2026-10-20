@@ -1,0 +1,80 @@
+/* Scala tipografica: famiglia, dimensioni e pesi con un nome che dice a cosa
+ * servono. La scala di Tailwind resta valida e non viene duplicata: qui si
+ * nominano soltanto i ruoli ricorrenti.
+ *
+ * Dove il design non dichiara l'interlinea vale `normal` (con Inter circa
+ * 1,21): il preflight di Tailwind imporrebbe 1,5 e sposterebbe il ritmo
+ * verticale di titoli, etichette e campi.
+ */
+
+@theme {
+  /* Inter, servita dall'applicazione stessa: nessuna richiesta a servizi
+   * esterni. Se non si carica, subentra il carattere di sistema. */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Titolo della pagina: "Modifica azienda", "Modifica sottoscrittore". */
+  --text-titolo-pagina: 1.5rem;
+  --text-titolo-pagina--line-height: normal;
+  --text-titolo-pagina--font-weight: 700;
+  --text-titolo-pagina--letter-spacing: -0.01em;
+
+  /* Titolo di un elenco nella sua testata: "Attuatori", "Sottoscrittori". */
+  --text-titolo-elenco: 1.375rem;
+  --text-titolo-elenco--line-height: normal;
+  --text-titolo-elenco--font-weight: 700;
+  --text-titolo-elenco--letter-spacing: -0.01em;
+
+  /* Titolo di una sezione dentro una scheda: "Contatti", "Dati anagrafici". */
+  --text-titolo-sezione: 0.9375rem;
+  --text-titolo-sezione--line-height: normal;
+  --text-titolo-sezione--font-weight: 600;
+
+  /* Titolo di una sezione in evidenza: "Diploma di istruzione secondaria". */
+  --text-titolo-evidenziato: 1.0625rem;
+  --text-titolo-evidenziato--line-height: normal;
+  --text-titolo-evidenziato--font-weight: 600;
+
+  /* Descrizione sotto il titolo di una sezione. */
+  --text-descrizione: 0.8125rem;
+  --text-descrizione--line-height: 1.5;
+
+  /* Etichetta di un campo o di una colonna. Va usata con uppercase e
+   * tracking-wider: la forma completa sta nelle varianti. */
+  --text-etichetta: 0.6875rem;
+  --text-etichetta--line-height: normal;
+  --text-etichetta--font-weight: 600;
+
+  /* Distintivo minuto accanto a un'etichetta, senza maiuscolo: "Solo
+   * Nazionale" nella scheda pratica. */
+  --text-distintivo: 0.625rem;
+  --text-distintivo--line-height: normal;
+  --text-distintivo--font-weight: 600;
+  --text-distintivo--letter-spacing: 0.03em;
+
+  /* Testo di servizio: note sotto un campo, conteggi, messaggi di stato. */
+  --text-nota: 0.75rem;
+  --text-nota--line-height: 1.45;
+
+  /* Controlli secondari, pulsanti piccoli, conteggi, voci del popover degli
+   * avvisi, fine dell'elenco. */
+  --text-dettaglio: 0.8125rem;
+  --text-dettaglio--line-height: 1.45;
+
+  /* Valore in evidenza in un campo: "Diploma", "Titolo". */
+  --text-evidenziato: 0.9375rem;
+  --text-evidenziato--line-height: normal;
+  --text-evidenziato--font-weight: 500;
+
+  /* Testo dei banner di avviso con piu' voci. */
+  --text-avviso: 0.875rem;
+  --text-avviso--line-height: 1.55;
+
+  /* Numeri della striscia dei totali nella pagina Pratiche: il totale delle
+   * pratiche e quello di ciascuno stato. */
+  --text-totale: 1.75rem;
+  --text-totale--line-height: normal;
+  --text-totale--font-weight: 700;
+  --text-conteggio: 1.5rem;
+  --text-conteggio--line-height: normal;
+  --text-conteggio--font-weight: 600;
+}

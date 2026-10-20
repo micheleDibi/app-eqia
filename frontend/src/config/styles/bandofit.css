@@ -1,0 +1,126 @@
+/* BandoFit nella sezione EduNews24: il riquadro della scheda Bandi della
+ * pagina (RiquadroBandoFit) e la striscia del modulo in Dashboard
+ * (StrisciaBandoFit). Il logo e' l'unico elemento forte: il resto usa la
+ * tipografia di EduNews24 e i colori di tokens/bandofit.css, senza gradienti.
+ *
+ * Classi BEM bandofit-* solo qui e nei due componenti. Come styles/edunews24.css
+ * il file non ha layer e vince sulle utilita' di Tailwind: qui layout,
+ * tipografia e colori; sui componenti solo le misure del logo (STILI_LOGO) e
+ * il bersaglio di 44px dei link (min-h-11). Niente transizioni. Il fuoco dei
+ * link e' la regola 1 di styles/edunews24.css, che vale in tutta la sezione.
+ *
+ * Soglie dei contenitori di EduNews24, mai della finestra:
+ * - edunews24-pannello: il riquadro, impilato sotto i 40rem, a griglia sopra;
+ * - edunews24-modulo: la striscia, con la frase breve dai 38rem. */
+
+/* === Link "Vai a BandoFit" ================================================ */
+
+/* Testo in fit-inchiostro (5,25 su bianco, 4,67 su fit-tenue) con la
+ * sottolineatura sempre visibile nel verde del marchio, solo come segno: il
+ * link si riconosce anche senza il colore. Non si comprime: e' largo quanto
+ * il suo testo su una riga (113px), che alla dimensione predefinita sta
+ * sempre nella riga del riquadro e della striscia da 254px in su. Solo con il
+ * testo ingrandito, quando nemmeno da solo sta nella riga, va a capo dentro
+ * il suo box invece di uscire dal modulo (che taglia con overflow clip):
+ * per questo max-width e non white-space: nowrap. */
+.bandofit-riquadro__link,
+.bandofit-striscia__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  max-width: 100%;
+  color: var(--color-bandofit-fit-inchiostro);
+  @apply text-edunews24-linguetta;
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-bandofit-fit);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+.bandofit-riquadro__link:hover,
+.bandofit-striscia__link:hover { text-decoration-color: currentColor; }
+
+/* === Riquadro della scheda Bandi ========================================== */
+
+/* Fondo fit-tenue senza bordo, con il raggio dei riquadri interni ERSAF.
+ * Impilato: logo, titolo e testo, link. */
+.bandofit-riquadro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-riquadro);
+  background-color: var(--color-bandofit-fit-tenue);
+}
+.bandofit-riquadro__testi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.bandofit-riquadro__titolo {
+  color: var(--color-bandofit-inchiostro);
+  @apply text-edunews24-voce;
+  text-wrap: balance;
+}
+.bandofit-riquadro__testo {
+  max-width: 66ch;
+  color: var(--color-testo-secondario);
+  @apply text-edunews24-meta;
+  text-wrap: pretty;
+}
+
+/* Dai 40rem di pannello una riga: logo, titolo e testo, link a destra. */
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-griglia)) {
+  .bandofit-riquadro {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+}
+
+/* === Striscia del modulo in Dashboard ===================================== */
+
+/* Una riga alta quanto il link (2.75rem), senza padding verticale ne' bordo:
+ * il posto e il margine li da' l'involucro del modulo. Il link resta a
+ * destra; con il testo ingrandito va a capo senza tagliare nulla. */
+.bandofit-striscia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.75rem;
+}
+.bandofit-striscia__testo {
+  display: none;
+  flex: 1 1 12rem;
+  min-width: 0;
+  color: var(--color-testo-secondario);
+  @apply text-edunews24-meta;
+  text-wrap: pretty;
+}
+.bandofit-striscia__link { margin-inline-start: auto; }
+
+/* La frase breve solo quando c'e' spazio per tenerla sulla riga. */
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .bandofit-striscia__testo { display: block; }
+}
+
+/* === Colori forzati ======================================================= */
+
+@media (forced-colors: active) {
+  /* Il fondo sparisce: resta un riquadro bordato. */
+  .bandofit-riquadro {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  /* Il logo ha i colori fissi del marchio su un fondo trasparente, che in un
+   * tema scuro lo renderebbe illeggibile: resta su una lastra chiara. */
+  .bandofit-riquadro img,
+  .bandofit-striscia img {
+    forced-color-adjust: none;
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--radius-controllo);
+    background-color: var(--color-superficie);
+  }
+}

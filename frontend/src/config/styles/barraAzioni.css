@@ -1,0 +1,8 @@
+/* Barra Annulla / Salva agganciata in fondo alla scheda (barraAzioniModulo
+ * "scheda"). Quando il fuoco fa scorrere la pagina, il browser lascia libera
+ * in fondo l'altezza della barra: il campo si ferma sopra la barra e non
+ * dietro. Altezza: pulsante (h-controllo), rientri py-4 e bordo, piu' 8px di
+ * respiro. */
+html:has(.barra-azioni-agganciata) {
+  scroll-padding-bottom: calc(var(--spacing-controllo) + var(--spacing) * 10 + 1px);
+}

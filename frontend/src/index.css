@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+/* Tema e token: unica sorgente di verita' dell'aspetto.
+ * Le pagine usano queste utilita' semantiche, non i colori grezzi della palette.
+ * Le varianti dei controlli stanno in src/config/styles/. */
+@import "./config/tokens/palette.css";
+@import "./config/theme/colori.css";
+@import "./config/theme/tipografia.css";
+@import "./config/tokens/controlli.css";
+@import "./config/tokens/movimento.css";
+@import "./config/tokens/edunews24.css";
+@import "./config/tokens/bandofit.css";
+@import "./config/styles/testataElenco.css";
+@import "./config/styles/filtriElenco.css";
+@import "./config/styles/selezione.css";
+@import "./config/styles/righeElenco.css";
+@import "./config/styles/indicatoriStato.css";
+@import "./config/styles/movimento.css";
+@import "./config/styles/dialogo.css";
+@import "./config/styles/schede.css";
+@import "./config/styles/avvisi.css";
+@import "./config/styles/barraAzioni.css";
+@import "./config/styles/edunews24.css";
+@import "./config/styles/bandofit.css";
+
+/* Distanza e rientro dei pannelli ancorati: registrate, getComputedStyle le
+ * restituisce in px anche quando sono scritte con calc() o --spacing().
+ * Il valore iniziale deve essere in px: con rem (che dipende dalla radice)
+ * il browser scarta l'intera regola e la proprieta' resta non registrata. */
+@property --distanza-popover {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 16px;
+}
+@property --rientro-popover {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-tela font-sans text-testo antialiased;
+  }
+
+  input, select, textarea {
+    accent-color: var(--color-primario);
+  }
+
+  /* Campi numerici senza frecce: percentuali, voti, anni. */
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  ::selection {
+    background-color: var(--color-accento-tenue);
+    color: var(--color-testo-forte);
+  }
+
+  /* Misure e tratto comuni, senza props di stile sui singoli componenti. */
+  .lucide {
+    width: var(--spacing-icona);
+    height: var(--spacing-icona);
+    stroke-width: var(--spessore-icona);
+    flex-shrink: 0;
+  }
+}

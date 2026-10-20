@@ -1,0 +1,57 @@
+/* Dialog nativo: focus e isolamento della pagina gestiti dal browser. */
+.dialogo {
+  @apply fixed border-0 bg-superficie text-testo p-0 shadow-xl;
+}
+.dialogo::backdrop {
+  @apply bg-testo-forte/30 backdrop-blur-xs;
+  opacity: 0;
+  transition: opacity var(--durata-rapida) var(--curva-uscita),
+    display var(--durata-rapida) allow-discrete,
+    overlay var(--durata-rapida) allow-discrete;
+}
+.dialogo[open]::backdrop { opacity: 1; transition-duration: var(--durata-normale); }
+.dialogo--menu {
+  @apply inset-y-0 left-0 right-auto m-0 w-barra-laterale max-w-[85vw] h-dvh max-h-none;
+  translate: -100% 0;
+  transition-duration: var(--durata-normale);
+}
+.dialogo--menu[open] { translate: 0 0; transition-duration: var(--durata-pannello); }
+.dialogo--menu[open]::backdrop { transition-duration: var(--durata-pannello); }
+.dialogo--menu::backdrop { transition-duration: var(--durata-normale); }
+.dialogo--finestra { @apply inset-0 m-auto w-[90%] max-w-[800px] max-h-[85dvh] rounded-superficie; }
+.dialogo--otp, .dialogo--conferma { @apply inset-0 m-auto w-[90%] max-w-md max-h-[85dvh] rounded-superficie; }
+.dialogo__contenuto { @apply flex max-h-[85dvh] flex-col p-6; }
+.dialogo--selezione, .dialogo--selezione-larga {
+  @apply inset-0 m-auto w-[90%] max-w-3xl max-h-[85dvh] rounded-superficie;
+}
+.dialogo--selezione-larga { @apply max-w-5xl; }
+/* Altezza stabile durante la ricerca, limitata allo spazio disponibile. */
+.dialogo__selezione { @apply flex h-[600px] max-h-[85dvh] flex-col p-6 sm:p-8; }
+/* Finestre della scheda pratica, come nei design: scelta dello studente
+ * (scelta), del percorso (scelta-larga), dei corsi (scelta-corsi) e firma
+ * dello studente (firma). 24px di margine dal bordo dello schermo, altezza
+ * secondo il contenuto fino al massimo; ombra e velo propri, senza sfocatura.
+ * Aperte, le finestre di scelta sono una colonna: testata, ricerca e piede
+ * restano fermi, l'elenco scorre (vedi config/styles/praticaSelezione.js). */
+.dialogo--scelta, .dialogo--scelta-larga, .dialogo--scelta-corsi, .dialogo--firma {
+  @apply inset-0 m-auto w-[calc(100%-48px)] max-w-[860px] max-h-[min(720px,90vh)] overflow-hidden rounded-superficie shadow-finestra;
+}
+.dialogo--scelta-larga { @apply max-w-[960px]; }
+.dialogo--scelta-corsi { @apply max-w-[960px] max-h-[min(760px,90vh)]; }
+.dialogo--firma { @apply max-w-[620px] max-h-[90vh]; }
+.dialogo--scelta[open], .dialogo--scelta-larga[open], .dialogo--scelta-corsi[open] { @apply flex flex-col; }
+.dialogo--scelta::backdrop, .dialogo--scelta-larga::backdrop, .dialogo--scelta-corsi::backdrop, .dialogo--firma::backdrop {
+  @apply bg-velo-finestra backdrop-blur-none;
+}
+/* Corsi di laurea della prevalutazione (design "Prevalutazione"): come la
+ * scelta dello studente, ma larga 900px. */
+.dialogo--scelta-prevalutazione {
+  @apply inset-0 m-auto w-[calc(100%-48px)] max-w-[900px] max-h-[min(720px,90vh)] overflow-hidden rounded-superficie shadow-finestra;
+}
+.dialogo--scelta-prevalutazione[open] { @apply flex flex-col; }
+.dialogo--scelta-prevalutazione::backdrop { @apply bg-velo-finestra backdrop-blur-none; }
+
+@starting-style {
+  .dialogo--menu[open] { opacity: 0; translate: -100% 0; }
+  .dialogo[open]::backdrop { opacity: 0; }
+}

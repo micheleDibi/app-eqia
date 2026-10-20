@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      Il token di reset viaggia nella query string. Senza questa direttiva ogni
+      richiesta partita da /reimposta-password?token=... porterebbe il token
+      nell'header Referer verso qualunque risorsa esterna.
+
+      Va nel documento e NON iniettata da React: le sottorisorse dell'HTML
+      partono durante il parsing dell'head, prima che React monti, e una
+      referrer policy non e' retroattiva.
+
+      Vale per tutta l'applicazione. Le sole risorse esterne sono immagini e
+      video degli articoli EduNews24, dagli host ammessi dal backend (il file
+      video solo dopo il clic su play): partono senza Referer, ed e' voluto.
+      Il backend non guarda il Referer; con strict-origin-when-cross-origin
+      quegli host vedrebbero l'origine della piattaforma.
+    -->
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Equia</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

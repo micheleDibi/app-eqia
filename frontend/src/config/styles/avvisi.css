@@ -1,0 +1,26 @@
+/* Avvisi delle anomalie nelle righe degli elenchi: segnale e popover nativo
+ * ancorato sotto di esso, allineato a sinistra (lib/popoverAncorato.js legge
+ * distanza, rientro e data-allinea). Il browser gestisce Escape e il clic
+ * fuori; la ricetta del movimento sta in movimento.css. */
+.avvisi { @apply inline-flex shrink-0 items-center align-middle; }
+/* Il segnale "⚠" del design occupa circa 11 x 10px con un tratto marcato: il
+ * triangolo da 12px ha lo stesso ingombro (quello da 14 del pulsante minimo e'
+ * piu' grande), con il tratto ingrossato perche' il punto esclamativo si legga. */
+.avvisi > button > svg { @apply size-3; stroke-width: 2.5; }
+
+.avvisi__pannello {
+  @apply fixed m-0 w-87.5 flex-col gap-2 rounded-riquadro border border-attenzione-bordo bg-superficie px-3.5 py-3 text-left shadow-popover cursor-default overflow-y-auto overscroll-contain;
+  inset: auto;
+  /* 350 in tutto: nel design 320 di contenuto, senza box-sizing, piu' rientri e bordo. */
+  --distanza-popover: 6px;
+  --rientro-popover: 8px;
+}
+/* display solo da aperto: dichiarato sulla regola base batterebbe il
+ * display:none che il browser assegna al popover chiuso. Direzione e spazi
+ * restano sulla base, cosi' non cambiano durante la dissolvenza di chiusura. */
+.avvisi__pannello:popover-open { display: flex; }
+
+.avvisi__titolo { @apply m-0 text-etichetta uppercase tracking-wider text-attenzione-forte; }
+.avvisi__elenco { @apply m-0 flex list-none flex-col gap-2 p-0; }
+.avvisi__elenco li { @apply flex gap-2 whitespace-normal text-dettaglio font-normal normal-case tracking-normal text-attenzione-profondo; }
+.avvisi__elenco li::before { content: "•"; color: var(--color-attenzione); }

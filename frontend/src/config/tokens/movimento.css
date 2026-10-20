@@ -1,0 +1,20 @@
+/* Scala unica per CSS, utility e animazioni avviate dagli hook. */
+@theme static {
+  --durata-rapida: 120ms;
+  --durata-normale: 180ms;
+  --durata-pannello: 240ms;
+  --curva-ingresso: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --curva-uscita: cubic-bezier(0.4, 0, 1, 1);
+  --spostamento-ingresso: 6px;
+  --default-transition-duration: var(--durata-rapida);
+  --default-transition-timing-function: var(--curva-ingresso);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --durata-rapida: 0s;
+    --durata-normale: 0s;
+    --durata-pannello: 0s;
+    --spostamento-ingresso: 0px;
+  }
+}

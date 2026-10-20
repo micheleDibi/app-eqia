@@ -1,0 +1,141 @@
+/* Identita' EduNews24: palette, tipografia, misure e soglie della sezione
+ * (modulo in Dashboard e pagina /edunews24). Valgono solo dentro la sezione:
+ * la shell ERSAF non li usa. Colori grezzi solo qui; styles/edunews24.css e le
+ * ricette di styles/edunews24.js li leggono per nome.
+ *
+ * Contrasti (WCAG 2.x, ricalcolati sui valori di palette.css e colori.css):
+ * inchiostro su superficie 15,39; blu su superficie 8,39, su velo 7,67;
+ * su-blu su blu 8,39; su-blu-tenue su blu 5,90; testo-tenue su velo 4,81;
+ * filo su superficie 3,68 (solo fili, mai testo). Vietati testo-tenue su
+ * tinta (4,21) e testo-attenuato. Incisione e tinta sono solo decorative. */
+@theme {
+  /* Marchio: campiture piene, linguetta attiva, timbri, icone social. */
+  --color-edunews24-blu: #064C99;
+  /* Passaggio del puntatore sui pieni, sui titoli e sui social. */
+  --color-edunews24-blu-intenso: #053C7A;
+  /* Titoli, cifre della targa, intestazioni dei gruppi. */
+  --color-edunews24-inchiostro: #0B2545;
+  /* Player, distintivo Video, durata nel timbro, errore del video. */
+  --color-edunews24-notte: #07182F;
+  /* Solo decorativo: motivo del ripiego blu. */
+  --color-edunews24-incisione: #04366E;
+  /* Superfici tenui: ripiego velo, stati, etichette dei filtri. */
+  --color-edunews24-velo: #F1F5FB;
+  /* Solo decorativo: motivo del ripiego velo. */
+  --color-edunews24-tinta: #DCE7F5;
+  /* Fili di 1px dei bordati (targa, trio, etichette dei filtri). */
+  --color-edunews24-filo: #5F87BF;
+  --color-edunews24-su-blu: #FFFFFF;
+  /* Testo secondario su blu e su notte. */
+  --color-edunews24-su-blu-tenue: #C8DAF1;
+
+  /* Scala tipografica: solo Inter Variable, tracking dalle metriche
+   * dinamiche di Inter. I nomi non collidono con quelli dei colori. */
+  --text-edunews24-apertura-grande: 2rem;
+  --text-edunews24-apertura-grande--line-height: 1.1;
+  --text-edunews24-apertura-grande--font-weight: 760;
+  --text-edunews24-apertura-grande--letter-spacing: -0.022em;
+  --text-edunews24-apertura: 1.5rem;
+  --text-edunews24-apertura--line-height: 1.15;
+  --text-edunews24-apertura--font-weight: 740;
+  --text-edunews24-apertura--letter-spacing: -0.02em;
+  --text-edunews24-apertura-modulo: 1.375rem;
+  --text-edunews24-apertura-modulo--line-height: 1.15;
+  --text-edunews24-apertura-modulo--font-weight: 740;
+  --text-edunews24-apertura-modulo--letter-spacing: -0.018em;
+  --text-edunews24-titolo: 1.0625rem;
+  --text-edunews24-titolo--line-height: 1.3;
+  --text-edunews24-titolo--font-weight: 650;
+  --text-edunews24-titolo--letter-spacing: -0.013em;
+  --text-edunews24-voce: 0.9375rem;
+  --text-edunews24-voce--line-height: 1.35;
+  --text-edunews24-voce--font-weight: 620;
+  --text-edunews24-voce--letter-spacing: -0.009em;
+  --text-edunews24-miniatura: 0.875rem;
+  --text-edunews24-miniatura--line-height: 1.3;
+  --text-edunews24-miniatura--font-weight: 600;
+  --text-edunews24-miniatura--letter-spacing: -0.006em;
+  --text-edunews24-sintesi: 0.9375rem;
+  --text-edunews24-sintesi--line-height: 1.55;
+  --text-edunews24-sintesi--font-weight: 400;
+  --text-edunews24-sintesi--letter-spacing: -0.009em;
+  --text-edunews24-linguetta: 0.875rem;
+  --text-edunews24-linguetta--line-height: 1.2;
+  --text-edunews24-linguetta--font-weight: 600;
+  --text-edunews24-linguetta--letter-spacing: -0.006em;
+  --text-edunews24-occhiello: 0.8125rem;
+  --text-edunews24-occhiello--line-height: 1.2;
+  --text-edunews24-occhiello--font-weight: 650;
+  --text-edunews24-occhiello--letter-spacing: -0.003em;
+  --text-edunews24-meta: 0.8125rem;
+  --text-edunews24-meta--line-height: 1.35;
+  --text-edunews24-meta--font-weight: 500;
+  --text-edunews24-meta--letter-spacing: -0.003em;
+  --text-edunews24-gruppo: 1rem;
+  --text-edunews24-gruppo--line-height: 1.2;
+  --text-edunews24-gruppo--font-weight: 700;
+  --text-edunews24-gruppo--letter-spacing: -0.011em;
+  --text-edunews24-cifra: 1.5rem;
+  --text-edunews24-cifra--line-height: 1;
+  --text-edunews24-cifra--font-weight: 760;
+  --text-edunews24-cifra--letter-spacing: -0.02em;
+  --text-edunews24-cifra-compatta: 1.125rem;
+  --text-edunews24-cifra-compatta--line-height: 1;
+  --text-edunews24-cifra-compatta--font-weight: 740;
+  --text-edunews24-cifra-compatta--letter-spacing: -0.014em;
+  --text-edunews24-distintivo: 0.75rem;
+  --text-edunews24-distintivo--line-height: 1.2;
+  --text-edunews24-distintivo--font-weight: 600;
+  --text-edunews24-distintivo--letter-spacing: 0;
+  /* Categoria nel ripiego; il componente la adatta al riquadro con un clamp
+   * in cqi, fino alla misura dell'occhiello nelle miniature. */
+  --text-edunews24-ripiego: 1.75rem;
+  --text-edunews24-ripiego--line-height: 1.05;
+  --text-edunews24-ripiego--font-weight: 780;
+  --text-edunews24-ripiego--letter-spacing: -0.021em;
+
+  /* Misure. Apertura del modulo: colonna della cornice nel regime affiancato
+   * (media alto 11,01rem) e in quello ampio (media alto 14rem). */
+  --spacing-edunews24-apertura: 22.5rem;
+  --spacing-edunews24-apertura-ampia: 28.625rem;
+  /* Fascia: voce di 10,75rem con una cornice che lascia al media 9 x 5,0625rem. */
+  --spacing-edunews24-miniatura: 10.75rem;
+  --spacing-edunews24-cornice-miniatura: 10.35rem;
+  /* Colonne della voce principale, del tabellone e delle righe della pagina. */
+  --spacing-edunews24-timbro: 6.5rem;
+  --spacing-edunews24-targa: 5rem;
+  --spacing-edunews24-stato: 9.75rem;
+  --spacing-edunews24-luogo: 9rem;
+  --spacing-edunews24-scadenza: 10.5rem;
+  --spacing-edunews24-area: 11rem;
+  --spacing-edunews24-classe: 6rem;
+  --spacing-edunews24-miniatura-riga: 7rem;
+  /* Altezza minima del corpo del modulo: affiancato, ampio, impilato. */
+  --spacing-edunews24-corpo: 24rem;
+  --spacing-edunews24-corpo-ampio: 26.5rem;
+  --spacing-edunews24-corpo-stretto: 32rem;
+
+  /* Soglie dei contenitori, mai della finestra: sempre come
+   * @container nome (width >= theme(--breakpoint-...)). Quelle del
+   * contenitore `dashboard` stanno in tokens/controlli.css.
+   * Contenitore `edunews24-modulo`. */
+  --breakpoint-edunews24-stretto: 18rem;
+  --breakpoint-edunews24-folio: 36rem;
+  --breakpoint-edunews24-affiancato: 38rem;
+  --breakpoint-edunews24-ampio: 56rem;
+  /* Contenitori `edunews24-foglio` ed `edunews24-pannello`. */
+  --breakpoint-edunews24-griglia: 40rem;
+  --breakpoint-edunews24-prima-pagina: 52rem;
+  /* Contenitore `edunews24-ripiego` (il riquadro del ripiego tipografico). */
+  --breakpoint-edunews24-ripiego: 20rem;
+}
+
+/* Costanti geometriche dei due parallelogrammi del logo, usate solo in
+ * transform e calc(). Le pendenze (tan 7,58 gradi e tan 5,68 gradi) sono
+ * ripetute in config/edunews24.js per i tracciati SVG: un test le confronta. */
+:root {
+  --edunews24-inclinazione-pieno: -7.58deg;
+  --edunews24-inclinazione-bordato: -5.68deg;
+  --edunews24-pendenza-pieno: 0.1331;
+  --edunews24-pendenza-bordato: 0.0995;
+}

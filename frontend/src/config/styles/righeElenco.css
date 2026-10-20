@@ -1,0 +1,223 @@
+/* Il contenitore misura lo spazio reale dopo sidebar e margini. Le soglie
+ * semantiche sono nei token; nessuna misura o variante nelle singole pagine. */
+.elenco-adattivo { container: righe-elenco / inline-size; position: relative; min-width: 0; }
+.elenco-adattivo__tabella { @apply hidden w-full table-fixed border-separate border-spacing-0 text-left text-sm; }
+/* Intestazione da 40 e righe da 56, ciascuna seguita dal suo bordo di 1px,
+ * contenuto centrato in verticale. Con i bordi separati ogni cella porta il
+ * proprio bordo inferiore dentro la sua altezza (40 + 1, 56 + 1), e il
+ * contenuto resta centrato nello spazio sopra il bordo, come nel design: con
+ * i bordi collassati meta' bordo entrava nella cella e alzava di un quarto di
+ * pixel l'intestazione e la prima riga. Misure confrontate in Chrome con il
+ * design, pixel per pixel. Fra due celle 16px (8 + 8), ai bordi 24, come la
+ * griglia del design. */
+.elenco-adattivo__tabella th {
+  @apply px-2 py-0 bg-tela border-b border-bordo text-etichetta uppercase tracking-wider text-testo-tenue;
+  height: calc(var(--spacing) * 10 + 1px);
+}
+.elenco-adattivo__tabella td {
+  @apply px-2 py-0 align-middle border-b border-divisore;
+  height: calc(var(--spacing) * 14 + 1px);
+}
+.elenco-adattivo__tabella :is(th, td):first-child { @apply pl-6; }
+.elenco-adattivo__tabella :is(th, td):last-child { @apply pr-6; }
+/* Solo le righe del corpo: l'intestazione non reagisce al puntatore. Il fondo
+ * al passaggio e' quasi bianco, per questo il focus da tastiera ha il bordo. */
+.elenco-adattivo__tabella tbody tr,
+.elenco-adattivo__lista > li {
+  @apply cursor-pointer transition-colors hover:bg-riga-hover focus-within:bg-riga-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-fuoco;
+}
+/* Il pannello degli avvisi e' un portale fuori dalla riga: come nel design,
+ * dove sta dentro la riga, il puntatore sul pannello tiene evidenziata la riga
+ * che lo apre (AvvisoTooltip.jsx). */
+.elenco-adattivo__tabella tbody tr:has(.avvisi[data-puntatore="pannello"]),
+.elenco-adattivo__lista > li:has(.avvisi[data-puntatore="pannello"]) { @apply bg-riga-hover; }
+.elenco-adattivo__tabella col[data-colonna="azioni"] { width: var(--spacing-colonna-azioni); }
+.elenco-adattivo__tabella col[data-colonna="ruolo"] { width: var(--spacing-colonna-ruolo); }
+.elenco-adattivo__tabella col[data-colonna="numero"] { width: var(--spacing-colonna-numero); }
+.elenco-adattivo__tabella col[data-colonna="stato"] { width: var(--spacing-colonna-stato); }
+.elenco-adattivo[data-ampiezza="articolata"] col[data-colonna="nome"],
+.elenco-adattivo[data-ampiezza="articolata"] col[data-colonna="cognome"] { width: 17%; }
+.elenco-adattivo[data-modello="prodotti"] col[data-colonna="codice"],
+.elenco-adattivo[data-modello="prodotti"] col[data-colonna="tipo"] { width: 18%; }
+.elenco-adattivo[data-modello="prodotti"] col[data-colonna="universita"] { width: 20%; }
+/* Stato delle pratiche: vale anche sotto la soglia articolata, dove il
+ * distintivo su una riga non starebbe nella colonna compatta. */
+.elenco-adattivo[data-modello="pratiche"] col[data-colonna="stato"] { width: var(--spacing-colonna-stato-pratiche); }
+/* Elenco del Nazionale: la data di ultima modifica su una riga, il resto
+ * dello spazio a sottoscrittore, corso, tipo e universita'. */
+.elenco-adattivo[data-modello="pratiche"] col[data-colonna="ultimaModifica"] { width: 7.5rem; }
+.elenco-adattivo__tabella td.elenco-adattivo__azione { @apply text-right; }
+.elenco-adattivo__tabella td > * + * { @apply mt-1; }
+/* Valori standard */
+.elenco-adattivo__valore { @apply block min-w-0 text-sm text-testo-secondario; overflow-wrap: anywhere; }
+.elenco-adattivo__valore + .elenco-adattivo__valore { @apply mt-1; }
+/* Principale e secondario si fermano a due righe. Gli 8px sopra e sotto del
+ * design sono margini e non rientri: il taglio nasconde cio' che esce dal
+ * bordo, e nel rientro inferiore si vedrebbe l'inizio della terza riga. */
+.elenco-adattivo__valore[data-rilievo="principale"] { @apply font-medium text-primario leading-[1.35] line-clamp-2 my-2; }
+.elenco-adattivo__valore[data-rilievo="secondario"] { @apply text-dettaglio leading-[1.4] line-clamp-2 my-2; }
+.elenco-adattivo__valore[data-rilievo="stato"] { @apply font-medium; }
+.elenco-adattivo__valore[data-tono="positivo"] { @apply text-positivo; }
+/* Valore seguito dal segnale di avviso (Aziende): il taglio a due righe passa
+ * al testo, cosi' il segnale resta visibile accanto. */
+.elenco-adattivo__valore.elenco-adattivo__valore--con-avviso {
+  @apply inline-flex items-center gap-3 my-0;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+.elenco-adattivo__valore--con-avviso > :first-child { @apply min-w-0 line-clamp-2 my-2; }
+/* Codice seguito dal segno dei messaggi da leggere (Pratiche): come sopra, ma
+ * flex e non inline-flex, cosi' il codice resta all'altezza di quello delle
+ * righe senza segno. */
+.elenco-adattivo__valore.elenco-adattivo__valore--con-segno {
+  @apply flex items-center gap-2 my-0;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+.elenco-adattivo__valore--con-segno > :first-child { @apply min-w-0 line-clamp-2 my-2; }
+.elenco-adattivo__segno { @apply shrink-0; }
+/* Nella lista da telefono il segno (20px) sta su una riga di testo da 18,9:
+ * il margine negativo gli impedisce di alzarla e di spostare le righe sotto. */
+.elenco-adattivo__principale > .elenco-adattivo__segno { @apply -my-px; }
+
+/* Distintivo codice monospace */
+.elenco-adattivo__codice {
+  @apply inline-block max-w-full font-mono text-xs font-semibold px-2 py-0.5 rounded bg-superficie-alta border border-bordo text-testo-tenue tracking-wide uppercase;
+  overflow-wrap: anywhere;
+}
+
+/* Badge di stato semantico: su una riga; se la colonna non basta il testo si
+ * tronca con i puntini invece di uscire dal bordo. */
+.elenco-adattivo__badge {
+  @apply inline-flex max-w-full items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap border border-bordo bg-superficie-tenue text-testo-tenue;
+}
+.elenco-adattivo__badge > :last-child { @apply min-w-0 truncate; }
+.elenco-adattivo__badge[data-tono="positivo"] {
+  @apply bg-positivo-tenue border-positivo-bordo text-positivo-forte;
+}
+.elenco-adattivo__badge[data-tono="attenzione"] {
+  @apply bg-attenzione-tenue border-attenzione-bordo text-attenzione-forte;
+}
+.elenco-adattivo__badge[data-tono="negativo"] {
+  @apply bg-negativo-tenue border-negativo-bordo text-negativo-forte;
+}
+/* Stato delle pratiche: un colore per stato, della stessa famiglia del
+ * pallino della pagina Pratiche e dello Storico (--color-stato-*). La Bozza
+ * resta grigia, come il badge di base. */
+.elenco-adattivo__badge[data-stato="lavorazione"] {
+  @apply bg-stato-lavorazione-tenue border-stato-lavorazione-bordo text-stato-lavorazione-testo;
+}
+.elenco-adattivo__badge[data-stato="attesa"] {
+  @apply bg-attenzione-tenue border-attenzione-bordo text-attenzione-forte;
+}
+.elenco-adattivo__badge[data-stato="conclusa"] {
+  @apply bg-positivo-tenue border-positivo-bordo text-positivo-forte;
+}
+.elenco-adattivo__badge[data-stato="caricata"] {
+  @apply bg-primario-tenue border-bordo-forte text-primario;
+}
+.elenco-adattivo__badge[data-stato="rifiutata"] {
+  @apply bg-negativo-tenue border-negativo-bordo text-negativo-forte;
+}
+.elenco-adattivo__badge-punto {
+  @apply inline-block size-1.5 rounded-full shrink-0 bg-current;
+}
+/* Icona dello stato al posto del pallino (stato delle pratiche): stessa
+ * misura e stesso tratto della spunta di indicatori-stato. */
+.elenco-adattivo__badge-spunta { @apply size-3 shrink-0; stroke-width: 3; }
+
+/* Lista mobile */
+.elenco-adattivo__lista { @apply m-0 list-none p-0; }
+.elenco-adattivo__lista > li { @apply flex items-center gap-3 p-4 border-b border-divisore; }
+.elenco-adattivo__corpo { @apply relative min-w-0 flex-1 flex flex-col gap-0.5; }
+/* Prima riga della scheda: iniziali, nome e avviso a 12px, come nella tabella. */
+.elenco-adattivo__principale { @apply flex min-w-0 items-center gap-3; }
+.elenco-adattivo__valore-principale { @apply block min-w-0 font-medium text-primario text-sm leading-[1.35]; overflow-wrap: anywhere; }
+
+.elenco-adattivo__fascia-tecnica { @apply flex flex-wrap items-center gap-2 mt-1; }
+.elenco-adattivo__tecnico-item { @apply inline-flex items-center; }
+
+.elenco-adattivo__metadati { @apply flex flex-wrap items-center gap-x-3.5 gap-y-1.5 mt-1.5 text-sm text-testo-secondario; }
+.elenco-adattivo__metadato { @apply inline-flex items-center gap-1.5 min-w-0; }
+.elenco-adattivo__metadato-icona {
+  width: var(--spacing-icona-piccola) !important;
+  height: var(--spacing-icona-piccola) !important;
+  @apply shrink-0 text-testo-tenue opacity-70;
+}
+.elenco-adattivo__metadato-testo { @apply min-w-0 break-words; }
+
+.elenco-adattivo__azione-mobile {
+  @apply self-center shrink-0 flex items-center justify-center text-testo-tenue;
+}
+.elenco-adattivo__chevron { @apply size-4 text-testo-spento; }
+/* Nella tabella il chevron sta sul bordo destro della colonna, come il "›"
+ * del design: l'icona ha 4px di margine interno a destra. */
+.elenco-adattivo__tabella .elenco-adattivo__chevron { @apply -mr-1 align-middle; }
+
+@container righe-elenco (width >= theme(--breakpoint-elenco-semplice)) {
+  [data-ampiezza="semplice"] > .elenco-adattivo__tabella { display: table; }
+  [data-ampiezza="semplice"] > .elenco-adattivo__lista { display: none; }
+}
+@container righe-elenco (width >= theme(--breakpoint-elenco-articolato)) {
+  [data-ampiezza="articolata"] > .elenco-adattivo__tabella { display: table; }
+  [data-ampiezza="articolata"] > .elenco-adattivo__lista { display: none; }
+}
+
+/* Nei desktop la sidebar riduce il contenitore: conserviamo tutte le colonne,
+ * lasciando andare a capo i valori e riducendo solo lo spazio fra le celle. */
+@media (width >= theme(--breakpoint-lg)) {
+  .elenco-adattivo > .elenco-adattivo__tabella { display: table; }
+  .elenco-adattivo > .elenco-adattivo__lista { display: none; }
+}
+@container righe-elenco (width < theme(--breakpoint-elenco-articolato)) {
+  .elenco-adattivo__tabella th,
+  .elenco-adattivo__tabella td { @apply px-1.5; }
+  .elenco-adattivo__tabella :is(th, td):first-child { @apply pl-4; }
+  .elenco-adattivo__tabella :is(th, td):last-child { @apply pr-4; }
+  .elenco-adattivo__tabella col[data-colonna="azioni"] { width: var(--spacing-colonna-azioni-compatta); }
+  .elenco-adattivo__tabella col[data-colonna="stato"] { width: var(--spacing-colonna-stato-compatta); }
+  .elenco-adattivo[data-modello="prodotti"] col[data-colonna="codice"] { width: 17%; }
+  .elenco-adattivo[data-modello="prodotti"] col[data-colonna="universita"] { width: 18%; }
+  .elenco-adattivo[data-modello="prodotti"] col[data-colonna="tipo"] { width: 22%; }
+}
+
+/* Ruolo dei clienti: interlinea naturale, come nel design (sta su una riga). */
+.elenco-adattivo[data-modello="clienti"] .elenco-adattivo__valore:not([data-rilievo]) { @apply leading-[normal]; }
+/* Nominativo dei clienti: iniziali, nome e avviso sulla stessa riga. */
+.elenco-adattivo__persona { @apply flex min-w-0 items-center gap-3; }
+/* Nella scheda da schermo stretto verifiche, ruolo e azienda partono sotto il
+ * nome, non sotto le iniziali (32 + 12). */
+.elenco-adattivo[data-modello="clienti"] .elenco-adattivo__principale ~ * { @apply pl-11; }
+/* Interlinea naturale, come nel design: con i 16px di text-xs le iniziali
+ * salirebbero di mezzo pixel. */
+.elenco-adattivo__iniziali {
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primario-tenue text-xs leading-[normal] font-semibold text-primario;
+}
+.elenco-adattivo__tabella col[data-colonna="verifiche"] { width: 13rem; }
+
+/* Colonne dei clienti nelle proporzioni del design (griglia 2.4/0.9/2/1.5 fr,
+ * 2/1.3 fr per i Sottoscrittori, chevron da 24): percentuali calcolate sulla
+ * tabella da 1118px, rientri compresi; il Nominativo prende il resto. */
+.elenco-adattivo[data-modello="clienti"] col[data-colonna="azioni"] { width: 3.5rem; }
+.elenco-adattivo[data-modello="clienti"]:has(col[data-colonna="azienda"]) col[data-colonna="ruolo"] { width: 13.056%; }
+.elenco-adattivo[data-modello="clienti"]:has(col[data-colonna="azienda"]) col[data-colonna="azienda"] { width: 27.265%; }
+.elenco-adattivo[data-modello="clienti"]:has(col[data-colonna="azienda"]) col[data-colonna="verifiche"] { width: 20.807%; }
+.elenco-adattivo[data-modello="clienti"]:not(:has(col[data-colonna="azienda"])) col[data-colonna="ruolo"] { width: 18.169%; }
+.elenco-adattivo[data-modello="clienti"]:has(col[data-colonna="ruolo"]):not(:has(col[data-colonna="azienda"])) col[data-colonna="verifiche"] { width: 29.327%; }
+.elenco-adattivo[data-modello="clienti"]:not(:has(col[data-colonna="ruolo"])) col[data-colonna="verifiche"] { width: 37.161%; }
+
+/* Gruppi per stato dell'elenco del Nazionale (ElencoPraticheNazionale.jsx):
+ * una fascia col nome dello stato e il numero di pratiche sopra ogni tabella. */
+.gruppo-pratiche + .gruppo-pratiche { @apply border-t border-bordo; }
+.gruppo-pratiche__titolo {
+  @apply flex items-baseline gap-1.5 px-6 py-3 bg-superficie-tenue border-b border-bordo text-sm font-semibold text-testo;
+}
+.gruppo-pratiche__totale { @apply font-normal text-testo-attenuato; }
+
+/* Fondo di ogni elenco (StatoPagineElenco.jsx): caricamento, "Hai raggiunto la
+ * fine dell'elenco" e "Carica altri elementi", centrati e staccati dall'ultima
+ * riga. testo-tenue e non testo-attenuato per il contrasto (vedi edunews24.css).
+ * Vuoto, non occupa spazio. */
+.stato-pagine-elenco { @apply flex flex-col items-center gap-3 px-4 py-6 text-center text-sm text-testo-tenue; }
+.stato-pagine-elenco:empty { @apply hidden; }
+.stato-pagine-elenco [role="alert"] { @apply text-negativo; }

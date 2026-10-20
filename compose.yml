@@ -1,0 +1,35 @@
+name: eqia
+services:
+  db:
+    image: mariadb:10.11.14
+    environment:
+      MARIADB_ROOT_PASSWORD: ${EQIA_DB_ROOT_PASSWORD:?Eseguire scripts/configura_locale.py}
+      MARIADB_DATABASE: eqia_dev
+      MARIADB_USER: eqia
+      MARIADB_PASSWORD: ${EQIA_DB_PASSWORD:?Eseguire scripts/configura_locale.py}
+      TZ: Europe/Rome
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--event-scheduler=ON"]
+    ports: ["127.0.0.1:3318:3306"]
+    volumes: [database:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  db-test:
+    image: mariadb:10.11.14
+    profiles: [test]
+    environment:
+      MARIADB_ROOT_PASSWORD: test
+      MARIADB_DATABASE: ersaf_test
+      TZ: Europe/Rome
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--event-scheduler=ON"]
+    ports: ["127.0.0.1:3319:3306"]
+    tmpfs: [/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+volumes:
+  database:

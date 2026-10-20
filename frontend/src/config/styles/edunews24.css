@@ -1,0 +1,1907 @@
+/* EduNews24: modulo in Dashboard e pagina /edunews24. Direzione
+ * "Inclinazione": il logo e' una coppia di parallelogrammi (pieno a -7,58
+ * gradi, bordato a -5,68 gradi) e la sezione ne usa la grammatica, su un solo
+ * blu in campiture nette sui neutri ERSAF. Tre usi soltanto: la cornice
+ * inclinata del media in evidenza, il pieno ("attivo o in evidenza") e il
+ * bordato ("dato chiave"). Tutto il resto e' rettilineo.
+ *
+ * Classi BEM; lo stato sta in data-* e negli attributi ARIA. Il file non ha
+ * layer, quindi vince sulle utilita' di Tailwind: qui layout, forme,
+ * pseudo-elementi, stati e container query; nelle ricette di
+ * styles/edunews24.js solo tipografia e colore dei testi interni. Su uno
+ * stesso elemento una proprieta' non si dichiara in entrambi.
+ * Colori solo dai token (tokens/edunews24.css, theme/colori.css); durate e
+ * curve solo da var(--durata-*) e var(--curva-*).
+ *
+ * Soglie sempre dei contenitori, mai della finestra:
+ * - edunews24-modulo: il modulo in Dashboard (larghezza utile U);
+ * - edunews24-foglio: la scheda della pagina (e' anche `.schede`);
+ * - edunews24-pannello: il contenuto di una scheda della pagina;
+ * - edunews24-ripiego: il riquadro del ripiego tipografico. */
+
+/* === Regole con ambito ===================================================== */
+
+/* 1. Focus pieno: outline di 2px nel colore del fuoco con offset, al posto
+ * dell'anello ring-fuoco/30 (1,80:1) di pulsante() e interruttore(). Solo
+ * dentro EduNews24; BarraSchede tiene il suo. Vale anche per il tabpanel che
+ * riceve il fuoco dopo la ripartenza dell'elenco o dopo "Riprova", e per il
+ * corpo del modulo, che lo riceve dopo "Riprova". */
+.edunews24 :is(a, button, [role="switch"]):not(.schede__linguetta):focus-visible,
+.edunews24 [role="tabpanel"]:focus-visible,
+.edunews24 .edunews24-modulo__corpo:focus-visible {
+  outline: 2px solid var(--color-fuoco);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+/* Il tabpanel e' largo quanto il foglio, che taglia (overflow clip) cio' che
+ * ne esce: l'anello si disegna all'interno, come sul corpo del modulo. */
+.edunews24 :is([role="tabpanel"], .edunews24-modulo__corpo):focus-visible { outline-offset: -2px; }
+/* La barra dei filtri, agganciata in cima al tabpanel con il fondo pieno, ne
+ * coprirebbe il lato superiore e il primo tratto dei lati: li ridisegna uno
+ * pseudo-elemento della barra (sticky, quindi gia' posizionata), senza
+ * cambiare misure. Scende di 1px sul bordo inferiore della barra, che
+ * altrimenti attraverserebbe i lati; e' un bordo e non un'ombra, cosi' resta
+ * anche in colori forzati. In basso l'anello segue gli angoli del foglio, che
+ * altrimenti lo taglierebbero (il tabpanel e' l'ultimo figlio visibile del
+ * foglio e non ha fondo: l'outline segue il border-radius). */
+.edunews24 [role="tabpanel"]:focus-visible > .edunews24-filtri::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 -1px;
+  border: 2px solid var(--color-fuoco);
+  border-bottom: 0;
+  pointer-events: none;
+}
+.edunews24 [role="tabpanel"]:focus-visible {
+  border-bottom-left-radius: calc(var(--radius-superficie) - 1px);
+  border-bottom-right-radius: calc(var(--radius-superficie) - 1px);
+}
+
+/* 2. Anello doppio su media e fondi scuri: bianco a contatto, poi il fuoco,
+ * che accanto al blu (1,51:1) e alla notte (1,41:1) non si distinguerebbe.
+ * Stessa specificita' della regola 1, dichiarata dopo. */
+.edunews24 .edunews24-anello-doppio:not(.schede__linguetta):focus-visible {
+  box-shadow: 0 0 0 2px var(--color-edunews24-su-blu);
+}
+/* Il player riceve il fuoco dopo "Guarda il video", ma il quadro (overflow
+ * clip) taglierebbe l'anello attorno al video: lo stesso anello doppio della
+ * copertina si disegna sul media, fuori dal quadro. */
+.edunews24 .edunews24-media__player:focus-visible { outline: none; }
+.edunews24-media:has(> .edunews24-media__quadro > .edunews24-media__player:focus-visible) {
+  outline: 2px solid var(--color-fuoco);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-edunews24-su-blu);
+}
+
+/* 3. Voci con il link del titolo esteso a tutta la voce: l'anello si
+ * disegna sulla voce. */
+.edunews24 .edunews24-voce .edunews24-voce__link:focus-visible { outline: none; }
+.edunews24-voce:has(.edunews24-voce__link:focus-visible) {
+  outline: 2px solid var(--color-fuoco);
+  outline-offset: 2px;
+}
+
+/* 4. Controlli in attesa ("Riprova" fino a Retry-After, frecce agli
+ * estremi): restano nel tab order con aria-disabled, i gestori ignorano il
+ * clic. Si spengono nel colore e non con l'opacita', che sbiadirebbe anche
+ * l'anello della regola 1 sotto il 3:1; i controlli inattivi sono esenti dal
+ * contrasto del testo. Il passaggio del puntatore non cambia il fondo: sono
+ * tutti su superficie ("Riprova" ha il fondo superficie, le frecce stanno nel
+ * piede del modulo). */
+.edunews24 [aria-disabled="true"] {
+  border-color: var(--color-bordo);
+  color: var(--color-testo-spento);
+  cursor: not-allowed;
+}
+.edunews24 [aria-disabled="true"]:hover { background-color: var(--color-superficie); }
+
+/* 5. Controlli condivisi della pagina: "Carica altri" a 44px e testo in
+ * testo-tenue (5,26:1; testo-attenuato e' 3,41:1). */
+.edunews24-pagina .stato-pagine-elenco { color: var(--color-testo-tenue); }
+.edunews24-pagina .stato-pagine-elenco button { min-height: 2.75rem; }
+
+/* 6. Binario spento dell'interruttore in testo-tenue (testo-spento e' 2,04:1). */
+.edunews24 [role="switch"][aria-checked="false"] { background-color: var(--color-testo-tenue); }
+
+/* 7. Select dell'area a 44px. "Tutte le aree" (nessun filtro) in
+ * testo-tenue, come la regola 5: la regola globale di selezione.css lo mette
+ * in testo-attenuato (3,41:1). Specificita' (0,4,2) contro (0,3,2). */
+.edunews24-filtri select { min-height: 2.75rem; }
+.edunews24-filtri select:has(> option[data-senza-filtro]:checked):not(:disabled),
+.edunews24-filtri select option[data-senza-filtro] { color: var(--color-testo-tenue); }
+
+/* 8. Ancore e focus non finiscono sotto la barra dei filtri, che resta in
+ * vista sotto la barra superiore (da lg sotto il bordo della finestra).
+ * L'altezza della barra la misura BarraFiltriEduNews24 (osservaAltezzaFiltri):
+ * con i filtri attivi la seconda riga puo' andare a capo. */
+html:has(.edunews24-filtri) {
+  scroll-padding-top: calc(var(--spacing-barra-superiore) + var(--edunews24-altezza-filtri, 4rem));
+}
+@media (width >= theme(--breakpoint-lg)) {
+  html:has(.edunews24-filtri) { scroll-padding-top: var(--edunews24-altezza-filtri, 4rem); }
+}
+
+/* === Voci, titoli e link ================================================== */
+
+.edunews24-voce {
+  position: relative;
+  min-width: 0;
+}
+/* Metadati (MetadatiVoce): la riga la disegna la ricetta metaVoce(). */
+.edunews24-voce__meta { min-width: 0; }
+
+/* Titolo di una voce (h2 o h3): il testo sta in uno span con la ricetta
+ * titoloVoce(), dentro il link. Flex: niente riga fantasma sotto il link. */
+.edunews24-voce__titolo,
+.edunews24-apertura__titolo,
+.edunews24-principale__titolo {
+  display: flex;
+  min-width: 0;
+}
+
+/* Link del titolo: l'icona esterna sta dentro il link ma fuori dal testo
+ * troncato, in basso a destra del blocco del titolo. `group` sul link fa
+ * cambiare colore al testo (ricetta titoloVoce). */
+.edunews24-voce__link {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--color-edunews24-inchiostro);
+  text-decoration: none;
+  transition: color var(--durata-rapida) var(--curva-ingresso);
+}
+.edunews24-voce__link:hover { color: var(--color-edunews24-blu-intenso); }
+
+/* Nelle voci il link del titolo e' l'unico link, esteso a tutta la voce
+ * (mai role="button"). Un media interattivo (player o link gemello) resta
+ * sopra l'estensione. */
+.edunews24-voce .edunews24-voce__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.edunews24-voce .edunews24-media[data-video] { z-index: 1; }
+/* Nell'apertura il link si estende alla colonna del testo (occhiello, titolo,
+ * sintesi e metadati, nessun altro controllo tranne, nella pagina, il
+ * pulsante Condividi, sopra l'estensione): un titolo su una riga resta un
+ * bersaglio di almeno 44px. Il media, con il player, e' fuori dalla colonna;
+ * l'anello resta sul titolo (regola 1). */
+.edunews24-apertura__testo { position: relative; }
+.edunews24-apertura__testo .edunews24-voce__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* Icona del link esterno (LinkEsterno). */
+.edunews24-esterno {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+}
+.edunews24-voce__link .edunews24-esterno {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-bottom: 0.2em;
+}
+
+/* Titoli la cui misura cambia con il regime del contenitore: la ricetta e'
+ * titoloVoce(null, righe), la misura e' qui. Modulo: apertura-modulo, dai
+ * 56rem apertura. Pagina: apertura, dai 52rem di pannello apertura-grande. */
+.edunews24-apertura__titolo,
+.edunews24-principale__titolo { @apply text-edunews24-apertura-modulo; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-apertura__titolo,
+  .edunews24-principale__titolo { @apply text-edunews24-apertura; }
+}
+.edunews24-pagina .edunews24-apertura__titolo { @apply text-edunews24-apertura; }
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-pagina .edunews24-apertura__titolo { @apply text-edunews24-apertura-grande; }
+}
+
+/* === Cornice inclinata (elemento firma) ==================================== */
+
+/* Il media in evidenza e' un rettangolo inscritto in un parallelogramma
+ * pieno a -7,58 gradi: se ne vedono due triangoli, in alto a destra e in
+ * basso a sinistra, separati dal media da un anello bianco di 2px. Sempre
+ * fluida: padding = p*9/16 / (1 + 2*p*9/16) con p = 0,1331; il media e' alto
+ * 0,48924 volte la colonna. Nessun clip-path sul media. */
+.edunews24-cornice {
+  position: relative;
+  isolation: isolate;
+  padding-inline: 6.512%;
+}
+.edunews24-cornice::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 3.256%;
+  z-index: -1;
+  background-color: var(--color-edunews24-blu);
+  transform: skewX(var(--edunews24-inclinazione-pieno));
+}
+.edunews24-cornice > .edunews24-media { box-shadow: 0 0 0 2px var(--color-edunews24-su-blu); }
+
+/* Variante piccola (miniatura della fascia): i triangoli sono l'indicatore
+ * della selezione, visibili solo sulla miniatura scelta. Padding sulla
+ * larghezza della cornice, non su quella del pulsante che la contiene. */
+.edunews24-cornice[data-misura="piccola"] {
+  width: var(--spacing-edunews24-cornice-miniatura);
+  padding-inline: calc(var(--spacing-edunews24-cornice-miniatura) * 0.06512);
+}
+.edunews24-cornice[data-misura="piccola"]::before { opacity: 0; }
+.edunews24-miniatura[aria-pressed="true"] .edunews24-cornice[data-misura="piccola"]::before { opacity: 1; }
+
+/* === Media ================================================================= */
+
+/* DOM: .edunews24-media > .edunews24-media__quadro (16:9, clip) con
+ * l'immagine, il ripiego, il player o l'errore; fuori dal quadro, fratelli
+ * posizionati, la copertina del video (con il timbro a cavallo del bordo
+ * inferiore, che il quadro taglierebbe), il link gemello e il distintivo. */
+.edunews24-media { position: relative; }
+.edunews24-media__quadro {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: clip;
+  background-color: var(--color-edunews24-velo);
+}
+.edunews24-media__immagine,
+.edunews24-media__player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.edunews24-media__immagine { object-fit: cover; }
+.edunews24-media__player {
+  object-fit: contain;
+  background-color: var(--color-edunews24-notte);
+}
+
+/* Locandina: una copertina verticale sta in un riquadro 9:16 a destra, alto
+ * quanto il media; a sinistra resta il ripiego blu con la categoria e il
+ * timbro. Il player resta dov'era la locandina. */
+.edunews24-media[data-orientamento="verticale"] .edunews24-media__immagine {
+  left: auto;
+  width: auto;
+  aspect-ratio: 9 / 16;
+}
+.edunews24-media[data-orientamento="verticale"] .edunews24-media__player { object-position: right center; }
+
+.edunews24-media__copertina {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.edunews24-media__gemello {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.edunews24-media .edunews24-distintivo-video {
+  position: absolute;
+  bottom: 0.375rem;
+  left: 0.375rem;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Il distintivo sta nello stesso angolo della categoria del ripiego: la
+ * categoria gli resta sopra (1.5rem di distintivo, .375rem di margine e
+ * .375rem d'aria), come per il timbro del player. */
+.edunews24-media:has(> .edunews24-distintivo-video) .edunews24-ripiego { padding-bottom: 2.25rem; }
+
+/* Il file del video non si carica: stesso riquadro, fondo notte. */
+.edunews24-media__errore {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-edunews24-notte);
+  color: var(--color-edunews24-su-blu);
+}
+.edunews24-media__errore-icona {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-edunews24-su-blu-tenue);
+}
+.edunews24-media__errore-testo { @apply text-edunews24-voce; }
+.edunews24-media__errore-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  color: var(--color-edunews24-su-blu);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  @apply text-edunews24-linguetta;
+}
+
+/* === Ripiego tipografico e sigillo ======================================== */
+
+/* Al posto dell'immagine: campitura blu (voci grandi) o velo (miniature della
+ * fascia e, solo se l'immagine non si carica, voci piccole della pagina, che
+ * senza immagine sono di solo testo), la coppia del logo tagliata dal bordo
+ * destro in tre posizioni (motivoRipiego) e la categoria in basso a sinistra.
+ * Mai il logo su blu. */
+.edunews24-ripiego {
+  position: absolute;
+  inset: 0;
+  container: edunews24-ripiego / inline-size;
+  display: flex;
+  align-items: flex-end;
+  padding: 5% 6%;
+  overflow: clip;
+}
+.edunews24-ripiego[data-campitura="blu"] {
+  background-color: var(--color-edunews24-blu);
+  color: var(--color-edunews24-su-blu);
+}
+.edunews24-ripiego[data-campitura="velo"] {
+  background-color: var(--color-edunews24-velo);
+  color: var(--color-edunews24-blu);
+}
+.edunews24-ripiego__motivo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.edunews24-ripiego__pieno { fill: var(--color-edunews24-incisione); }
+.edunews24-ripiego__bordato {
+  fill: none;
+  stroke: var(--color-edunews24-su-blu-tenue);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+}
+.edunews24-ripiego[data-campitura="velo"] .edunews24-ripiego__pieno { fill: var(--color-edunews24-tinta); }
+.edunews24-ripiego[data-campitura="velo"] .edunews24-ripiego__bordato { stroke: var(--color-edunews24-filo); }
+/* La misura segue il riquadro (cqi del ripiego): scende fino all'occhiello
+ * nelle miniature. */
+.edunews24-ripiego__categoria {
+  position: relative;
+  max-width: 80%;
+  @apply text-edunews24-ripiego;
+  font-size: clamp(var(--text-edunews24-occhiello), 8cqi, var(--text-edunews24-ripiego));
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-wrap: balance;
+}
+/* Variante "in basso": il pieno occupa il basso a destra dal 44% circa. Solo
+ * nei riquadri dai 20rem: in quelli piccoli (miniature, righe) la categoria,
+ * alla misura dell'occhiello, andrebbe a capo a meta' parola ("Con-corsi") e
+ * passa invece sopra il motivo, che e' solo decorativo. */
+@container edunews24-ripiego (width >= theme(--breakpoint-edunews24-ripiego)) {
+  .edunews24-ripiego[data-variante="1"] .edunews24-ripiego__categoria { max-width: 42%; }
+}
+/* Nel video il timbro sta a cavallo del bordo inferiore, a sinistra: la
+ * categoria gli resta sopra. */
+.edunews24-media[data-video="player"] .edunews24-ripiego { padding-bottom: 1.75rem; }
+
+.edunews24-sigillo {
+  display: block;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 0.875rem;
+}
+.edunews24-sigillo__pieno { fill: var(--color-edunews24-blu); }
+.edunews24-sigillo__bordato {
+  fill: var(--color-edunews24-su-blu);
+  stroke: var(--color-edunews24-blu);
+  stroke-width: 1px;
+}
+
+/* === Pieni: linguetta, timbro del play, timbro della voce principale ====== */
+
+/* Linguetta, timbro e targa si inclinano attorno all'angolo in basso a
+ * sinistra (transform-origin 0 100%): quell'angolo resta sul bordo del
+ * contenuto, allineato a logo, targhe e testi, e la cima sporge a destra,
+ * nello spazio fra le colonne. Cornice e timbro del play restano centrati. */
+
+/* Linguetta del selettore e delle categorie (button aria-pressed): pieno a
+ * -7,58 gradi quando e' attiva, stesso peso da attiva e da inattiva cosi' la
+ * larghezza non cambia. L'anello di focus e' rettangolare attorno all'area di
+ * 44px, separato dal pieno dallo spazio bianco dell'offset. */
+.edunews24-linguetta {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding-inline: 0.875rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-edunews24-blu);
+  @apply text-edunews24-linguetta;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--durata-rapida) var(--curva-ingresso);
+}
+.edunews24-linguetta::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.375rem;
+  inset-inline: 0;
+  z-index: -1;
+  background-color: transparent;
+  transform: skewX(var(--edunews24-inclinazione-pieno));
+  transform-origin: 0 100%;
+  transition: background-color var(--durata-rapida) var(--curva-ingresso);
+}
+.edunews24-linguetta:hover::before { background-color: var(--color-edunews24-velo); }
+.edunews24-linguetta[aria-pressed="true"] { color: var(--color-edunews24-su-blu); }
+.edunews24-linguetta[aria-pressed="true"]::before { background-color: var(--color-edunews24-blu); }
+.edunews24-linguetta[aria-pressed="true"]:hover::before { background-color: var(--color-edunews24-blu-intenso); }
+
+/* Timbro del play (dentro .edunews24-media__copertina): pieno alto 2.25rem con
+ * alone bianco di 2px, "Guarda il video", poi la durata in un segmento notte
+ * separato. A cavallo del bordo inferiore del media, oppure nell'angolo. */
+.edunews24-timbro-play {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.25rem;
+  height: 2.25rem;
+  color: var(--color-edunews24-su-blu);
+  white-space: nowrap;
+}
+.edunews24-timbro-play[data-posizione="a-cavallo"] {
+  bottom: -1.125rem;
+  left: 0.75rem;
+}
+.edunews24-timbro-play[data-posizione="angolo"] {
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+.edunews24-timbro-play__azione,
+.edunews24-timbro-play__durata {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-inline: 0.875rem;
+}
+.edunews24-timbro-play__azione::before,
+.edunews24-timbro-play__durata::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-shadow: 0 0 0 2px var(--color-edunews24-su-blu);
+  transform: skewX(var(--edunews24-inclinazione-pieno));
+  transition: background-color var(--durata-rapida) var(--curva-ingresso);
+}
+.edunews24-timbro-play__azione::before { background-color: var(--color-edunews24-blu); }
+.edunews24-timbro-play__durata::before { background-color: var(--color-edunews24-notte); }
+.edunews24-media__copertina:hover .edunews24-timbro-play__azione::before {
+  background-color: var(--color-edunews24-blu-intenso);
+}
+.edunews24-timbro-play__icona {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: currentColor;
+}
+.edunews24-timbro-play__testo {
+  @apply text-edunews24-distintivo;
+  font-weight: 700;
+}
+.edunews24-timbro-play__durata { @apply text-edunews24-distintivo tabular-nums; }
+/* Modulo sotto i 18rem: solo icona e durata; il testo resta nel nome. */
+@container edunews24-modulo (width < theme(--breakpoint-edunews24-stretto)) {
+  .edunews24-timbro-play__testo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Timbro della voce principale in Dashboard: su una riga ("15 ott 2026",
+ * cifra compatta, alto 2.25rem) nel modulo stretto; verticale (etichetta,
+ * cifra, anno) dai 38rem di modulo. */
+.edunews24-timbro {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.25rem 1rem;
+  color: var(--color-edunews24-su-blu);
+  font-variant-numeric: tabular-nums;
+}
+.edunews24-timbro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--color-edunews24-blu);
+  transform: skewX(var(--edunews24-inclinazione-pieno));
+  transform-origin: 0 100%;
+}
+.edunews24-timbro__corpo {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  column-gap: 0.375rem;
+}
+.edunews24-timbro__etichetta {
+  @apply text-edunews24-distintivo;
+  color: var(--color-edunews24-su-blu-tenue);
+}
+.edunews24-timbro__cifra,
+.edunews24-timbro__anno { @apply text-edunews24-cifra-compatta; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-timbro {
+    justify-content: center;
+    width: var(--spacing-edunews24-timbro);
+    min-height: 5.25rem;
+    padding: 0.625rem 0.75rem;
+  }
+  .edunews24-timbro__corpo {
+    flex-direction: column;
+    align-items: center;
+    row-gap: 0.25rem;
+    text-align: center;
+  }
+  .edunews24-timbro__cifra { @apply text-edunews24-cifra; }
+  .edunews24-timbro__anno {
+    @apply text-edunews24-distintivo;
+    color: var(--color-edunews24-su-blu-tenue);
+  }
+}
+
+/* === Bordato: targa ======================================================== */
+
+/* Targa del dato chiave (scadenza, data, classe di concorso): filo di 1px a
+ * -5,68 gradi, testo diritto. Toni: normale (filo), attenzione (entro 7
+ * giorni: attenzione-forte, 6,79:1 come bordo) e neutro (chiusa o scaduta:
+ * le cifre restano leggibili, 7,89:1). */
+.edunews24-targa {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--spacing-edunews24-targa);
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+  color: var(--color-edunews24-inchiostro);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.edunews24-targa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 1px solid var(--color-edunews24-filo);
+  background-color: var(--color-superficie);
+  transform: skewX(var(--edunews24-inclinazione-bordato));
+  transform-origin: 0 100%;
+}
+.edunews24-targa__corpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 0.125rem;
+}
+.edunews24-targa__cifra { @apply text-edunews24-cifra; }
+.edunews24-targa__mese,
+.edunews24-targa__anno {
+  @apply text-edunews24-meta;
+  color: var(--color-testo-tenue);
+}
+.edunews24-targa__etichetta {
+  @apply text-edunews24-occhiello;
+  text-wrap: balance;
+}
+/* In riga: "15 ott 2026" tutto nella cifra compatta. */
+.edunews24-targa[data-forma="riga"] .edunews24-targa__corpo {
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: baseline;
+  column-gap: 0.3em;
+}
+.edunews24-targa[data-forma="riga"] :is(.edunews24-targa__cifra, .edunews24-targa__mese, .edunews24-targa__anno) {
+  @apply text-edunews24-cifra-compatta;
+  color: inherit;
+}
+/* Adattiva: in riga sotto i 40rem del pannello della pagina. */
+@container edunews24-pannello (width < theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-targa[data-forma="adattiva"] .edunews24-targa__corpo {
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: baseline;
+    column-gap: 0.3em;
+  }
+  .edunews24-targa[data-forma="adattiva"] :is(.edunews24-targa__cifra, .edunews24-targa__mese, .edunews24-targa__anno) {
+    @apply text-edunews24-cifra-compatta;
+    color: inherit;
+  }
+}
+.edunews24-targa[data-tono="attenzione"] { color: var(--color-attenzione-forte); }
+.edunews24-targa[data-tono="attenzione"]::before {
+  border-color: var(--color-attenzione-forte);
+  background-color: var(--color-attenzione-tenue);
+}
+.edunews24-targa[data-tono="neutro"] { color: var(--color-testo-secondario); }
+.edunews24-targa[data-tono="neutro"]::before {
+  border-color: var(--color-testo-tenue);
+  background-color: var(--color-superficie-alta);
+}
+.edunews24-targa:is([data-tono="attenzione"], [data-tono="neutro"]) :is(.edunews24-targa__mese, .edunews24-targa__anno) {
+  color: inherit;
+}
+
+/* === Distintivi ============================================================ */
+
+/* Distintivo "Video": notte, rettilineo, icona piu' testo. */
+.edunews24-distintivo-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.5rem;
+  padding-inline: 0.375rem;
+  background-color: var(--color-edunews24-notte);
+  color: var(--color-edunews24-su-blu);
+  @apply text-edunews24-distintivo tabular-nums;
+  white-space: nowrap;
+}
+.edunews24-distintivo-video__icona {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+/* Nei metadati delle voci di solo testo il distintivo sta in riga, nella
+ * misura della meta: icona e testo in inchiostro (15,39:1), senza il blocco
+ * notte, che resta sui media e qui peserebbe piu' del titolo. */
+.edunews24-voce__meta .edunews24-distintivo-video {
+  height: auto;
+  padding-inline: 0;
+  background-color: transparent;
+  color: var(--color-edunews24-inchiostro);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-weight: 600;
+}
+.edunews24-voce__meta .edunews24-distintivo-video__icona {
+  width: 0.8125rem;
+  height: 0.8125rem;
+}
+
+/* Distintivo di stato della selezione e dei bandi, e "Da verificare": la
+ * terna ERSAF piu' l'informazione, unica forma arrotondata della sezione (lo
+ * stato e' della piattaforma). */
+.edunews24-distintivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.5rem;
+  padding-inline: 0.5rem;
+  border: 1px solid;
+  border-radius: 9999px;
+  @apply text-edunews24-distintivo;
+  white-space: nowrap;
+}
+.edunews24-distintivo__icona {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.edunews24-distintivo[data-tono="attenzione"] {
+  border-color: var(--color-attenzione-bordo);
+  background-color: var(--color-attenzione-tenue);
+  color: var(--color-attenzione-forte);
+}
+.edunews24-distintivo[data-tono="aperto"] {
+  border-color: var(--color-positivo-bordo);
+  background-color: var(--color-positivo-tenue);
+  color: var(--color-positivo-forte);
+}
+.edunews24-distintivo[data-tono="neutro"] {
+  border-color: var(--color-bordo-controllo);
+  background-color: var(--color-superficie-alta);
+  color: var(--color-testo-secondario);
+}
+/* Bandi in apertura (CalendarClock): ne' aperti ne' in scadenza. */
+.edunews24-distintivo[data-tono="informazione"] {
+  border-color: var(--color-informazione-bordo);
+  background-color: var(--color-informazione-tenue);
+  color: var(--color-informazione-forte);
+}
+
+/* Frase "Da verificare" di un bando (NotaDaVerificare esteso): TriangleAlert
+ * allineato alla prima riga, testo nella ricetta notaVerifica. */
+.edunews24-nota-verifica {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  min-width: 0;
+}
+.edunews24-nota-verifica__icona {
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.125rem;
+}
+
+/* === Folio e social ======================================================== */
+
+.edunews24-folio {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 1.25rem;
+  color: var(--color-testo-tenue);
+  @apply text-edunews24-meta tabular-nums;
+}
+.edunews24-folio[data-stantio="si"] { color: var(--color-testo-secondario); }
+.edunews24-folio__icona {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.edunews24-social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+}
+.edunews24-social__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding-inline: 0.625rem;
+  color: var(--color-edunews24-blu);
+  text-decoration: none;
+  transition: color var(--durata-rapida) var(--curva-ingresso),
+    background-color var(--durata-rapida) var(--curva-ingresso);
+}
+.edunews24-social__link:hover { color: var(--color-edunews24-blu-intenso); }
+.edunews24-social[data-variante="modulo"] .edunews24-social__link:hover {
+  background-color: var(--color-edunews24-velo);
+}
+.edunews24-social[data-variante="pagina"] { column-gap: 0.75rem; }
+.edunews24-social[data-variante="pagina"] .edunews24-social__link {
+  gap: 0.375rem;
+  padding-inline: 0.25rem;
+  text-underline-offset: 0.2em;
+}
+.edunews24-social[data-variante="pagina"] .edunews24-social__link:hover { text-decoration: underline; }
+.edunews24-social__etichetta { @apply text-edunews24-linguetta; }
+
+/* Icone dei marchi: SVG monocromatici usati come maschera sul colore del
+ * testo; nessun colore ufficiale dei marchi. */
+.edunews24-social__icona {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.edunews24-social__icona--facebook {
+  -webkit-mask-image: url("../../assets/edunews24/facebook.svg");
+  mask-image: url("../../assets/edunews24/facebook.svg");
+}
+.edunews24-social__icona--instagram {
+  -webkit-mask-image: url("../../assets/edunews24/instagram.svg");
+  mask-image: url("../../assets/edunews24/instagram.svg");
+}
+.edunews24-social__icona--tiktok {
+  -webkit-mask-image: url("../../assets/edunews24/tiktok.svg");
+  mask-image: url("../../assets/edunews24/tiktok.svg");
+}
+
+/* === Modulo in Dashboard ================================================== */
+
+/* DOM: section.edunews24.edunews24-modulo (involucroModulo()) con
+ * __testata (h2.__titolo con il logo, SocialEduNews24 con __social), __barra
+ * (__selettore con quattro .edunews24-linguetta, FolioEduNews24), __corpo
+ * (#edunews24-modulo-corpo), il paragrafo aria-live e __piede (__frecce e
+ * il link "Tutte le ..."). Il padding segue il contenitore dashboard: se
+ * cambia, va rifatto il conto dell'altezza minima del corpo. Posizionato,
+ * cosi' l'overflow clip taglia anche i testi sr-only in position absolute. */
+.edunews24-modulo {
+  position: relative;
+  container: edunews24-modulo / inline-size;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+@container dashboard (width >= theme(--breakpoint-dashboard-comodo)) {
+  .edunews24-modulo { padding: 1.25rem; }
+}
+.edunews24-modulo__testata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+}
+.edunews24-modulo__titolo {
+  display: flex;
+  min-width: 0;
+}
+
+/* Barra: selettore e folio sulla stessa riga dai 36rem, con il selettore che
+ * non si stringe; sotto, le quattro etichette brevi su una riga, distribuite
+ * fra i bordi, e il folio su una riga propria. A U = 254px i testi occupano
+ * 208,55px: con 0.25rem per lato (il minimo perche' il pieno inclinato
+ * contenga il glifo in alto) restano circa 2,8px fra le linguette, e il pieno
+ * attivo non copre il testo accanto. Con lo zoom del testo vanno a capo.
+ * Il padding a destra del selettore accoglie la cima inclinata dell'ultima
+ * linguetta, che sporge di 2rem x tan 7,58 gradi, circa 4,26px: senza, il
+ * selettore traboccherebbe (scrollWidth oltre clientWidth). */
+.edunews24-modulo__barra {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+.edunews24-modulo__selettore {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-inline-end: 0.3125rem;
+}
+.edunews24-modulo__selettore .edunews24-linguetta { padding-inline: 0.25rem; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-folio)) {
+  .edunews24-modulo__barra {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 1rem;
+    min-height: 2.75rem;
+  }
+  .edunews24-modulo__selettore { flex-shrink: 0; }
+  .edunews24-modulo__selettore .edunews24-linguetta { padding-inline: 0.875rem; }
+}
+
+/* Corpo: la stessa altezza minima per le quattro sezioni e per contenuto,
+ * scheletro, errore e vuoto. Lo spazio in piu' va nella riga 1fr: nelle
+ * Notizie fra l'apertura e la fascia; in Interpelli, Selezione e Bandi il
+ * tabellone sta nella riga 1fr, allineato in alto, subito sotto la voce
+ * principale (il divisore resta fra i due), e lo spazio resta sotto il
+ * tabellone. Righe: la voce principale (o l'apertura) nella 1, il tabellone
+ * nella 2, la fascia delle Notizie e la striscia BandoFit dei Bandi nella 3;
+ * scheletro ed errore le occupano tutte, il vuoto dei Bandi la 1 e la 2 (la
+ * striscia resta nella 3).
+ * - Impilato: max(49cqi + 21.5rem, 32rem), cqi = larghezza utile U del
+ *   modulo. Notizie 0,48924 U + 20,88rem, 21,38rem con il player (1.75rem
+ *   fra media e testo per il timbro a cavallo): 29,2rem a U = 254px e, ai
+ *   38rem, 39,97 contro 40,12rem di minimo. Opportunita' a 254px 31,36rem,
+ *   da cui il minimo di 32rem.
+ * - Affiancato (38-56rem): 24rem (Notizie 11,01 + 1,25 + 10,5625 = 22,8rem;
+ *   opportunita' 8,34 + 1,5625 + 11,47 = 21,4rem).
+ * - Ampio (dai 56rem): 26.5rem (Notizie 25,8rem, opportunita' 25,2rem).
+ *   Oltre il contenuto resta lo spazio per il timbro del player, che sporge
+ *   di 1.125rem sotto il media: con 26rem gli restavano circa 11px dalla
+ *   fascia, con 26.5rem circa 19px.
+ * - Bandi, una riga di tabellone in meno, nel caso peggiore (ente e titolo
+ *   lunghi, sintesi, stato e "Da verificare" a capo nella cella, date
+ *   nell'anno dopo): impilato 25,4rem a U = 254px (22,4rem da 360 a 390),
+ *   affiancato 17,4rem, ampio 21,1rem. La targa delle righe e' senza anno,
+ *   come quella della selezione: con l'anno ("15 gen 2027" su 3 righe) ogni
+ *   riga cresce di circa 18px e l'ampio non ci starebbe. Con la striscia
+ *   BandoFit nella riga 3 (alta 2.75rem da U = 254px, piu' 1.25rem di
+ *   margine) 29,4 contro 32rem, 21,4 contro 24 e 25,1 contro 26,5: stanno
+ *   nei minimi di oggi, con almeno 1,4rem di margine.
+ * Con lo zoom del testo il minimo in rem cresce: si cresce, non si taglia.
+ * Al 200% a 320 la striscia va a capo e i Bandi nel caso peggiore arrivano
+ * a circa 35,5rem, come oggi Interpelli (37,1) e Selezione (34,9). */
+.edunews24-modulo__corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  min-height: max(calc(49cqi + 21.5rem), var(--spacing-edunews24-corpo-stretto));
+  margin-top: 0.75rem;
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-modulo__corpo { min-height: var(--spacing-edunews24-corpo); }
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-modulo__corpo { min-height: var(--spacing-edunews24-corpo-ampio); }
+}
+.edunews24-modulo__corpo > .edunews24-fascia { grid-row: 3; }
+.edunews24-modulo__corpo > .edunews24-tabellone {
+  grid-row: 2;
+  align-self: start;
+}
+.edunews24-modulo__corpo > :is(.edunews24-stato, .edunews24-scheletro) { grid-row: 1 / -1; }
+.edunews24-modulo__corpo[data-sezione="bandi"] > .edunews24-stato[data-tipo="vuoto"] { grid-row: 1 / 3; }
+.edunews24-modulo__corpo > .edunews24-fascia { margin-top: 1.25rem; }
+/* Striscia BandoFit dei Bandi (con le voci e con il vuoto): in fondo al
+ * corpo, nella riga 3, come la fascia delle Notizie. */
+.edunews24-modulo__supporto {
+  grid-row: 3;
+  grid-column: 1;
+  margin-top: 1.25rem;
+}
+
+/* Piede: divisore nel padding, frecce della fascia a sinistra (solo Notizie)
+ * e il link alla pagina a destra. */
+.edunews24-modulo__piede {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-divisore);
+}
+.edunews24-modulo__piede > :last-child { margin-left: auto; }
+.edunews24-modulo__frecce {
+  display: flex;
+  gap: 0.25rem;
+}
+/* Senza nulla da scorrere le frecce spariscono senza spostare il piede: lo
+ * dice data-scorrevole sulla fascia (o sulle frecce stesse). */
+.edunews24-modulo__frecce[data-scorrevole="false"],
+.edunews24-modulo:has(.edunews24-fascia[data-scorrevole="false"]) .edunews24-modulo__frecce { visibility: hidden; }
+
+/* Sintesi: nella pagina sempre, nel modulo solo nel regime ampio. Sta in un
+ * involucro, perche' il testo porta gia' il line-clamp della ricetta. */
+.edunews24-modulo :is(.edunews24-apertura__sintesi, .edunews24-principale__sintesi) { display: none; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-modulo :is(.edunews24-apertura__sintesi, .edunews24-principale__sintesi) { display: block; }
+}
+
+/* === Apertura (modulo e pagina) ============================================ */
+
+/* DOM: .edunews24-apertura[data-cambio] > __media (cornice grande) e __testo
+ * (occhiello, titolo, sintesi, metadati in fondo). Impilata sotto i 38rem di
+ * modulo (1.25rem fra media e testo, 1.75rem con il timbro a cavallo);
+ * affiancata dai 38rem con la colonna della cornice fissa e il testo
+ * allineato in alto. */
+.edunews24-apertura {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.25rem;
+}
+.edunews24-apertura__media { min-width: 0; }
+.edunews24-apertura__testo {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.375rem;
+  min-width: 0;
+}
+.edunews24-apertura__testo > :last-child { margin-top: auto; }
+/* Modulo impilato con il player: il timbro a cavallo sporge di 1.125rem sotto
+ * il media, e con 1.25rem l'occhiello gli resterebbe attaccato. Il segno e'
+ * data-video, che non cambia all'avvio del video: il testo non si sposta. */
+.edunews24-modulo .edunews24-apertura:has(.edunews24-media[data-video="player"]) { row-gap: 1.75rem; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-apertura {
+    grid-template-columns: var(--spacing-edunews24-apertura) minmax(0, 1fr);
+    column-gap: 1.25rem;
+  }
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-apertura { grid-template-columns: var(--spacing-edunews24-apertura-ampia) minmax(0, 1fr); }
+}
+.edunews24-pagina .edunews24-apertura { row-gap: 1.75rem; }
+.edunews24-pagina .edunews24-apertura__testo { row-gap: 0.5rem; }
+
+/* === Fascia delle miniature (modulo, solo Notizie) ======================= */
+
+/* ul#edunews24-fascia: scorre in orizzontale (swipe, trackpad, frecce), con
+ * scroll-snap e padding per l'anello di focus della prima e dell'ultima
+ * miniatura. Contiene tutte le voci della prima pagina. Posizionata, come la
+ * miniatura: cio' che vi e' in position absolute (il titolo completo sr-only)
+ * resta dentro l'area che scorre invece di allargare la pagina. */
+.edunews24-fascia {
+  position: relative;
+  display: flex;
+  padding: 0.25rem 0.25rem 0.75rem;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.25rem;
+  scrollbar-width: thin;
+}
+.edunews24-fascia > li {
+  flex: 0 0 var(--spacing-edunews24-miniatura);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+/* Sotto i 56rem di modulo 1rem fra le miniature: senza, a 390 e a 768 il
+ * bordo della fascia cadrebbe nel bianco dopo l'ultima immagine visibile e
+ * nessuna miniatura apparirebbe tagliata. Con 1rem se ne vede l'84% a 390
+ * (U = 324px) e il 63% a 768 (U = 670px). Fra circa 345 e 400px di U (da
+ * 412 a 430 circa di finestra) nessuno spazio fino a 1.5rem basta: servirebbe
+ * un'altra misura della miniatura. Dai 56rem l'ultima e' gia' tagliata. */
+@container edunews24-modulo (width < theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-fascia { column-gap: 1rem; }
+}
+
+/* Miniatura: pulsante aria-pressed (mai un link) con cornice piccola, media 9
+ * x 5,0625rem, occhiello e titolo su 2 righe (minimo 2 righe). Posizionata:
+ * il blocco contenitore del titolo completo sr-only e' il pulsante. */
+.edunews24-miniatura {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0.125rem 0 0.25rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+/* Dentro il pulsante solo contenuto in linea: cornice, media e quadro sono
+ * span e qui tornano blocchi, come altrove. */
+.edunews24-miniatura :is(.edunews24-cornice, .edunews24-media, .edunews24-media__quadro) { display: block; }
+.edunews24-miniatura > .edunews24-cornice { margin-block: 0.125rem; }
+/* Occhiello e titolo allineati al media (9rem, rientrato del padding della
+ * cornice): fra i testi di due miniature vicine restano 1.75rem (2.75rem
+ * sotto i 56rem di modulo). */
+.edunews24-miniatura :is(.edunews24-miniatura__occhiello, .edunews24-miniatura__titolo) {
+  width: calc(var(--spacing-edunews24-cornice-miniatura) * 0.86976);
+  margin-inline-start: calc(var(--spacing-edunews24-cornice-miniatura) * 0.06512);
+}
+.edunews24-miniatura__occhiello { margin-top: 0.5rem; }
+.edunews24-miniatura__titolo {
+  margin-top: 0.25rem;
+  min-height: 2.6em;
+}
+
+/* === Voce principale e tabellone (modulo: Interpelli, Selezione, Bandi) == */
+
+/* DOM: .edunews24-principale > .edunews24-timbro, __stato (distintivo o
+ * classe; per i bandi anche "Da verificare"), __ente, __corpo (titolo,
+ * sintesi, metadati). Impilata: timbro e
+ * stato sulla stessa riga (lo stato puo' andare a capo), poi ente e corpo a
+ * tutta larghezza. Dai 38rem: timbro verticale a sinistra, a destra stato ed
+ * ente sulla stessa riga, poi il corpo. */
+.edunews24-principale {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.edunews24-principale__ente,
+.edunews24-principale__corpo {
+  flex: 1 0 100%;
+  min-width: 0;
+}
+.edunews24-principale__ente {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.edunews24-principale__corpo {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-principale {
+    display: grid;
+    grid-template-columns: calc(var(--spacing-edunews24-timbro) + 1rem) auto minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "timbro stato ente"
+      "timbro corpo corpo";
+    gap: 0.5rem 0;
+    align-items: start;
+  }
+  .edunews24-principale > .edunews24-timbro {
+    grid-area: timbro;
+    justify-self: start;
+  }
+  .edunews24-principale__stato {
+    grid-area: stato;
+    margin-inline-end: 0.75rem;
+  }
+  .edunews24-principale__ente {
+    grid-area: ente;
+    align-self: center;
+  }
+  .edunews24-principale__corpo { grid-area: corpo; }
+}
+
+/* Tabellone: divisore sopra, righe [targa | stato | titolo | luogo] con i
+ * divisori fra le righe; 2 righe nel modulo impilato, 3 dai 38rem (Bandi:
+ * 1 e 2, piu' sotto). */
+.edunews24-tabellone {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-divisore);
+}
+.edunews24-tabellone__elenco { list-style: none; }
+.edunews24-riga + .edunews24-riga { border-top: 1px solid var(--color-divisore); }
+.edunews24-riga > .edunews24-targa { grid-area: targa; }
+.edunews24-riga__stato { grid-area: stato; }
+.edunews24-riga__corpo {
+  grid-area: corpo;
+  min-width: 0;
+}
+.edunews24-riga__luogo {
+  grid-area: luogo;
+  min-width: 0;
+}
+/* Luogo del tabellone del modulo: sede e area su una riga troncata, "Fonte"
+ * sotto se non ci sta; al massimo 2 righe, come il titolo. Il testo completo
+ * e' nella frase per i lettori di schermo. */
+.edunews24-riga__dove {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.edunews24-riga[data-contesto="modulo"] {
+  display: grid;
+  grid-template-columns: var(--spacing-edunews24-targa) minmax(0, 1fr);
+  grid-template-areas:
+    "targa stato"
+    "targa corpo"
+    "targa luogo";
+  gap: 0.25rem 0.75rem;
+  align-items: start;
+  padding-block: 0.625rem;
+}
+.edunews24-riga[data-contesto="modulo"]:nth-child(n + 3) { display: none; }
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-riga[data-contesto="modulo"] {
+    grid-template-columns:
+      var(--spacing-edunews24-targa) var(--spacing-edunews24-stato)
+      minmax(0, 1fr) var(--spacing-edunews24-luogo);
+    grid-template-areas: "targa stato corpo luogo";
+    column-gap: 0.75rem;
+  }
+  .edunews24-riga[data-contesto="modulo"]:nth-child(n + 3) { display: grid; }
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-ampio)) {
+  .edunews24-riga[data-contesto="modulo"] {
+    grid-template-columns:
+      var(--spacing-edunews24-targa) var(--spacing-edunews24-stato)
+      minmax(0, 1fr) var(--spacing-edunews24-area);
+  }
+}
+
+/* Bandi: il distintivo di stato e "Da verificare" nella stessa cella, a capo
+ * se non ci stanno. Solo qui: nelle altre sezioni la cella e' un blocco con
+ * un solo figlio in linea, e il flex ne cambierebbe l'altezza. Il tabellone
+ * ha una riga in meno in ogni regime (VOCI_BANDI_MODULO): 1 nel modulo
+ * impilato, 2 dai 38rem; vale anche per lo scheletro, che sta nel corpo. */
+.edunews24-modulo__corpo[data-sezione="bandi"] :is(.edunews24-principale__stato, .edunews24-riga__stato) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.375rem;
+}
+@container edunews24-modulo (width < theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-modulo__corpo[data-sezione="bandi"] .edunews24-riga[data-contesto="modulo"]:nth-child(n + 2) { display: none; }
+}
+
+/* === Stati ================================================================ */
+
+/* Errore e vuoto del modulo: stessa altezza minima del corpo (occupano tutte
+ * le sue righe), fondo velo, contenuto centrato in verticale nella lastra e
+ * allineato a sinistra. Niente rosso: EduNews24 fuori servizio non e' un
+ * errore della piattaforma. */
+.edunews24-stato {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background-color: var(--color-edunews24-velo);
+}
+.edunews24-stato__icona {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-testo-secondario);
+}
+.edunews24-stato .edunews24-sigillo { margin-bottom: 0.25rem; }
+/* Riga delle azioni degli stati: errore e vuoto del modulo, errore del primo
+ * caricamento e vuoto della pagina. */
+.edunews24-azioni {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Vuoto della pagina: un trafiletto allineato a sinistra. */
+.edunews24-vuoto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: 36rem;
+  padding-block: 1.5rem 0.5rem;
+}
+.edunews24-vuoto .edunews24-sigillo { margin-bottom: 0.25rem; }
+
+/* Funzione spenta nella pagina: sotto la testata, senza schede ne' filtri. */
+.edunews24-disattivata {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0 1.5rem 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--color-edunews24-velo);
+}
+.edunews24-disattivata .edunews24-sigillo { margin-bottom: 0.25rem; }
+
+/* Scheletro statico (nessuna animazione) nei neutri ERSAF: le forme usano le
+ * classi del contenuto vero e qui cambiano solo colore. */
+.edunews24-scheletro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.edunews24-scheletro[data-contesto="modulo"] .edunews24-scheletro__forme {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+}
+/* Come nel corpo: la fascia in fondo, il tabellone subito sotto la voce
+ * principale e lo spazio libero sotto. */
+.edunews24-scheletro__forme > .edunews24-fascia { grid-row: 3; }
+.edunews24-scheletro__forme > .edunews24-tabellone {
+  grid-row: 2;
+  align-self: start;
+}
+.edunews24-scheletro__forme > .edunews24-fascia {
+  margin-top: 1.25rem;
+  overflow: hidden;
+}
+.edunews24-scheletro .edunews24-cornice::before { background-color: var(--color-superficie-premuta); }
+.edunews24-scheletro .edunews24-cornice > .edunews24-media { box-shadow: 0 0 0 2px var(--color-superficie); }
+.edunews24-scheletro .edunews24-media__quadro { background-color: var(--color-superficie-alta); }
+.edunews24-scheletro .edunews24-timbro { width: 8rem; }
+.edunews24-scheletro .edunews24-timbro::before { background-color: var(--color-superficie-premuta); }
+.edunews24-scheletro .edunews24-targa::before {
+  border-color: var(--color-bordo);
+  background-color: var(--color-superficie-alta);
+}
+@container edunews24-modulo (width >= theme(--breakpoint-edunews24-affiancato)) {
+  .edunews24-scheletro .edunews24-timbro { width: var(--spacing-edunews24-timbro); }
+}
+.edunews24-scheletro__righe {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.375rem;
+  width: 100%;
+}
+.edunews24-scheletro__barra {
+  display: block;
+  height: 0.75rem;
+  background-color: var(--color-superficie-alta);
+}
+.edunews24-scheletro__barra[data-forma="occhiello"] {
+  width: 4rem;
+  height: 0.5rem;
+}
+.edunews24-scheletro__barra[data-forma="titolo"] {
+  width: 92%;
+  height: 1.1rem;
+}
+.edunews24-scheletro__barra[data-forma="titolo"] + .edunews24-scheletro__barra[data-forma="titolo"] { width: 84%; }
+.edunews24-scheletro__barra[data-forma="titolo"] + .edunews24-scheletro__barra[data-forma="titolo"] + .edunews24-scheletro__barra[data-forma="titolo"] {
+  width: 58%;
+}
+.edunews24-scheletro__barra[data-forma="meta"] {
+  width: 7rem;
+  height: 0.6rem;
+}
+.edunews24-scheletro__barra[data-forma="gruppo"] {
+  width: 9rem;
+  height: 1rem;
+}
+
+/* === Pagina /edunews24 ==================================================== */
+
+/* DOM: div.edunews24.edunews24-pagina (contenutoPagina) con
+ * IntestazionePagina e il foglio (foglio(), e' anche `.schede`): testata,
+ * BarraSchede, un tabpanel `.schede__pannello` per scheda con la barra dei
+ * filtri, `.edunews24-pannello` e StatoPagineElenco. */
+.edunews24-foglio { container: edunews24-foglio / inline-size; }
+
+/* Testata: sotto i 40rem logo, presentazione, social e folio in colonna; fra
+ * 40 e 52rem logo e social su una riga e presentazione sotto; dai 52rem
+ * logo, presentazione e lato su una riga, allineati in basso. */
+.edunews24-testata {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem 1.5rem;
+  align-items: start;
+  padding: 1.25rem 1.5rem;
+}
+.edunews24-testata__logo { height: 2rem; }
+.edunews24-testata__presentazione { max-width: 52ch; }
+.edunews24-testata__lato {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 0.25rem;
+}
+@container edunews24-foglio (width >= theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-testata {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "logo lato"
+      "presentazione presentazione";
+    align-items: center;
+  }
+  .edunews24-testata__logo {
+    grid-area: logo;
+    height: 2.25rem;
+  }
+  .edunews24-testata__presentazione { grid-area: presentazione; }
+  .edunews24-testata__lato {
+    grid-area: lato;
+    align-items: flex-end;
+    justify-self: end;
+  }
+}
+@container edunews24-foglio (width >= theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-testata {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "logo presentazione lato";
+    align-items: end;
+  }
+}
+
+/* Barra dei filtri: in vista sotto la barra superiore (da lg sotto il bordo
+ * della finestra), da bordo a bordo del foglio con margini negativi pari al
+ * padding di `.schede__pannello` (cqi del foglio; edunews24Sorgenti.test.js
+ * li confronta con schede.css). Nessun antenato con overflow-hidden,
+ * altrimenti non resta in vista. */
+.edunews24-filtri {
+  position: sticky;
+  top: var(--spacing-barra-superiore);
+  z-index: 10;
+  margin-top: calc(-1 * clamp(20px, 4cqi, 28px));
+  margin-inline: calc(-1 * clamp(16px, 4cqi, 32px));
+  padding-inline: clamp(16px, 4cqi, 32px);
+  border-bottom: 1px solid var(--color-bordo);
+  background-color: var(--color-superficie);
+}
+@media (width >= theme(--breakpoint-lg)) {
+  .edunews24-filtri { top: 0; }
+}
+.edunews24-filtri__riga {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding-block: 0.375rem;
+}
+/* Categorie: una fila che scorre in orizzontale a ogni larghezza, con la
+ * barra di scorrimento sottile come nella fascia: e' il segnale che ci sono
+ * altre categorie per chi usa solo il mouse. Lo
+ * scorrimento taglia cio' che esce dall'area: il padding fa spazio all'anello
+ * di focus (regola 1, 4px) sui quattro lati, e il margine negativo lo
+ * compensa, cosi' la riga e la barra restano alte uguali. Niente scroll-snap:
+ * riporterebbe la fila sull'inizio di una linguetta precedente e taglierebbe
+ * quella a fuoco; la portano in vista, anello compreso, BarraFiltriEduNews24
+ * e lo scroll-padding. */
+.edunews24-filtri__categorie {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: -0.25rem;
+  padding: 0.25rem;
+  overflow-x: auto;
+  scroll-padding-inline: 0.25rem;
+  scrollbar-width: thin;
+}
+/* Tre linguette d'attesa finche' le categorie non arrivano: pieni inclinati
+ * nei neutri dello scheletro. */
+.edunews24-filtri__attesa {
+  display: block;
+  flex-shrink: 0;
+  align-self: center;
+  width: 5rem;
+  height: 1.75rem;
+  margin-inline: 0.5rem;
+  background-color: var(--color-superficie-alta);
+  transform: skewX(var(--edunews24-inclinazione-pieno));
+}
+/* "Solo video": fuori dallo scorrimento, dopo un divisore verticale. */
+.edunews24-filtri__video {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--color-divisore);
+}
+/* Senza categorie (elenco non caricato) nessun divisore prima. */
+.edunews24-filtri__video:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+/* "Area" (Interpelli, Selezione e Bandi): etichetta e select nativo, largo al
+ * massimo 22rem. */
+.edunews24-filtri__area {
+  display: flex;
+  flex: 0 1 22rem;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.edunews24-filtri__area > label { flex-shrink: 0; }
+.edunews24-filtri__attivi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 0.25rem 0.625rem;
+}
+/* Sotto i 40rem di foglio i filtri attivi stanno su una riga sola che scorre
+ * in orizzontale, come la fila delle categorie, con lo stesso ingresso in
+ * vista da tastiera (BarraFiltriEduNews24). Ai lati padding e margine
+ * negativo fanno spazio all'anello di focus (4px): 5px, perche' allo
+ * scorrimento massimo l'arrotondamento dello scrollWidth ne toglie una
+ * frazione all'ultimo controllo. "Filtri attivi" resta solo per i lettori di
+ * schermo; la riga e' posizionata, cosi' il testo nascosto sta dentro l'area
+ * che scorre. L'altezza della barra la misura sempre osservaAltezzaFiltri. */
+@container edunews24-foglio (width < theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-filtri__attivi {
+    position: relative;
+    flex-wrap: nowrap;
+    margin-inline: -0.3125rem;
+    padding-inline: 0.3125rem;
+    overflow-x: auto;
+    scroll-padding-inline: 0.3125rem;
+    scrollbar-width: thin;
+  }
+  .edunews24-filtri__attivi > * { flex-shrink: 0; }
+  .edunews24-filtri__titolo-attivi { @apply sr-only; }
+}
+/* Interpelli, Selezione e Bandi dai 52rem di foglio: la select occupa al
+ * massimo 22rem, e i filtri attivi salgono accanto nella stessa riga (B.6);
+ * vanno a capo solo se non ci stanno. Stesso padding sopra e sotto, per restare
+ * centrati sulla riga della select. */
+@container edunews24-foglio (width >= theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-filtri:has(> .edunews24-filtri__riga > .edunews24-filtri__area) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+  .edunews24-filtri:has(> .edunews24-filtri__riga > .edunews24-filtri__area) > .edunews24-filtri__attivi {
+    padding-block: 0.375rem;
+  }
+}
+
+/* Etichetta rimovibile di un filtro attivo: rettangolo ERSAF su velo con il
+ * filo; 44px sotto i 40rem di foglio. */
+.edunews24-etichetta-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding-inline: 0.625rem;
+  border: 1px solid var(--color-edunews24-filo);
+  border-radius: var(--radius-controllo);
+  background-color: var(--color-edunews24-velo);
+  color: var(--color-edunews24-inchiostro);
+  @apply text-edunews24-linguetta;
+  cursor: pointer;
+}
+@container edunews24-foglio (width >= theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-etichetta-filtro { min-height: 2.25rem; }
+}
+
+/* Contenuto di una scheda: avvisi, scheletro, vuoto o elenchi. */
+.edunews24-pannello {
+  container: edunews24-pannello / inline-size;
+  padding-top: 1.5rem;
+}
+/* Nota sull'area della scheda Bandi: primo figlio del pannello, fuori dalla
+ * barra che resta in vista (non ne cambia l'altezza), in ogni stato. Testo
+ * nella ricetta notaArea. */
+.edunews24-pannello__nota {
+  max-width: 66ch;
+  margin-bottom: 1.25rem;
+}
+/* Riquadro BandoFit della scheda Bandi: dopo la nota, prima di avvisi,
+ * scheletro, vuoto o elenco, in ogni stato. */
+.edunews24-pannello__supporto { margin-bottom: 1.5rem; }
+
+/* Prima pagina delle Notizie: apertura (8 colonne) e 2 secondari (4) dai
+ * 52rem; fra 40 e 52rem apertura a tutta larghezza e secondari 6|6; sotto i
+ * 40rem secondari come righe con la miniatura di 7rem. Apertura e secondari
+ * vengono solo dalla prima pagina. */
+.edunews24-prima-pagina {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+.edunews24-prima-pagina__apertura,
+.edunews24-secondario { min-width: 0; }
+.edunews24-prima-pagina__secondari {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(2.5rem + 1px);
+  align-content: start;
+}
+/* Divisore fra voci impilate (secondari, colonna B doppia, trio sotto i
+ * 40rem): nel mezzo dello spazio fra le due voci (1.25rem, il filo, 1.25rem),
+ * fuori dal riquadro della voce. Sulla voce, con padding e bordo, starebbe
+ * dentro l'anello di fuoco (regola 3): doppia linea in alto e aria
+ * asimmetrica. Le voci sono posizionate (.edunews24-voce); e' un bordo, cosi'
+ * resta anche in colori forzati. */
+.edunews24-prima-pagina__secondari > * + *::before,
+.edunews24-banda__colonna > * + *::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: calc(-1.25rem - 1px);
+  border-top: 1px solid var(--color-divisore);
+  pointer-events: none;
+}
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-griglia)) and (width < theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-prima-pagina__secondari {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .edunews24-prima-pagina__secondari > * + *::before { content: none; }
+}
+/* Dai 52rem l'apertura resta alta quanto il suo contenuto: allungata fino
+ * alla colonna dei secondari, dividerebbe l'altezza in piu' fra le righe
+ * della sua griglia e staccherebbe il testo dal media (1.75rem, B.6). Se i
+ * secondari sono piu' alti, sotto l'apertura resta il bianco. */
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-prima-pagina { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .edunews24-prima-pagina__apertura {
+    grid-column: span 8;
+    align-self: start;
+  }
+  .edunews24-prima-pagina__secondari { grid-column: span 4; }
+}
+
+/* "Altre notizie": bande calcolate per pagina caricata (bandeGriglia), mai a
+ * cavallo di due pagine; 2.5rem fra le bande (e, con il padding di
+ * StatoPagineElenco, anche prima di "Carica altri"), nessun bordo ne' ombra
+ * attorno alle voci. */
+.edunews24-griglia {
+  margin-block: 2.5rem 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-divisore);
+}
+.edunews24-griglia__titolo {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+.edunews24-banda + .edunews24-banda { margin-top: 2.5rem; }
+.edunews24-banda {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-banda { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .edunews24-banda > * { grid-column: span 12; }
+  .edunews24-banda[data-schema="coppia"] > :nth-child(1) { grid-column: span 7; }
+  .edunews24-banda[data-schema="coppia"] > :nth-child(2) { grid-column: span 5; }
+  .edunews24-banda[data-schema="coppia-specchio"] > :nth-child(1) { grid-column: span 5; }
+  .edunews24-banda[data-schema="coppia-specchio"] > :nth-child(2) { grid-column: span 7; }
+  .edunews24-banda:is([data-schema="terzina"], [data-schema="trio"]) > * { grid-column: span 4; }
+  .edunews24-banda[data-schema="coda"] > :nth-child(1):nth-last-child(2),
+  .edunews24-banda[data-schema="coda"] > :nth-child(2):last-child { grid-column: span 6; }
+  /* Trio: fili a -5,68 gradi fra le colonne, nel mezzo del gap. Su una voce
+   * alta 200px l'inclinazione sposta gli estremi di 10px per parte: il gap
+   * del trio e' di 3rem, cosi' i fili non toccano i testi. */
+  .edunews24-banda[data-schema="trio"] { column-gap: 3rem; }
+  .edunews24-banda[data-schema="trio"] > * + *::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.25rem;
+    left: -1.5rem;
+    width: 1px;
+    background-color: var(--color-edunews24-filo);
+    transform: skewX(var(--edunews24-inclinazione-bordato));
+  }
+}
+/* Trio sotto i 40rem: voci di testo con il divisore nello spazio fra le voci,
+ * come i secondari (fuori dall'anello di fuoco). Sotto i 40rem anche
+ * "Condividi" resta solo icona: il testo va ai lettori di schermo (il nome
+ * del pulsante e' comunque l'aria-label "Condividi: <titolo>"). */
+@container edunews24-pannello (width < theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-condividi__testo { @apply sr-only; }
+  .edunews24-banda[data-schema="trio"] { row-gap: calc(2.5rem + 1px); }
+  .edunews24-banda[data-schema="trio"] > * + *::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: calc(-1.25rem - 1px);
+    border-top: 1px solid var(--color-divisore);
+    pointer-events: none;
+  }
+}
+/* Colonna piccola di coppia e specchio con due voci di solo testo (la voce B
+ * senza immagine e quella dopo, bandeGriglia): un solo figlio della banda,
+ * quindi prende la colonna da 5; dentro, le due voci una sotto l'altra con il
+ * divisore fra le voci, come i secondari. Sotto i 40rem segue la voce grande
+ * a tutta larghezza, allo stesso modo. */
+.edunews24-banda__colonna {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: calc(2.5rem + 1px);
+  align-content: start;
+  min-width: 0;
+}
+
+/* Forme delle voci della pagina (data-forma sulla .edunews24-voce):
+ * - scheda: media sopra, testo sotto;
+ * - riga: miniatura di 7rem a sinistra;
+ * - compatta: riga sotto i 40rem di pannello, scheda sopra;
+ * - fascia: scheda sotto i 40rem, media e testo 6|6 sopra;
+ * - testo: senza media. E' la forma del trio e delle voci compatte senza
+ *   immagine (formaVocePagina): nei posti piccoli niente riquadro ne'
+ *   ripiego, il distintivo Video sta nei metadati. */
+.edunews24-voce[data-forma] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0.75rem;
+  align-content: start;
+}
+.edunews24-voce__media { min-width: 0; }
+.edunews24-voce__testo {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.375rem;
+  min-width: 0;
+}
+.edunews24-voce:is([data-forma="riga"], [data-forma="compatta"]) {
+  grid-template-columns: var(--spacing-edunews24-miniatura-riga) minmax(0, 1fr);
+  column-gap: 0.875rem;
+  align-items: start;
+}
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-voce[data-forma="compatta"] { grid-template-columns: minmax(0, 1fr); }
+  .edunews24-voce[data-forma="fascia"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    align-items: center;
+  }
+}
+/* Spazio per il timbro del play a cavallo del bordo inferiore del media. */
+.edunews24-pagina .edunews24-voce .edunews24-media[data-video="player"] { margin-bottom: 0.75rem; }
+/* "Condividi" solo icona nelle voci strette (compatta e testo) a ogni
+ * larghezza: il testo resta visibile solo in apertura, scheda e fascia dai
+ * 40rem di pannello. */
+.edunews24-voce:is([data-forma="compatta"], [data-forma="testo"]) .edunews24-condividi__testo { @apply sr-only; }
+
+/* Interpelli, Selezione e Bandi: gruppi per giorno di pubblicazione, righe
+ * con il titolo come unico link (esteso). */
+.edunews24-gruppo + .edunews24-gruppo {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-divisore);
+}
+.edunews24-gruppo__intestazione {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.edunews24-elenco { list-style: none; }
+
+/* Riga della pagina (li.edunews24-riga.edunews24-voce[data-contesto="pagina"]
+ * [data-sezione]): __stato (targa adattiva e distintivo, per i bandi anche
+ * "Da verificare", oppure la targa della classe), __corpo (ente, titolo, per
+ * i bandi la frase "Da verificare", metadati) e __area. L'area compare
+ * due volte nel DOM, una sola visibile: come colonna (__area) dai 52rem, e
+ * per gli interpelli sotto i 40rem accanto alla classe; altrimenti nei
+ * metadati (dettaglio con className __area-meta).
+ * Sotto i 40rem un blocco a due livelli; dai 40rem colonna fissa a sinistra;
+ * dai 52rem anche la colonna dell'area. */
+.edunews24-riga[data-contesto="pagina"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "stato"
+    "corpo";
+  row-gap: 0.5rem;
+  padding-block: 1rem;
+}
+.edunews24-riga[data-contesto="pagina"] > .edunews24-riga__stato {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.edunews24-riga[data-contesto="pagina"] > .edunews24-riga__corpo {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.375rem;
+}
+.edunews24-riga[data-contesto="pagina"] > .edunews24-riga__area {
+  grid-area: area;
+  display: none;
+  min-width: 0;
+}
+/* Ente della riga: una riga sola, troncata. */
+.edunews24-riga__ente {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Tipologia (o programma) di un bando nei metadati: una riga sola, troncata
+ * alla larghezza della riga; il testo completo resta nel DOM. */
+.edunews24-riga__tipologia {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@container edunews24-pannello (width < theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-riga[data-contesto="pagina"][data-sezione="interpelli"] {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "area stato"
+      "corpo corpo";
+    column-gap: 0.75rem;
+    align-items: center;
+  }
+  .edunews24-riga[data-contesto="pagina"][data-sezione="interpelli"] > .edunews24-riga__area { display: block; }
+  .edunews24-riga[data-contesto="pagina"][data-sezione="interpelli"] .edunews24-riga__area-meta { display: none; }
+}
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-griglia)) {
+  .edunews24-riga[data-contesto="pagina"] {
+    grid-template-columns: var(--spacing-edunews24-scadenza) minmax(0, 1fr);
+    grid-template-areas: "stato corpo";
+    column-gap: 1.5rem;
+    align-items: start;
+  }
+  .edunews24-riga[data-contesto="pagina"][data-sezione="interpelli"] {
+    grid-template-columns: var(--spacing-edunews24-classe) minmax(0, 1fr);
+  }
+  .edunews24-riga[data-contesto="pagina"] > .edunews24-riga__stato {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@container edunews24-pannello (width >= theme(--breakpoint-edunews24-prima-pagina)) {
+  .edunews24-riga[data-contesto="pagina"] {
+    grid-template-columns:
+      var(--spacing-edunews24-scadenza) minmax(0, 1fr) var(--spacing-edunews24-area);
+    grid-template-areas: "stato corpo area";
+  }
+  .edunews24-riga[data-contesto="pagina"][data-sezione="interpelli"] {
+    grid-template-columns:
+      var(--spacing-edunews24-classe) minmax(0, 1fr) var(--spacing-edunews24-area);
+  }
+  .edunews24-riga[data-contesto="pagina"] > .edunews24-riga__area { display: block; }
+  .edunews24-riga[data-contesto="pagina"] .edunews24-riga__area-meta { display: none; }
+}
+
+/* === Movimento ============================================================= */
+
+/* Sipario inclinato, solo su gesto: scelta una miniatura, il gestore imposta
+ * data-cambio="si" su apertura e fascia (mai al primo montaggio ne' al cambio
+ * di sezione) e il media rimontato si scopre con un bordo d'attacco nella
+ * pendenza del logo (7,49% della larghezza su un 16:9). Il testo cambia senza
+ * animazione. */
+@keyframes edunews24-sipario {
+  from { clip-path: polygon(0 0, 0 0, -7.5% 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 107.5% 0, 100% 100%, 0 100%); }
+}
+.edunews24-apertura[data-cambio="si"] .edunews24-media__quadro {
+  animation: edunews24-sipario var(--durata-pannello) var(--curva-ingresso);
+}
+/* I triangoli della miniatura appena scelta. */
+.edunews24-fascia[data-cambio="si"] .edunews24-miniatura[aria-pressed="true"] .edunews24-cornice::before {
+  transition: opacity var(--durata-normale) var(--curva-ingresso);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .edunews24-fascia { scroll-behavior: smooth; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edunews24-apertura[data-cambio="si"] .edunews24-media__quadro { animation: none; }
+  .edunews24-linguetta,
+  .edunews24-linguetta::before,
+  .edunews24-voce__link,
+  .edunews24-social__link,
+  .edunews24-timbro-play__azione::before,
+  .edunews24-timbro-play__durata::before,
+  .edunews24-fascia[data-cambio="si"] .edunews24-miniatura[aria-pressed="true"] .edunews24-cornice::before {
+    transition: none;
+  }
+}
+
+/* === Colori forzati ======================================================= */
+
+@media (forced-colors: active) {
+  .edunews24-linguetta[aria-pressed="true"],
+  .edunews24-timbro,
+  .edunews24-timbro-play { forced-color-adjust: none; }
+  .edunews24-linguetta[aria-pressed="true"] { color: HighlightText; }
+  .edunews24-linguetta[aria-pressed="true"]::before { background-color: Highlight; }
+  .edunews24-timbro,
+  .edunews24-timbro-play { color: HighlightText; }
+  .edunews24-timbro::before,
+  .edunews24-timbro-play__azione::before,
+  .edunews24-timbro-play__durata::before {
+    background-color: Highlight;
+    box-shadow: none;
+  }
+  .edunews24-timbro__etichetta,
+  .edunews24-timbro__anno { color: HighlightText; }
+  /* La scelta si disegna dentro la cornice: il riquadro del media e i
+   * triangoli in Highlight. L'outline del pulsante resta al fuoco (regola 1):
+   * se lo usasse anche la scelta, il fuoco sulla miniatura appena scelta
+   * sarebbe un anello identico e non si vedrebbe. */
+  .edunews24-miniatura[aria-pressed="true"] .edunews24-cornice[data-misura="piccola"] > .edunews24-media {
+    outline: 2px solid Highlight;
+    outline-offset: 0;
+  }
+  .edunews24-miniatura[aria-pressed="true"] .edunews24-cornice[data-misura="piccola"]::before {
+    forced-color-adjust: none;
+    background-color: Highlight;
+  }
+  /* Controlli in attesa (regola 4): il colore forzato li renderebbe uguali a
+   * quelli attivi. */
+  .edunews24 [aria-disabled="true"] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+  /* Ripiego: la campitura sparisce e il motivo terrebbe i suoi colori fissi.
+   * Resta un riquadro bordato con la categoria. Il filo sta sul ripiego e
+   * sull'errore del video, non sul quadro: sono assoluti in inset 0 e con il
+   * fondo forzato a Canvas coprirebbero l'outline del quadro. Le immagini
+   * restano senza filo. */
+  .edunews24-ripiego__motivo { display: none; }
+  .edunews24-ripiego,
+  .edunews24-media__errore {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  /* Interruttore "Solo video": binario bordato e levetta visibile, cosi' la
+   * posizione della levetta dice ancora lo stato. */
+  .edunews24 [role="switch"] { border: 1px solid ButtonText; }
+  .edunews24 [role="switch"] > span {
+    forced-color-adjust: none;
+    background-color: ButtonText;
+  }
+  .edunews24 [role="switch"][aria-checked="true"] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+  }
+  .edunews24 [role="switch"][aria-checked="true"] > span { background-color: HighlightText; }
+  .edunews24-targa::before { border-color: CanvasText; }
+  .edunews24-social__icona {
+    forced-color-adjust: none;
+    background-color: LinkText;
+  }
+}

@@ -1,0 +1,20 @@
+.filtri-elenco__comando { @apply h-10 w-full; }
+.filtri-elenco__numero { @apply text-xs font-semibold; }
+
+.filtri-elenco__pannello {
+  @apply fixed m-0 border border-bordo rounded-riquadro bg-superficie text-testo shadow-popover pointer-events-auto overflow-y-auto overscroll-contain;
+  --distanza-popover: --spacing(4);
+  padding: var(--distanza-popover);
+  inset: auto;
+  width: min(var(--container-filtri-elenco), calc(100% - var(--distanza-popover) * 2));
+  max-height: calc(100dvh - var(--distanza-popover) * 2);
+}
+.filtri-elenco__intestazione { @apply flex items-center justify-between gap-3 mb-3; }
+.filtri-elenco__intestazione h2 { @apply text-base font-semibold text-testo-forte; }
+.filtri-elenco__campi { @apply grid gap-4; }
+/* Etichetta compatta, come etichetta() dei moduli. I controlli ereditano peso
+ * e spaziatura dalla <label>: qui tornano al testo normale. */
+.filtri-elenco__campo { @apply grid min-w-0 gap-2 text-etichetta uppercase tracking-wider text-testo-tenue; }
+.filtri-elenco__campo :is(input, select) { @apply font-normal tracking-normal normal-case; }
+.filtri-elenco__campo select { @apply min-w-0 w-full h-10; }
+.filtri-elenco__azzera { @apply mt-4 h-10 w-full; }

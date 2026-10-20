@@ -1,0 +1,122 @@
+/* Palette Equia.
+ * Le superfici usano i ruoli semantici di theme/colori.css. */
+@theme {
+  --color-marchio-viola: #0157B2;
+  --color-marchio-oro: #0157B2;
+  --color-marchio-carbone: #3E4047;
+  --color-marchio-verde: #72B736;
+  --color-marchio-rosso: #E54147;
+  --color-marchio-blu: #30A4DD;
+  --color-neutro-bianco: #FFFFFF;
+  --color-neutro-nero: #000000;
+}
+
+/* Campioni dell'interfaccia: valori esatti del design, non ottenibili per
+ * miscela dei campioni del logo. Le pagine non li usano direttamente: passano
+ * dai ruoli di theme/colori.css. */
+@theme {
+  --color-ardesia-25: #fbfbfd;
+  --color-ardesia-50: #f7f7f9;
+  --color-ardesia-100: #f3f3f6;
+  --color-ardesia-125: #f0f0f4;
+  /* Fondo della pillola Bozza nella scheda pratica: non e' la 125. */
+  --color-ardesia-130: #f0f0f3;
+  --color-ardesia-150: #eeeef3;
+  --color-ardesia-175: #ececf2;
+  --color-ardesia-200: #e6e6ee;
+  --color-ardesia-225: #e4e4ea;
+  --color-ardesia-250: #dcdce4;
+  /* Bordo della casella non scelta nella finestra dei corsi. */
+  --color-ardesia-275: #c9c9d3;
+  --color-ardesia-300: #c5c5cc;
+  --color-ardesia-400: #b5b5be;
+  --color-ardesia-450: #a9a9b4;
+  --color-ardesia-500: #8a8a95;
+  --color-ardesia-550: #7a7a85;
+  --color-ardesia-600: #6b6b76;
+  --color-ardesia-700: #4a4a55;
+  --color-ardesia-900: #2b2b33;
+  /* Tratto della firma disegnata. */
+  --color-ardesia-950: #1f1f2a;
+  /* Grigio neutro, non ardesia: il design non da' colore ai segnaposti e
+   * Chrome li mostra nel suo grigio predefinito. */
+  --color-grigio-550: #757575;
+
+  --color-indaco-25: #fafaff;
+  --color-indaco-50: #f8f7fc;
+  --color-indaco-60: #f5f4fb;
+  --color-indaco-75: #f1f6fc;
+  --color-indaco-100: #e8f1fb;
+  --color-indaco-150: #e2dff2;
+  --color-indaco-175: #d9d7f0;
+  --color-indaco-200: #d8d5ea;
+  --color-indaco-250: #c9c7e3;
+  --color-indaco-300: #b9b6dc;
+  --color-indaco-500: #1769b8;
+  --color-indaco-600: #014387;
+  --color-indaco-700: #0157b2;
+  /* Base del velo delle finestre (rgba(30,28,60,…) nel design). */
+  --color-indaco-950: #1e1c3c;
+
+  /* 50, 200 e 650: pillola «In svolgimento» della Sicurezza sul lavoro. */
+  --color-cobalto-50: #f0f3fb;
+  --color-cobalto-100: #e6edfb;
+  --color-cobalto-200: #c9d4f1;
+  --color-cobalto-500: #4a6fd1;
+  --color-cobalto-650: #34508f;
+  --color-cobalto-700: #2a4a9a;
+
+  /* Blu del rinnovo agevolato "Accettata". */
+  --color-oceano-50: #eef4fc;
+  --color-oceano-100: #e6f1fb;
+  --color-oceano-150: #e1edf9;
+  --color-oceano-200: #cfe0f3;
+  --color-oceano-500: #4a7fc1;
+  --color-oceano-700: #1f5a8a;
+  --color-oceano-800: #1f4a70;
+
+  /* Passaggio del puntatore sui pulsanti bianchi del riquadro verde dell'esito. */
+  --color-muschio-25: #f6fbf3;
+  --color-muschio-50: #eef7e9;
+  --color-muschio-100: #e8f3e2;
+  --color-muschio-150: #dcefd3;
+  --color-muschio-200: #cfe5c4;
+  /* «Invia al Centro» disabilitato (Sicurezza sul lavoro). */
+  --color-muschio-300: #a9c9ad;
+  --color-muschio-500: #4f9a3a;
+  --color-muschio-600: #2f7a3a;
+  --color-muschio-650: #286a32;
+  --color-muschio-700: #2f6b1f;
+  /* Nome del file dell'esito della prevalutazione. */
+  --color-muschio-750: #3d6630;
+  --color-muschio-800: #1f4d14;
+
+  --color-ambra-25: #fffdf5;
+  --color-ambra-50: #fefbe8;
+  --color-ambra-75: #fff7dc;
+  --color-ambra-100: #fdf3d7;
+  --color-ambra-150: #fdf0c4;
+  --color-ambra-200: #fbe7b0;
+  --color-ambra-300: #f3d86b;
+  --color-ambra-350: #e0c98a;
+  --color-ambra-400: #e0a43a;
+  --color-ambra-500: #d49a0a;
+  --color-ambra-600: #b7791f;
+  --color-ambra-700: #a8620f;
+  --color-ambra-800: #8a4b0f;
+  /* Distinto dalla 850 (#7a4410): rinnovo agevolato "Prezzo proposto". */
+  --color-ambra-840: #7a4510;
+  --color-ambra-850: #7a4410;
+  --color-ambra-875: #6b3a0c;
+  --color-ambra-900: #5a3a10;
+
+  --color-mattone-50: #fdf2f1;
+  --color-mattone-100: #fdecea;
+  --color-mattone-150: #fbdeda;
+  --color-mattone-200: #f5c9c3;
+  --color-mattone-600: #c0392b;
+  --color-mattone-700: #a0281c;
+  --color-mattone-800: #7a1f15;
+  /* Base delle ombre di popover e segmenti (rgba(20,20,40,…) nel design). */
+  --color-ombra: #141428;
+}

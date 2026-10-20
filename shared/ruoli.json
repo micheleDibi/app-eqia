@@ -1,0 +1,66 @@
+[
+  {
+    "id": 5,
+    "codice": "nazionale",
+    "nome": "Nazionale",
+    "assegna": [
+      "nazionale",
+      "business",
+      "startup",
+      "startup-for-education"
+    ],
+    "amministraAccount": true,
+    "menu": [
+      "dashboard",
+      "attuatori",
+      "sottoscrittori",
+      "aziende",
+      "notizie",
+      "edunews24"
+    ]
+  },
+  {
+    "id": 2,
+    "codice": "business",
+    "nome": "Business",
+    "assegna": [
+      "startup",
+      "startup-for-education"
+    ],
+    "amministraAccount": true,
+    "menu": [
+      "dashboard",
+      "attuatori",
+      "sottoscrittori",
+      "aziende",
+      "notizie",
+      "edunews24"
+    ]
+  },
+  {
+    "id": 1,
+    "codice": "startup",
+    "nome": "Startup",
+    "assegna": [],
+    "amministraAccount": false,
+    "menu": [
+      "dashboard",
+      "sottoscrittori",
+      "notizie",
+      "edunews24"
+    ]
+  },
+  {
+    "id": 3,
+    "codice": "startup-for-education",
+    "nome": "Startup for Education",
+    "assegna": [],
+    "amministraAccount": false,
+    "menu": [
+      "dashboard",
+      "sottoscrittori",
+      "notizie",
+      "edunews24"
+    ]
+  }
+]

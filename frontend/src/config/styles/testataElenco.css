@@ -1,0 +1,147 @@
+/* La riserva mantiene ferme le righe e non intercetta i loro click. */
+.soglia-testata-elenco { height: 1px; margin-bottom: -1px; pointer-events: none; }
+.testata-elenco {
+  @apply sticky top-barra-superiore z-10 pointer-events-none lg:top-0;
+  overflow-anchor: none;
+  container-type: inline-size;
+}
+.testata-elenco[data-compatta="true"] { min-height: var(--altezza-testata-estesa); }
+.testata-elenco__contenuto {
+  @apply grid items-center gap-x-2.5 gap-y-3 border border-bordo rounded-t-superficie bg-superficie px-6 py-5 pointer-events-auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "titolo azioni" "strumenti strumenti";
+}
+/* Titolo e conteggio sulla stessa linea di base, a 10px, come nel design.
+ * Quando lo spazio non basta il conteggio va a capo, cosi' il titolo non si
+ * spezza a meta' parola. */
+.testata-elenco__titolo { @apply flex min-w-0 flex-wrap items-baseline gap-x-2.5; grid-area: titolo; }
+.testata-elenco__nome { @apply min-w-0 text-titolo-elenco text-primario; overflow-wrap: anywhere; }
+.testata-elenco__conteggio { @apply shrink-0 text-dettaglio leading-[normal] font-normal text-testo-attenuato; }
+.testata-elenco__strumenti { @apply flex min-w-0 items-center gap-2.5; grid-area: strumenti; }
+.testata-elenco__ricerca { @apply min-w-0 flex-1; }
+.testata-elenco__ricerca > div { @apply max-w-none; }
+.testata-elenco__ricerca input,
+.testata-elenco__azioni .azione-crea,
+.testata-elenco__azioni .azione-testo { @apply h-10; }
+/* La lente del design (glifo di 14px) ha un ingombro di circa 6,5px e un tratto
+ * di 1px: la Search da 8px con tratto 3 ha la stessa misura e lo stesso centro,
+ * sempre a 12px dal bordo del campo. */
+.testata-elenco__ricerca svg { @apply size-2; stroke-width: 3; }
+/* Nel design le etichette di "Filtri" e "+ Nuovo" hanno l'interlinea naturale,
+ * non i 20px dei pulsanti: con l'altezza fissa il testo scende di mezzo pixel. */
+.testata-elenco .azione-crea,
+.testata-elenco .azione-testo,
+.testata-elenco .filtri-elenco__comando { @apply leading-[normal]; }
+/* Nel campo vuoto Chrome riserva lo spazio del pulsante che svuota la ricerca e
+ * taglia il segnaposto prima del bordo: il pulsante esce dal layout finche' il
+ * campo e' vuoto e torna appena si scrive. */
+.testata-elenco__ricerca input:placeholder-shown::-webkit-search-cancel-button { display: none; }
+/* Il segnaposto del design e' il grigio predefinito del browser, non il testo
+ * attenuato dei campi; il testo digitato resta nel colore del testo. */
+.testata-elenco__ricerca input { @apply placeholder:text-testo-segnaposto; }
+.testata-elenco__azioni { @apply flex items-center justify-end gap-2; grid-area: azioni; }
+/* "+ Nuovo" del design: il segno piu' (7,5px, tratto di circa 1,3px) sta a 4px
+ * dall'etichetta. La Plus da 11px con 2px di distanza ha lo stesso ingombro e
+ * la stessa larghezza del pulsante. Da sola, nei pulsanti quadrati, l'icona
+ * torna alla misura piccola standard. */
+.azione-crea { @apply gap-0.5; }
+.azione-crea__icona { @apply size-2.75; stroke-width: 2.75; }
+.filtri-elenco { @apply min-w-0 shrink-0; }
+/* Senza area propria: occupa tutta la larghezza nella prima riga libera, sotto
+ * le aree di ogni disposizione, e nella testata agganciata non compare. */
+.testata-elenco__legenda { @apply min-w-0; grid-column: 1 / -1; }
+
+@container (width < theme(--breakpoint-testata-stretta)) {
+  .testata-elenco .azione-crea { @apply size-10 p-0; }
+  .testata-elenco .azione-crea__etichetta { @apply sr-only; }
+  .testata-elenco .azione-crea__icona { @apply size-icona-piccola; stroke-width: var(--spessore-icona); }
+}
+
+/* Agganciata, la testata resta la parte alta della stessa card: fondo pieno,
+ * bordo #e6e6ee e nessuna ombra, come nel design. Gli angoli sono vivi perche'
+ * la card prosegue sotto la testata e oltre il bordo della finestra. */
+.testata-elenco[data-compatta="true"] .testata-elenco__contenuto {
+  @apply rounded-t-none py-3 gap-2;
+  grid-template-areas: "strumenti azioni";
+}
+.testata-elenco[data-compatta="true"] .testata-elenco__titolo { @apply sr-only; }
+.testata-elenco[data-compatta="true"] .testata-elenco__legenda { @apply hidden; }
+.testata-elenco[data-compatta="true"] .azione-crea { @apply size-10 p-0; }
+.testata-elenco[data-compatta="true"] .azione-crea__etichetta { @apply sr-only; }
+.testata-elenco[data-compatta="true"] .azione-crea__icona { @apply size-icona-piccola; stroke-width: var(--spessore-icona); }
+.testata-elenco[data-compatta="true"] .testata-elenco__strumenti { @apply gap-2; }
+.testata-elenco[data-compatta="true"] .filtri-elenco__comando { @apply min-w-10 px-2; }
+.testata-elenco[data-compatta="true"] .filtri-elenco__etichetta { @apply sr-only; }
+
+/* Si misura lo spazio del contenuto, anche quando appare la sidebar. */
+@container (width >= theme(--breakpoint-elenco-semplice)) {
+  .testata-elenco[data-compatta="true"] .azione-crea { @apply w-auto px-4; }
+  .testata-elenco[data-compatta="true"] .azione-crea__etichetta { @apply not-sr-only; }
+  .testata-elenco[data-compatta="true"] .azione-crea__icona { @apply size-2.75; stroke-width: 2.75; }
+  .testata-elenco[data-compatta="true"] .testata-elenco__contenuto,
+  .testata-elenco[data-compatta="true"] .testata-elenco__strumenti { @apply gap-3; }
+  .testata-elenco[data-compatta="true"] .filtri-elenco__comando { @apply px-4; }
+  .testata-elenco[data-compatta="true"] .filtri-elenco__etichetta { @apply not-sr-only; }
+}
+@container (width >= theme(--breakpoint-elenco-articolato)) {
+  .testata-elenco__contenuto,
+  .testata-elenco[data-compatta="true"] .testata-elenco__contenuto {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "titolo strumenti azioni";
+  }
+  .testata-elenco__ricerca { width: var(--container-ricerca-elenco); flex: none; }
+  .testata-elenco[data-compatta="true"] .testata-elenco__titolo { @apply not-sr-only min-w-0; }
+  .testata-elenco[data-compatta="true"] .testata-elenco__nome { @apply text-titolo-sezione; }
+}
+
+/* Nella testata estesa il comando dei filtri e' solo testo, come nel design;
+ * l'icona torna quando la testata si aggancia e l'etichetta puo' sparire. */
+.testata-elenco:not([data-compatta="true"]) .filtri-elenco__comando > .lucide { display: none; }
+
+/* Testata con selettore (i loghi degli atenei nell'elenco pratiche del
+ * Nazionale). Estesa: titolo, sotto il selettore, sotto ricerca e Filtri a
+ * tutta larghezza. Agganciata: il selettore rimpicciolito sopra ricerca e
+ * Filtri; dalla soglia articolata il titolo torna visibile accanto alla
+ * ricerca, e dalla soglia del selettore tutto sta su una riga. */
+.testata-elenco__selettore { @apply min-w-0; grid-area: selettore; }
+.testata-elenco__contenuto[data-selettore="true"] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "titolo azioni" "selettore selettore" "strumenti strumenti";
+}
+.testata-elenco[data-compatta="true"] .testata-elenco__contenuto[data-selettore="true"] {
+  grid-template-areas: "selettore selettore" "strumenti azioni";
+}
+@container (width >= theme(--breakpoint-elenco-articolato)) {
+  .testata-elenco__contenuto[data-selettore="true"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "titolo azioni" "selettore selettore" "strumenti strumenti";
+  }
+  .testata-elenco:not([data-compatta="true"]) .testata-elenco__contenuto[data-selettore="true"] .testata-elenco__ricerca {
+    @apply w-auto flex-1;
+  }
+  .testata-elenco[data-compatta="true"] .testata-elenco__contenuto[data-selettore="true"] {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "titolo strumenti azioni" "selettore selettore selettore";
+  }
+}
+@container (width >= theme(--breakpoint-testata-selettore)) {
+  .testata-elenco[data-compatta="true"] .testata-elenco__contenuto[data-selettore="true"] {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "titolo selettore strumenti azioni";
+  }
+}
+
+/* Loghi degli atenei: due per riga sul telefono, in fila dalla soglia
+ * semplice; nella testata agganciata piu' piccoli e sempre in fila. */
+.atenei-elenco { @apply grid grid-cols-2 gap-3; }
+.atenei-elenco__pulsante {
+  @apply inline-flex h-16 min-w-0 items-center justify-center rounded-riquadro border border-bordo bg-superficie px-4 py-2 cursor-pointer transition-colors hover:bg-riga-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuoco;
+}
+.atenei-elenco__pulsante[aria-pressed="true"] { @apply border-primario bg-primario-tenue ring-1 ring-primario; }
+.atenei-elenco__logo { @apply max-h-full max-w-full object-contain; }
+@container (width >= theme(--breakpoint-elenco-semplice)) {
+  .atenei-elenco { @apply flex flex-wrap; }
+  .atenei-elenco__pulsante { @apply w-40; }
+}
+.testata-elenco[data-compatta="true"] .atenei-elenco { @apply flex flex-nowrap gap-2; }
+.testata-elenco[data-compatta="true"] .atenei-elenco__pulsante { @apply h-10 w-20 min-w-0 shrink px-2 py-1; }

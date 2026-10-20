@@ -1,0 +1,80 @@
+/* Schede sottolineate (predefinite): una riga che scorre in orizzontale, la
+ * scheda attiva e' sottolineata nella tinta primaria. La variante segmentata
+ * (sotto-schede) e' un gruppo di pulsanti su fondo grigio.
+ * Solo la selezione ha un indicatore: nessun divisore lungo la barra. */
+.schede { container-type: inline-size; isolation: isolate; min-width: 0; }
+.schede__barra {
+  display: flex;
+  flex-wrap: nowrap;
+  @apply gap-1 px-2 sm:px-6;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  background: transparent;
+}
+.schede__linguetta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 52px;
+  padding: 0 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-testo-tenue);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--durata-rapida) var(--curva-ingresso),
+    border-color var(--durata-rapida) var(--curva-ingresso);
+}
+.schede__linguetta:hover { color: var(--color-testo); }
+.schede__linguetta[aria-selected="true"] {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primario);
+  border-bottom-color: var(--color-primario);
+}
+.schede__etichetta { display: block; white-space: nowrap; }
+.schede__linguetta:focus-visible { outline: 2px solid var(--color-fuoco); outline-offset: -3px; }
+
+/* Il pannello sta sul fondo della scheda che lo contiene: niente bordo,
+ * ombra o fondo propri, che uscirebbero dagli angoli arrotondati. */
+.schede__pannello { padding: clamp(20px, 4cqi, 28px) clamp(16px, 4cqi, 32px); }
+/* Pannello fatto di sezioni di modulo: le sezioni portano gia' il loro margine. */
+.schede__pannello--sezioni { padding: 0; }
+
+/* Variante segmentata: sotto-schede del curriculum. */
+.schede__barra--segmentata {
+  flex-wrap: wrap;
+  width: fit-content;
+  gap: 4px;
+  padding: 4px;
+  margin: 20px clamp(16px, 4cqi, 32px) 4px;
+  border: 0;
+  border-radius: var(--radius-riquadro);
+  background: var(--color-superficie-alta);
+}
+.schede__barra--segmentata .schede__linguetta {
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  margin: 0;
+  border-radius: var(--radius-segmento);
+  font-size: var(--text-dettaglio);
+}
+.schede__barra--segmentata .schede__linguetta[aria-selected="true"] {
+  background: var(--color-superficie);
+  box-shadow: var(--shadow-segmento);
+}
+.schede__barra--segmentata .schede__linguetta:disabled { cursor: default; opacity: 0.5; }
+
+/* Selettore fra le azioni dell'intestazione: nessun margine proprio, lo
+ * spazio lo da' la riga delle azioni; su schermo stretto le voci vanno a capo
+ * invece di sforare. */
+.schede__barra--selettore { margin: 0; max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .schede__linguetta { transition: none; }
+}

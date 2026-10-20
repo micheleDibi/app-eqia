@@ -1,0 +1,90 @@
+/* Token di forma e di misura: controlli, superfici, icone e guscio.
+ *
+ * Spaziature, spessori e anello di messa a fuoco restano quelli di Tailwind:
+ * qui si nominano solo le misure ricorrenti che hanno un ruolo preciso.
+ */
+
+:root { --soglia-menu-mobile: theme(--breakpoint-lg); }
+
+@theme {
+  /* Raggi. Controllo 8 (campi e pulsanti); superficie 14 (schede e testate);
+   * evidenza 12 (schede evidenziate); riquadro 10 (banner, tabelle di modulo,
+   * riquadri, barra segmentata, popover); segmento 7 (voce della barra
+   * segmentata); comando 6 (pulsante minimo, pulsante avviso nelle righe). */
+  --radius-controllo: var(--radius-lg);
+  --radius-superficie: 0.875rem;
+  --radius-evidenza: var(--radius-xl);
+  --radius-riquadro: 0.625rem;
+  --radius-segmento: 0.4375rem;
+  --radius-comando: var(--radius-md);
+
+  /* Altezze dei controlli: 42 nei moduli, 40 in ricerca, filtri e testate.
+   * Utilita': h-controllo, h-controllo-compatto. */
+  --spacing-controllo: calc(var(--spacing) * 10.5);
+  --spacing-controllo-compatto: calc(var(--spacing) * 10);
+
+  /* Icone: nei controlli e nel menu, e nella misura piccola dentro i campi.
+   * Utilita': size-icona, size-icona-piccola. */
+  --spacing-icona: calc(var(--spacing) * 4.5);
+  --spacing-icona-piccola: calc(var(--spacing) * 4);
+  --spessore-icona: 2;
+
+  /* Guscio dell'applicazione. Utilita': w-barra-laterale, lg:pl-barra-laterale,
+   * h-barra-superiore. */
+  --spacing-barra-laterale: calc(var(--spacing) * 64);
+  --spacing-barra-superiore: calc(var(--spacing) * 20);
+  --container-filtri-elenco: var(--container-xs);
+  --container-ricerca-elenco: 15rem;
+  --breakpoint-testata-stretta: 20rem;
+
+  /* Soglie del contenitore elenco, non della finestra. */
+  --breakpoint-elenco-semplice: 40rem;
+  --breakpoint-elenco-articolato: 52rem;
+  /* Testata agganciata con un selettore (i loghi degli atenei nell'elenco
+   * pratiche del Nazionale): da qui titolo, loghi, ricerca e Filtri stanno
+   * su una riga sola. */
+  --breakpoint-testata-selettore: 64rem;
+  --spacing-colonna-azioni: calc(var(--spacing) * 12);
+  --spacing-colonna-azioni-compatta: calc(var(--spacing) * 10);
+  --spacing-colonna-ruolo: calc(var(--spacing) * 36);
+  --spacing-colonna-numero: calc(var(--spacing) * 36);
+  --spacing-colonna-stato: calc(var(--spacing) * 32);
+  --spacing-colonna-stato-compatta: calc(var(--spacing) * 28);
+  /* Stato delle pratiche: il distintivo piu' lungo ("Pratica in Attesa di
+   * Modifica", 195px) sta su una riga anche con i rientri delle celle. */
+  --spacing-colonna-stato-pratiche: 13.5rem;
+  /* Stato delle edizioni (Sicurezza sul lavoro): il distintivo piu' lungo
+   * ("Integrazioni sulla documentazione", 231px) sta su una riga con i
+   * rientri delle celle. */
+  --spacing-colonna-stato-edizioni: 15.5rem;
+
+  /* Soglie del contenitore della pagina Pratiche, come nel design: striscia
+   * dei totali su tre colonne (480) e su una riga (820), tabella degli atenei
+   * al posto della lista (720). */
+  --breakpoint-pratiche-striscia-media: 30rem;
+  --breakpoint-pratiche-tabella: 45rem;
+  --breakpoint-pratiche-striscia: 51.25rem;
+
+  /* Soglie del contenitore della Dashboard (styles/dashboard.css): scorciatoie
+   * su due colonne e su tre, rientro comodo dei moduli, griglia dei moduli. */
+  --breakpoint-dashboard-scorciatoie-due: 22rem;
+  --breakpoint-dashboard-comodo: 30rem;
+  --breakpoint-dashboard-scorciatoie-tre: 40rem;
+  --breakpoint-dashboard-moduli: 60rem;
+
+  /* Larghezza massima del contenuto, esclusi i margini (box-content).
+   * Utilita': max-w-pagina per gli elenchi (1120), max-w-modulo per le pagine
+   * di dettaglio con un modulo (1080), max-w-pratica per la scheda pratica
+   * a due colonne (1280). */
+  --container-pagina: 70rem;
+  --container-modulo: 67.5rem;
+  --container-pratica: 80rem;
+
+  /* Conversazioni: lettura, larghezza dei messaggi e indicatore presenza. */
+  --spacing-storico-minimo: calc(var(--spacing) * 48);
+  --altezza-storico-chat: 52dvh;
+  --larghezza-messaggio-chat: 85%;
+  --spacing-presenza: calc(var(--spacing) * 2);
+  --spacing-compositore-chat-minimo: var(--spacing-controllo-compatto);
+  --spacing-compositore-chat-massimo: calc(var(--spacing) * 30);
+}

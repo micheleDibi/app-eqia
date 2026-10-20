@@ -1,0 +1,251 @@
+/* Ruoli semantici dell'intera app. I valori dell'interfaccia richiamano i
+ * campioni esatti del design (palette.css, secondo blocco); le famiglie che il
+ * design non tocca (accento oro, informazione) restano miscele dei campioni del
+ * logo, scurite quando devono portare testo. */
+@theme {
+  --color-primario: var(--color-indaco-700);
+  --color-primario-hover: var(--color-indaco-600);
+  --color-primario-tenue: var(--color-indaco-100);
+  --color-primario-velo: var(--color-indaco-75);
+  --color-su-primario: var(--color-neutro-bianco);
+  /* Etichetta secondaria sul fondo primario: "Totale pratiche". */
+  --color-su-primario-tenue: var(--color-indaco-175);
+  --color-accento: var(--color-marchio-oro);
+  --color-accento-tenue: color-mix(in srgb, var(--color-marchio-oro) 16%, var(--color-neutro-bianco));
+  /* Solo il guscio: voce attiva e passaggio nel menu di navigazione. */
+  --color-navigazione-hover: color-mix(in srgb, var(--color-accento) 6%, transparent);
+  --color-navigazione-selezionata: color-mix(in srgb, var(--color-accento) 10%, transparent);
+  --color-navigazione-selezionata-hover: color-mix(in srgb, var(--color-accento) 14%, transparent);
+
+  --color-tela: var(--color-ardesia-50);
+  --color-superficie: var(--color-neutro-bianco);
+  --color-superficie-tenue: var(--color-ardesia-25);
+  --color-superficie-alta: var(--color-ardesia-100);
+  --color-superficie-premuta: var(--color-ardesia-175);
+  --color-riga-hover: var(--color-indaco-25);
+  /* Righe della pagina Pratiche: il design le evidenzia piu' degli elenchi. */
+  --color-riga-conteggi-hover: var(--color-indaco-60);
+  --color-evidenza: var(--color-indaco-50);
+  --color-evidenza-bordo: var(--color-indaco-150);
+
+  --color-bordo: var(--color-ardesia-200);
+  --color-divisore: var(--color-ardesia-150);
+  /* Fra le righe delle tabelle della pagina Pratiche. */
+  --color-divisore-tenue: var(--color-ardesia-125);
+  --color-bordo-forte: var(--color-indaco-200);
+  --color-bordo-controllo: var(--color-ardesia-250);
+  --color-bordo-controllo-tenue: var(--color-ardesia-225);
+  --color-testo: var(--color-ardesia-900);
+  /* Sinonimo di `testo`: i titoli a peso 600 non hanno piu' una tinta propria. */
+  --color-testo-forte: var(--color-testo);
+  --color-testo-secondario: var(--color-ardesia-700);
+  --color-testo-tenue: var(--color-ardesia-600);
+  --color-testo-sola-lettura: var(--color-ardesia-550);
+  --color-testo-attenuato: var(--color-ardesia-500);
+  /* Segnaposto dei campi come nel design, che non dichiara ::placeholder e
+   * lascia il grigio predefinito del browser: campo() e ricerca degli elenchi
+   * (testataElenco.css). Le voci "Seleziona..." dei select restano
+   * testo-attenuato (selezione.css). */
+  --color-testo-segnaposto: var(--color-grigio-550);
+  --color-testo-spento: var(--color-ardesia-400);
+  /* Un conteggio a zero, che resta leggibile ma si fa da parte. */
+  --color-valore-nullo: var(--color-ardesia-300);
+
+  --color-positivo: var(--color-muschio-700);
+  --color-positivo-forte: var(--color-muschio-700);
+  --color-positivo-tenue: var(--color-muschio-100);
+  --color-positivo-bordo: var(--color-muschio-200);
+
+  --color-attenzione: var(--color-ambra-500);
+  --color-attenzione-tenue: var(--color-ambra-50);
+  --color-attenzione-bordo: var(--color-ambra-300);
+  --color-attenzione-forte: var(--color-ambra-800);
+  /* Testo del banner con piu' voci: il design usa un marrone diverso da quello
+   * della voce singola (attenzione-forte). */
+  --color-attenzione-testo: var(--color-ambra-850);
+  --color-attenzione-profondo: var(--color-ambra-900);
+  --color-attenzione-nota: var(--color-ambra-700);
+  --color-attenzione-campo: var(--color-ambra-25);
+  --color-attenzione-campo-bordo: var(--color-ambra-400);
+  --color-attenzione-comando: var(--color-ambra-100);
+  --color-attenzione-comando-hover: var(--color-ambra-200);
+  --color-attenzione-comando-testo: var(--color-ambra-600);
+
+  --color-negativo: var(--color-mattone-600);
+  --color-negativo-forte: color-mix(in srgb, var(--color-mattone-600) 85%, var(--color-neutro-nero));
+  --color-negativo-tenue: color-mix(in srgb, var(--color-mattone-600) 7%, var(--color-neutro-bianco));
+  --color-negativo-bordo: color-mix(in srgb, var(--color-mattone-600) 27%, var(--color-neutro-bianco));
+
+  --color-informazione: color-mix(in srgb, var(--color-marchio-blu) 55%, var(--color-neutro-nero));
+  --color-informazione-forte: color-mix(in srgb, var(--color-marchio-blu) 50%, var(--color-neutro-nero));
+  --color-informazione-tenue: color-mix(in srgb, var(--color-marchio-blu) 8%, var(--color-neutro-bianco));
+  --color-informazione-bordo: color-mix(in srgb, var(--color-marchio-blu) 30%, var(--color-neutro-bianco));
+
+  /* Stati delle pratiche: pallini della pagina Pratiche. */
+  --color-stato-bozza: var(--color-ardesia-450);
+  --color-stato-lavorazione: var(--color-cobalto-500);
+  --color-stato-attesa: var(--color-ambra-400);
+  --color-stato-conclusa: var(--color-muschio-500);
+  --color-stato-caricata: var(--color-indaco-700);
+  --color-stato-rifiutata: var(--color-mattone-600);
+  /* Tag "In lavorazione" degli elenchi: il blu del pallino, che nessuna
+   * famiglia semantica porta (informazione e' l'azzurro del marchio). */
+  --color-stato-lavorazione-tenue: color-mix(in srgb, var(--color-cobalto-500) 9%, var(--color-neutro-bianco));
+  --color-stato-lavorazione-bordo: color-mix(in srgb, var(--color-cobalto-500) 30%, var(--color-neutro-bianco));
+  --color-stato-lavorazione-testo: color-mix(in srgb, var(--color-cobalto-500) 70%, var(--color-neutro-nero));
+  /* Pillola di stato della scheda pratica: fondo e inchiostro, il pallino e'
+   * stato-<chiave>. Diversi dal tag degli elenchi (-tenue/-bordo/-testo). */
+  --color-stato-bozza-fondo: var(--color-ardesia-130);
+  --color-stato-bozza-inchiostro: var(--color-ardesia-700);
+  --color-stato-lavorazione-fondo: var(--color-cobalto-100);
+  --color-stato-lavorazione-inchiostro: var(--color-cobalto-700);
+  --color-stato-attesa-fondo: var(--color-ambra-100);
+  --color-stato-attesa-inchiostro: var(--color-ambra-800);
+  --color-stato-conclusa-fondo: var(--color-muschio-100);
+  --color-stato-conclusa-inchiostro: var(--color-muschio-700);
+  --color-stato-caricata-fondo: var(--color-indaco-100);
+  --color-stato-caricata-inchiostro: var(--color-indaco-700);
+  --color-stato-rifiutata-fondo: var(--color-mattone-100);
+  --color-stato-rifiutata-inchiostro: var(--color-mattone-700);
+  /* Sicurezza sul lavoro: edizione CHIUSA e versione scaduta del catalogo.
+   * Pallino, pillola (fondo e inchiostro) e distintivo degli elenchi
+   * (tenue, bordo, testo). */
+  --color-stato-chiusa: var(--color-ardesia-600);
+  --color-stato-chiusa-fondo: var(--color-ardesia-225);
+  --color-stato-chiusa-inchiostro: var(--color-ardesia-900);
+  --color-stato-chiusa-tenue: var(--color-ardesia-150);
+  --color-stato-chiusa-bordo: var(--color-ardesia-300);
+  --color-stato-chiusa-testo: var(--color-ardesia-900);
+  /* Sicurezza sul lavoro, design v2: pillola di stato (PillolaStato), valori
+   * esatti del design (fondo, bordo, testo); il pallino e' stato-<chiave>.
+   * Bozza piena e Scaduta usano -fondo e -inchiostro qui sopra. */
+  --color-stato-bozza-pillola: var(--color-ardesia-25);
+  --color-stato-bozza-pillola-bordo: var(--color-ardesia-200);
+  --color-stato-bozza-pillola-testo: var(--color-ardesia-600);
+  --color-stato-caricata-pillola: var(--color-indaco-100);
+  --color-stato-caricata-pillola-bordo: var(--color-indaco-200);
+  --color-stato-caricata-pillola-testo: var(--color-indaco-700);
+  --color-stato-attesa-pillola: var(--color-ambra-50);
+  --color-stato-attesa-pillola-bordo: var(--color-ambra-300);
+  --color-stato-attesa-pillola-testo: var(--color-ambra-800);
+  --color-stato-conclusa-pillola: var(--color-muschio-100);
+  --color-stato-conclusa-pillola-bordo: var(--color-muschio-200);
+  --color-stato-conclusa-pillola-testo: var(--color-muschio-700);
+  --color-stato-lavorazione-pillola: var(--color-cobalto-50);
+  --color-stato-lavorazione-pillola-bordo: var(--color-cobalto-200);
+  --color-stato-lavorazione-pillola-testo: var(--color-cobalto-650);
+  --color-stato-chiusa-pillola: var(--color-ardesia-150);
+  --color-stato-chiusa-pillola-bordo: var(--color-ardesia-300);
+  --color-stato-chiusa-pillola-testo: var(--color-ardesia-900);
+  --color-stato-rifiutata-pillola: var(--color-mattone-50);
+  --color-stato-rifiutata-pillola-bordo: var(--color-mattone-200);
+  --color-stato-rifiutata-pillola-testo: var(--color-mattone-700);
+
+  /* Colori dei moduli di un corso (calendario dell'edizione, barra delle ore
+   * della versione), per numero di modulo in ciclo di 6: forte, tenue e
+   * inchiostro. Mai mattone, che segnala gli errori. */
+  --color-modulo-1: var(--color-indaco-500);
+  --color-modulo-1-tenue: var(--color-indaco-100);
+  --color-modulo-1-inchiostro: var(--color-indaco-700);
+  --color-modulo-2: var(--color-oceano-500);
+  --color-modulo-2-tenue: var(--color-oceano-100);
+  --color-modulo-2-inchiostro: var(--color-oceano-700);
+  --color-modulo-3: var(--color-ambra-400);
+  --color-modulo-3-tenue: var(--color-ambra-100);
+  --color-modulo-3-inchiostro: var(--color-ambra-800);
+  --color-modulo-4: var(--color-muschio-500);
+  --color-modulo-4-tenue: var(--color-muschio-100);
+  --color-modulo-4-inchiostro: var(--color-muschio-700);
+  --color-modulo-5: var(--color-cobalto-500);
+  --color-modulo-5-tenue: var(--color-cobalto-100);
+  --color-modulo-5-inchiostro: var(--color-cobalto-700);
+  --color-modulo-6: var(--color-ardesia-500);
+  --color-modulo-6-tenue: var(--color-ardesia-130);
+  --color-modulo-6-inchiostro: var(--color-ardesia-700);
+
+  /* Scheda pratica. Invio al Nazionale: il pulsante verde del piede. */
+  --color-invio: var(--color-muschio-600);
+  --color-invio-hover: var(--color-muschio-650);
+  /* Sicurezza sul lavoro: «Invia al Centro» finche' l'edizione non e' pronta. */
+  --color-invio-spento: var(--color-muschio-300);
+  /* Segnali della scheda: "Manca", passo bloccato, passaggio su Elimina e
+   * sulla X; riquadro "Rate corrette". Valori esatti del design, distinti da
+   * negativo-tenue/-bordo/-forte, che sono miscele usate dalle altre pagine. */
+  --color-negativo-sfondo: var(--color-mattone-100);
+  /* Sicurezza sul lavoro: passaggio su «Elimina bozza», «Annulla edizione». */
+  --color-negativo-velo: var(--color-mattone-50);
+  --color-negativo-contorno: var(--color-mattone-200);
+  --color-negativo-scuro: var(--color-mattone-700);
+  --color-positivo-sfondo: var(--color-muschio-50);
+  /* Riquadro verde dell'esito della prevalutazione: titolo, nome del file e
+   * passaggio del puntatore sui suoi pulsanti bianchi. */
+  --color-positivo-profondo: var(--color-muschio-800);
+  --color-positivo-nota: var(--color-muschio-750);
+  --color-positivo-hover: var(--color-muschio-25);
+  /* Bordo della casella non scelta (finestra dei corsi della prevalutazione). */
+  --color-bordo-casella: var(--color-ardesia-275);
+  /* Bordi tratteggiati: riquadri vuoti (studente, percorso, firma) e
+   * "Aggiungi rata". */
+  --color-bordo-tratteggio: var(--color-indaco-250);
+  --color-bordo-tratteggio-forte: var(--color-indaco-300);
+  /* Tratto della firma sulla tela (letto con getComputedStyle). */
+  --color-inchiostro-firma: var(--color-ardesia-950);
+  /* Velo dietro le finestre di scelta e della firma. */
+  --color-velo-finestra: color-mix(in srgb, var(--color-indaco-950) 35%, transparent);
+
+  /* Rinnovo agevolato, per stato della richiesta: riquadro (fondo, bordo,
+   * testo), distintivo (fondo e testo), testo forte e pallino. */
+  --color-rinnovo-nessuna-fondo: var(--color-neutro-bianco);
+  --color-rinnovo-nessuna-bordo: var(--color-ardesia-200);
+  --color-rinnovo-nessuna-testo: var(--color-indaco-700);
+  --color-rinnovo-nessuna-distintivo: var(--color-ardesia-130);
+  --color-rinnovo-nessuna-distintivo-testo: var(--color-ardesia-700);
+  --color-rinnovo-nessuna-forte: var(--color-ardesia-900);
+  --color-rinnovo-nessuna-pallino: var(--color-ardesia-450);
+  --color-rinnovo-richiesta-fondo: var(--color-indaco-60);
+  --color-rinnovo-richiesta-bordo: var(--color-indaco-175);
+  --color-rinnovo-richiesta-testo: var(--color-indaco-700);
+  --color-rinnovo-richiesta-distintivo: var(--color-indaco-100);
+  --color-rinnovo-richiesta-distintivo-testo: var(--color-indaco-700);
+  --color-rinnovo-richiesta-forte: var(--color-indaco-700);
+  --color-rinnovo-richiesta-pallino: var(--color-indaco-700);
+  --color-rinnovo-accettata-fondo: var(--color-oceano-50);
+  --color-rinnovo-accettata-bordo: var(--color-oceano-200);
+  --color-rinnovo-accettata-testo: var(--color-oceano-700);
+  --color-rinnovo-accettata-distintivo: var(--color-oceano-150);
+  --color-rinnovo-accettata-distintivo-testo: var(--color-oceano-700);
+  --color-rinnovo-accettata-forte: var(--color-oceano-800);
+  --color-rinnovo-accettata-pallino: var(--color-oceano-500);
+  --color-rinnovo-proposto-fondo: var(--color-ambra-50);
+  --color-rinnovo-proposto-bordo: var(--color-ambra-300);
+  --color-rinnovo-proposto-testo: var(--color-ambra-800);
+  --color-rinnovo-proposto-distintivo: var(--color-ambra-150);
+  --color-rinnovo-proposto-distintivo-testo: var(--color-ambra-840);
+  --color-rinnovo-proposto-forte: var(--color-ambra-875);
+  --color-rinnovo-proposto-pallino: var(--color-ambra-400);
+  --color-rinnovo-conclusa-fondo: var(--color-muschio-50);
+  --color-rinnovo-conclusa-bordo: var(--color-muschio-200);
+  --color-rinnovo-conclusa-testo: var(--color-muschio-700);
+  --color-rinnovo-conclusa-distintivo: var(--color-muschio-150);
+  --color-rinnovo-conclusa-distintivo-testo: var(--color-muschio-700);
+  --color-rinnovo-conclusa-forte: var(--color-muschio-800);
+  --color-rinnovo-conclusa-pallino: var(--color-muschio-500);
+  --color-rinnovo-rifiutata-fondo: var(--color-mattone-50);
+  --color-rinnovo-rifiutata-bordo: var(--color-mattone-200);
+  --color-rinnovo-rifiutata-testo: var(--color-mattone-700);
+  --color-rinnovo-rifiutata-distintivo: var(--color-mattone-150);
+  --color-rinnovo-rifiutata-distintivo-testo: var(--color-mattone-700);
+  --color-rinnovo-rifiutata-forte: var(--color-mattone-800);
+  --color-rinnovo-rifiutata-pallino: var(--color-mattone-600);
+  /* "Annulla" accanto al prezzo proposto: bordo e passaggio del puntatore. */
+  --color-rinnovo-comando-bordo: var(--color-ambra-350);
+  --color-rinnovo-comando-hover: var(--color-ambra-75);
+
+  --color-fuoco: var(--color-primario);
+  --shadow-selezione: inset 3px 0 0 var(--color-accento);
+  /* Pannelli ancorati (filtri, avvisi) e segmento attivo delle sotto-schede. */
+  --shadow-popover: 0 8px 24px color-mix(in srgb, var(--color-ombra) 12%, transparent);
+  --shadow-segmento: 0 1px 2px color-mix(in srgb, var(--color-ombra) 10%, transparent);
+  /* Finestre di scelta e della firma della scheda pratica. */
+  --shadow-finestra: 0 20px 60px color-mix(in srgb, var(--color-ombra) 25%, transparent);
+}

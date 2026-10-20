@@ -1,0 +1,20 @@
+/* Identita' BandoFit: i colori del marchio, solo per il riquadro della scheda
+ * Bandi e la striscia del modulo in Dashboard (styles/bandofit.css, classi
+ * bandofit-*). Colori grezzi solo qui; nessun altro file li usa.
+ *
+ * Contrasti (WCAG 2.x). Su bianco (superficie): inchiostro 13,76; fit 3,15;
+ * fit-inchiostro 5,25. Su fit-tenue: inchiostro 12,26; fit 2,81;
+ * fit-inchiostro 4,67; testo-secondario ERSAF 7,79.
+ * Fit solo per segni grafici (la sottolineatura del link) e mai come unico
+ * indicatore sul fondo tenue; i testi in fit-inchiostro, inchiostro o
+ * testo-secondario. */
+@theme {
+  /* Testo del marchio: titolo del riquadro. */
+  --color-bandofit-inchiostro: #212b50;
+  /* Il verde del segno di spunta: solo segni grafici. */
+  --color-bandofit-fit: #1aa38c;
+  /* Il verde per i testi: link "Vai a BandoFit". */
+  --color-bandofit-fit-inchiostro: #0e7a68;
+  /* Fondo del riquadro. */
+  --color-bandofit-fit-tenue: #e6f5f2;
+}

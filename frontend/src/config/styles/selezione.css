@@ -1,0 +1,9 @@
+/* :checked segue la scelta effettiva, anche nei select controllati da React.
+ * Segnaposto e filtri "Tutti" condividono il colore attenuato dei segnaposti,
+ * con marker distinti. I valori reali (anche 0) non vengono classificati in
+ * base al loro contenuto. */
+select:has(> option:is([data-segnaposto], [data-senza-filtro]):checked):not(:disabled) { @apply text-testo-attenuato; }
+
+/* Le scelte reali restano nel colore del testo anche mentre il campo mostra il segnaposto. */
+select option { @apply text-testo; }
+select option:is([data-segnaposto], [data-senza-filtro]) { @apply text-testo-attenuato; }

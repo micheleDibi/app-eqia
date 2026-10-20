@@ -1,0 +1,56 @@
+@keyframes ingresso-contenuto {
+  from { opacity: 0; translate: 0 var(--spostamento-ingresso); }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes ingresso-discreto {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Gli hook riavviano solo questa animazione, senza rimontare le pagine. */
+.movimento-pagina {
+  animation: ingresso-contenuto var(--durata-normale) var(--curva-ingresso);
+}
+.movimento-pagina--elenco { animation-name: ingresso-discreto; }
+.movimento-scheda,
+[role="tabpanel"]:not([hidden]) {
+  animation: ingresso-discreto var(--durata-rapida) var(--curva-ingresso);
+}
+.movimento-feedback { animation: ingresso-discreto var(--durata-normale) var(--curva-ingresso); }
+button[data-esito="eseguita"] {
+  background-color: var(--color-positivo-tenue);
+  border-color: var(--color-positivo-bordo);
+  color: var(--color-positivo-forte);
+}
+
+/* Ricetta comune ai pannelli nel top layer; il posizionamento resta separato. */
+.dialogo, .filtri-elenco__pannello, .avvisi__pannello {
+  opacity: 0;
+  translate: 0 var(--spostamento-ingresso);
+  transition: opacity var(--durata-rapida) var(--curva-uscita),
+    translate var(--durata-rapida) var(--curva-uscita),
+    display var(--durata-rapida) allow-discrete,
+    overlay var(--durata-rapida) allow-discrete;
+}
+.dialogo[open], .filtri-elenco__pannello:popover-open, .avvisi__pannello:popover-open {
+  opacity: 1;
+  translate: 0 0;
+  transition-duration: var(--durata-normale);
+  transition-timing-function: var(--curva-ingresso);
+}
+@starting-style {
+  .dialogo[open], .filtri-elenco__pannello:popover-open, .avvisi__pannello:popover-open { opacity: 0; translate: 0 var(--spostamento-ingresso); }
+}
+
+.testata-elenco__contenuto {
+  transition: background-color var(--durata-rapida) var(--curva-ingresso),
+    box-shadow var(--durata-rapida) var(--curva-ingresso);
+}
+
+/* Nessun movimento residuo, anche cambiando preferenza a pannello aperto. */
+@media (prefers-reduced-motion: reduce) {
+  .movimento-pagina, .movimento-scheda, .movimento-feedback,
+  [role="tabpanel"]:not([hidden]) { animation: none; }
+  .dialogo, .dialogo::backdrop, .filtri-elenco__pannello, .avvisi__pannello { transition: none; }
+}
