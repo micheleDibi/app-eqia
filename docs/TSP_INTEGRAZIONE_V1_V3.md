@@ -50,3 +50,19 @@ L'accettazione finale richiede release e migrazioni effettive, HTTPS e
 login OTP, pubblicazione di una notizia sintetica, upload/download e confronto
 dell'allegato dopo ricreazione del container API. Il contenuto di prova
 viene poi eliminato dall'interfaccia. Email/SMS restano su file.
+
+## Esito
+
+PR #1 unita con `8879fdc`, PR #2 con `5dd5141`; correzioni `23eb5dc`,
+integrazione finale `426836c326bcea22ca0635b4126dc07fdebc8150`.
+Release `20261020-151309-426836c3` attiva sullo staging.
+
+HTTPS, health, 17 migrazioni, indice univoco, provider isolati e backup
+verificati. Nel browser: login OTP, creazione/pubblicazione Notizie,
+upload/download, disponibilità dopo ricreazione API/web e logout.
+Confronto byte e SHA-256 del file positivo prima e dopo la ricreazione.
+Notizia di prova eliminata; sezione e argomento disattivati.
+
+Il codice distribuito corrisponde all'albero verificato prima del merge.
+L'aggiornamento successivo dei documenti registra soltanto gli esiti;
+non modifica codice, migrazioni o configurazione distribuiti.

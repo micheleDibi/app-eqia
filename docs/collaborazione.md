@@ -78,3 +78,10 @@ Il [contratto account/anagrafica](contratti-account.md) è il primo punto di inc
 Per il ruolo Business si applica il catalogo condiviso: gestisce i due tipi Startup
 nella propria rete; l'assegnazione di Business e Nazionale resta al Nazionale.
 Non reintrodurre distinzioni Provinciale/Regionale all'interno dei moduli.
+
+## Consegna del 20 ottobre 2026
+
+PR #1 Notizie e #2 V1 account integrate su `main` e pubblicate nello staging;
+release e prove in [deploy.md](deploy.md#integrazione-v1-e-notizie).
+Il contratto V1 è disponibile per M1. Questo esito non completa le schermate
+anagrafiche, il pacchetto V2 o l'attivazione di EduNews esterno.

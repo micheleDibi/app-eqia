@@ -137,13 +137,13 @@ preesistenti. La sola rotta `/salute` non prova database, provider o login.
 
 ## Stato verificato il 20 ottobre 2026
 
-Staging pubblicato su `https://eqiastaging.ersaf.it`, con redirect HTTP 301
-verso HTTPS e certificato Let's Encrypt valido. Release attiva
+Prima pubblicazione verificata su `https://eqiastaging.ersaf.it`, con redirect
+HTTP 301 verso HTTPS e certificato Let's Encrypt valido. Release iniziale
 `20261020-095530-c99ae9df`, sorgente
 `c99ae9df1b3f2e01a7a3713a4809b4b912f93a89`.
 
-I tre container sono sani; il database nuovo contiene 15 migrazioni, quattro
-ruoli e un solo account sintetico. La connessione MariaDB usa TLS verificato
+Alla prima pubblicazione i tre container erano sani e il database conteneva
+15 migrazioni, quattro ruoli e un solo account sintetico. La connessione MariaDB usa TLS verificato
 (`TLS_AES_256_GCM_SHA384`). API e database non espongono porte sull'host;
 la porta web sulla LAN è raggiungibile solo dal reverse proxy.
 
@@ -160,5 +160,35 @@ Il certificato HTTPS e il redirect sono stati verificati dal client.
 
 I servizi Università e Universo preesistenti sono rimasti operativi.
 Email/SMS restano su file e l'integrazione EduNews esterna resta disabilitata,
-come indicato sopra. Le prove riguardano l'ambiente e l'accesso iniziale;
-non completano i pacchetti funzionali ancora aperti.
+come indicato sopra. Le prove iniziali riguardavano l'ambiente e l'accesso;
+la consegna V1/Notizie è verificata separatamente di seguito.
+
+### Integrazione V1 e Notizie
+
+PR #1 e #2 unite nell'ordine, preservando i commit originali; correzioni
+integrate da `matteogenna`. Release distribuita e verificata:
+`20261020-151309-426836c3`, commit
+`426836c326bcea22ca0635b4126dc07fdebc8150`.
+
+Trasferimento `scp -O`, build delle immagini e attivazione completati.
+Migrazioni 017 e 018 applicate: 17 migrazioni totali e indice
+`uq_utenti_username` presente. Nessun doppione prima della migrazione.
+Backup SQL e archivio allegati compressi verificati; il backup successivo
+alla prova include il file caricato dal browser.
+
+Verificati HTTPS 200 con certificato valido, redirect HTTP 301, API salute
+200, sessione anonima 401, database TLS e tre container sani.
+Login OTP e logout nel browser riusciti. In Notizie sono passati creazione
+di sezione/argomento, pubblicazione, upload e download. Dopo ricreazione
+dei container API/web, sessione, notizia e allegato sono rimasti disponibili:
+il download ha gli stessi byte e lo stesso SHA-256 dell'originale.
+
+La notizia sintetica è stata eliminata dall'interfaccia; sezione e argomento
+di collaudo sono disattivati. Il file resta nell'archivio secondo la policy
+del modulo, che non elimina fisicamente gli allegati.
+Email e SMS sono ancora su file, EduNews esterno disabilitato.
+Un solo account sintetico; nessuna nuova anagrafica.
+
+V1 consegna API, servizio di creazione e componente riusabile. Il ciclo
+account nelle schede anagrafiche richiede M1, fuori da questo rilascio;
+V2 e prove di authenticator/passkey su dispositivo non sono incluse.
