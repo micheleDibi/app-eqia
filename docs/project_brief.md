@@ -22,6 +22,9 @@ vedono i contenuti loro assegnati e il conteggio delle notizie da leggere.
 La tranche M1/M2 del 21 ottobre aggiunge elenchi, schede e collegamenti
 di attuatori, sottoscrittori e centri, riusando V1. Specifiche e stato delle
 verifiche in [anagrafiche.md](anagrafiche.md); release in [deploy.md](deploy.md).
+Le schede del ramo `schede-dettaglio` di Vincenzo sono la base dei dettagli
+attuali; elenchi e creazione restano collegati agli stessi servizi comuni.
+Merge e pubblicazione sono passaggi separati; lo stato del dominio è in `deploy.md`.
 
 ## Struttura
 

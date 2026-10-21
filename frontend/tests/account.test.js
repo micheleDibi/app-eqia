@@ -81,8 +81,12 @@ test("il cambio di stato rifiutato porta il messaggio del server", async () => {
 
 // Sorgenti letti come testo (i test non importano .jsx).
 test("Attiva/Disattiva compare solo con il permesso, e chiede conferma", () => {
-  const sezione = readFileSync(new URL("../src/components/account/SezioneAccount.jsx", import.meta.url), "utf8");
-  assert.match(sezione, /\{permessi\.statoAccount && \(/);
-  assert.match(sezione, /onClick=\{\(\) => setConferma\(cambio\)\}/);
-  assert.match(sezione, /<DialogoConferma /);
+  const leggi = (nome) => readFileSync(new URL(`../src/components/${nome}`, import.meta.url), "utf8");
+  const stato = leggi("account/StatoAccount.jsx");
+  assert.match(stato, /\{modificabile && \(/);
+  assert.match(stato, /onClick=\{\(\) => setConferma\(cambio\)\}/);
+  assert.match(stato, /<DialogoConferma /);
+  // Il permesso arriva dal Nazionale, nella sezione account e nella scheda Utente.
+  assert.match(leggi("account/SezioneAccount.jsx"), /modificabile=\{permessi\.statoAccount\}/);
+  assert.match(leggi("anagrafiche/UtenteAnagrafica.jsx"), /modificabile=\{permessi\.stato_account\b/);
 });

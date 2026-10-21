@@ -10,15 +10,17 @@ import { Check } from "../../config/icone.js";
  * Scheda di un recapito usato per l'accesso (email o cellulare): etichetta
  * con la pillola "Verificata" oppure il pulsante "Verifica", il valore e le
  * note (data della verifica, invito a salvare). Il valore si modifica nella
- * scheda anagrafica: qui si legge soltanto.
+ * scheda anagrafica: con `onChange` il campo e' il suo (nome `tipo`),
+ * altrimenti qui si legge soltanto.
  *
  * @param {{
  *   tipo: "email"|"cellulare",
  *   valore: string,
  *   verifica: { disponibile: boolean, stato?: object, apri: Function },
+ *   onChange?: (evento: import("react").ChangeEvent<HTMLInputElement>) => void,
  * }} props
  */
-export default function RecapitoAccount({ tipo, valore, verifica }) {
+export default function RecapitoAccount({ tipo, valore, verifica, onChange }) {
   const id = `account-${tipo}`;
   const { verificato, verificatoIl, mostraVerifica, verificaDisabilitata, daSalvare } =
     statoRecapito(verifica, valore);
@@ -40,8 +42,16 @@ export default function RecapitoAccount({ tipo, valore, verifica }) {
           </button>
         )}
       </div>
-      <input id={id} type="text" readOnly value={valore || testi.vuoto} className={campo("recapito")}
-        aria-describedby={conNote ? `${id}-nota` : undefined} />
+      {onChange ? (
+        // Testo e non type="email": il formato lo controlla il server solo
+        // se il valore cambia, un'email storica non blocca il salvataggio.
+        <input id={id} name={tipo} type="text" inputMode={tipo === "email" ? "email" : "tel"} value={valore}
+          onChange={onChange} autoComplete="off" className={campo("recapito")}
+          aria-describedby={conNote ? `${id}-nota` : undefined} />
+      ) : (
+        <input id={id} type="text" readOnly value={valore || testi.vuoto} className={campo("recapito")}
+          aria-describedby={conNote ? `${id}-nota` : undefined} />
+      )}
       {conNote && (
         <div id={`${id}-nota`}>
           {verificatoIl && <p className={notaRecapito()}>{testi.verificatoIl(dataVerifica(verificatoIl))}</p>}

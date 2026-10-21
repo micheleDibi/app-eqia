@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, Query
 
 from src.aziende.models import Azienda
-from src.clienti.lettura import persona, query_persone, rappresenta, riepilogo
+from src.clienti.lettura import query_persone, rappresenta, riepilogo
 from src.clienti.models import Cliente
 from src.clienti.schemi import DatiPersona, TipoPersona
-from src.clienti.servizio import aggiorna_persona, crea_persona
+from src.clienti.servizio import crea_persona
 from src.gestione.contesto import contesto, richiedi
 from src.gestione.ricerca import cerca, pagina, parametri
 
@@ -27,19 +27,6 @@ def elenco(tipo: TipoPersona, ruolo: int | None = Query(None, gt=0),
                   ricerca, riepilogo)
 
 
-@router.get('/{cliente_id}')
-def dettaglio(cliente_id: int, ctx=Depends(contesto)):
-    riga = persona(ctx, cliente_id)
-    if riga.cliente_ruolo is not None:
-        richiedi(bool(ctx.assegna))
-    return rappresenta(ctx, riga)
-
-
 @router.post('/', status_code=201)
 def crea(tipo: TipoPersona, dati: DatiPersona, ctx=Depends(contesto)):
     return rappresenta(ctx, crea_persona(ctx, tipo, dati))
-
-
-@router.put('/{cliente_id}')
-def modifica(cliente_id: int, dati: DatiPersona, ctx=Depends(contesto)):
-    return rappresenta(ctx, aggiorna_persona(ctx, cliente_id, dati))

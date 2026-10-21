@@ -16,17 +16,13 @@ export async function richiestaGestione(percorso, opzioni) {
   if (!risposta.ok) throw Object.assign(new Error(await messaggioErrore(risposta)), { status: risposta.status });
   return leggiJson(risposta);
 }
-export function leggiScheda(tipo, id, signal) {
-  return richiestaGestione(tipo === "centro" ? api.centro(id) : api.persona(id), { signal });
-}
 export async function nomeCentro(id, signal) {
   const dati = await richiestaGestione(`${api.opzioniCentri}?id=${encodeURIComponent(id)}`, { signal });
   return dati.elementi[0]?.label ?? null;
 }
-export function salvaScheda(tipo, id, dati) {
-  const percorso = id ? (tipo === "centro" ? api.centro(id) : api.persona(id))
-    : (tipo === "centro" ? api.centri : `${api.persone}?tipo=${tipo}`);
-  return richiestaGestione(percorso, { method: id ? "PUT" : "POST", body: JSON.stringify(payloadGestione(tipo, dati)) });
+export function creaScheda(tipo, dati) {
+  const percorso = tipo === "centro" ? api.centri : `${api.persone}?tipo=${tipo}`;
+  return richiestaGestione(percorso, { method: "POST", body: JSON.stringify(payloadGestione(tipo, dati)) });
 }
 export function valoriIniziali(tipo) {
   return tipo === "centro" ? { ...VUOTO_CENTRO, azienda_padre_id: null }

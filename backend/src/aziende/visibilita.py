@@ -12,12 +12,16 @@ def ids_visibili(ctx):
 
 
 def calcola_ids_visibili(ctx):
-    if ctx.nazionale:
+    return ids_centri_visibili(ctx.db, ctx.vis)
+
+
+def ids_centri_visibili(db, vis):
+    if vis.nazionale:
         return None
-    persone = filtra_clienti(ctx.db.query(Cliente), ctx.vis).all()
-    utenti = {ctx.autore.utente_id, *(p.utente_id for p in persone)}
+    persone = filtra_clienti(db.query(Cliente), vis).all()
+    utenti = {vis.utente_id, *(p.utente_id for p in persone)}
     radici = {p.azienda_id for p in persone if p.azienda_id is not None}
-    righe = ctx.db.execute(select(Azienda.azienda_id, Azienda.azienda_padre_id,
+    righe = db.execute(select(Azienda.azienda_id, Azienda.azienda_padre_id,
                                   Azienda.azienda_created_by)).all()
     radici.update(r.azienda_id for r in righe if r.azienda_created_by in utenti)
     figli = {}
@@ -30,6 +34,11 @@ def calcola_ids_visibili(ctx):
                 radici.add(figlio)
                 coda.append(figlio)
     return radici
+
+
+def centro_visibile(db, vis, azienda_id):
+    visibili = ids_centri_visibili(db, vis)
+    return visibili is None or azienda_id in visibili
 
 
 def query_centri(ctx):

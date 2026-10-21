@@ -155,6 +155,20 @@ passkey con autenticatore software e cambio metodo. Non attesta una prova
 su telefono o autenticatore fisico. Release e controlli sul dominio pubblico
 sono registrati in [deploy.md](deploy.md#integrazione-v2).
 
+## Verifica delle schede dettaglio — 21 ottobre 2026
+
+Integrazione della consegna `schede-dettaglio` con elenchi e creazione:
+`verify-local.ps1` superato, 301 test backend su `ersaf_test` alla porta 3319,
+131 test frontend, lint e build. Dopo la separazione delle regole account
+sono passati altri 43 test mirati. L'unico avviso di build resta il bundle
+oltre 500 kB.
+
+Prove browser locali: accesso OTP, salvataggio anagrafica cambiando linguetta,
+referente, ricerca e associazione centro, modifica centro, collegamenti del
+sottoscrittore, creazione centro e ritorno all'elenco filtrato. Verificati la
+cronologia aggiornata, il layout mobile a 390 px e l'assenza di errori JavaScript.
+La prova non invia email/SMS reali e non modifica il database di staging.
+
 ## Staging
 
 Verifica del 21 ottobre per identità Eqia e precompilazione temporanea OTP

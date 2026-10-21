@@ -41,27 +41,26 @@ def test_business_non_vede_ne_modifica_anagrafiche_di_altra_rete(gestore):
 def test_business_non_escalation_ne_trasferimento_della_rete(gestore):
     browser, _, _ = gestore(2)
     riga = crea_persona(browser)
-    dati = dati_persona() | {'padre_utente_id': riga['padre_utente_id']}
     for ruolo in (2, 5):
-        assert browser.put(f"/clienti/{riga['cliente_id']}", json=dati | {'cliente_ruolo': ruolo}).status_code == 403
-    assert browser.put(f"/clienti/{riga['cliente_id']}", json=dati | {'padre_utente_id': None}).status_code == 403
+        assert browser.put(f"/clienti/{riga['cliente_id']}", json={'cliente_ruolo': ruolo}).status_code == 403
+    assert browser.put(f"/clienti/{riga['cliente_id']}", json={'utente_padre': None}).status_code == 403
 
 
-def test_startup_non_modifica_attuatore_neppure_se_discendente(db, gestore, account):
+def test_startup_legge_discendente_ma_non_gestisce_ruoli_o_account(db, gestore, account):
     browser, autore, _ = gestore(1)
     utente, cliente = account(1)
     utente.utente_padre = autore.utente_id
     db.commit()
-    assert browser.get(f'/clienti/{cliente.cliente_id}').status_code == 403
-    assert browser.put(f'/clienti/{cliente.cliente_id}', json=dati_persona()).status_code == 403
+    assert browser.get(f'/clienti/{cliente.cliente_id}').status_code == 200
+    for dati in ({'cliente_ruolo': 3}, {'utente_username': 'Nuovo'}, {'utente_padre': None}):
+        assert browser.put(f'/clienti/{cliente.cliente_id}', json=dati).status_code == 403
 
 
 def test_gerarchia_utenti_rifiuta_cicli(gestore):
     browser, _, _ = gestore()
     padre = crea_persona(browser)
     figlio = crea_persona(browser, dati_persona(1) | {'padre_utente_id': padre['utente_id']})
-    risposta = browser.put(f"/clienti/{padre['cliente_id']}", json=dati_persona() |
-                           {'padre_utente_id': figlio['utente_id']})
+    risposta = browser.put(f"/clienti/{padre['cliente_id']}", json={'utente_padre': figlio['utente_id']})
     assert risposta.status_code == 422
 
 

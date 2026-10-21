@@ -1,15 +1,18 @@
 # Attuatori, sottoscrittori e centri
 
-Stato del 21 ottobre 2026: tranche M1/M2 implementata, verificata e pubblicata
-in staging. Release `20261021-085433-8d03254a`; riscontri in `deploy.md`.
+La tranche M1/M2 iniziale è pubblicata in staging; release in `deploy.md`.
+Il 21 ottobre le schede del ramo `schede-dettaglio` sostituiscono i precedenti
+dettagli. Questa integrazione richiede un nuovo deploy con frontend e backend
+insieme: il solo merge non modifica lo staging.
 
 ## Funzioni
 
 - Elenchi separati, ricerca per parole, filtri per ruolo e centro, paginazione.
 - Schede di creazione e modifica con dati personali, documento, residenza,
   domicilio, recapiti e collegamenti. Copia della residenza nel domicilio.
-- Scheda Account collegata al componente V1 esistente per verifica dei recapiti
-  e stato dell'account. Nessuna password nel modulo anagrafico.
+- Schede Anagrafica, Centro (attuatori) e Utente. Verifica dei recapiti nei
+  Contatti; stato, username, referente, ruolo e cronologia nella scheda Utente.
+  Nessuna password nel modulo anagrafico.
 - Centri con dati amministrativi, sede, recapiti, coordinate bancarie,
   centro superiore, sottocentri e collegamenti alle persone del centro.
 
@@ -34,8 +37,8 @@ dalla rete e i loro sottocentri. Le selezioni remote applicano gli stessi limiti
 Un identificativo non visibile ha la stessa risposta di uno inesistente.
 
 Il sottoscrittore ha ruolo nullo: non è un quinto ruolo e non può accedere al
-gestionale. Il cambio di tipo non è previsto dalla scheda. Il ruolo di un
-attuatore può cambiare solo entro il catalogo assegnabile; non è possibile
+gestionale. Nazionale e Business possono promuoverlo ad attuatore e riportare
+un attuatore a sottoscrittore, entro il catalogo assegnabile. Non è possibile
 cambiare il proprio ruolo. Un cambio di ruolo revoca le sessioni del destinatario.
 
 ## Account e collegamenti
@@ -52,8 +55,9 @@ dell'anagrafica: è un'associazione distinta e non sposta la gerarchia dell'acco
 I collegamenti verso persone e centri devono essere visibili al chiamante.
 Le gerarchie di account e centri rifiutano collegamenti ciclici.
 
-Il codice dell'anagrafica, il codice del centro e lo username sono assegnati
-dal server e rimangono stabili durante le modifiche. I payload ammettono solo
+Il codice dell'anagrafica e il codice del centro rimangono stabili durante le
+modifiche. Lo username è assegnato in creazione e modificabile dal Nazionale,
+con controllo dei duplicati coerente con il login. I payload ammettono solo
 i campi del modulo, escludendo password, stato account e flag di verifica.
 Codice fiscale, recapiti e identificativi duplicati vengono rifiutati.
 
@@ -64,11 +68,26 @@ validazioni, ricerca e selettori. I router delle persone e dei centri restano
 nei rispettivi moduli. Gli elenchi restituiscono solo i campi di riepilogo;
 i dati completi sono letti dalla scheda.
 
-`frontend/src/components/gestione` compone liste e schede con i controlli comuni.
+`frontend/src/components/gestione` compone liste e creazione; i dettagli sono
+in `components/anagrafiche` e `components/aziende`, con gli stessi controlli comuni.
 Definizioni dei campi, testi, endpoint, rotte, colonne e stili sono in `config`;
 il trasporto passa da `lib/api.js`. Ricerca, filtri e scheda attiva sono nell'URL.
 Il ritorno dalla scheda conserva i filtri dell'elenco. Tabella su schermi ampi,
 lista continua su schermi stretti, senza avatar o schede decorative ripetute.
+
+GET/PUT `/clienti/{id}` e `/aziende/{id}` hanno un solo gestore, in `scheda.py`.
+Il PUT è parziale: controlla e scrive solo i campi modificati, senza bloccare
+altri interventi per un valore storico non conforme. POST ed elenchi restano
+nei rispettivi `routers.py`. Il referente usa `utente_padre`; i collegamenti
+del sottoscrittore usano `attuatore_id` e `azienda_id`. Il centro dell'attuatore
+si associa con PUT `/clienti/{id}/centro`, dopo la ricerca per partita IVA.
+Gli URL precedenti `scheda=dati` e `scheda=account` aprono rispettivamente
+Anagrafica e Utente.
+
+I due Startup possono leggere e aggiornare i dati delle anagrafiche visibili;
+non gestiscono ruoli, username, referente o centri. La voce Attuatori nel menu
+resta riservata ai ruoli amministrativi. La visibilità dei centri è condivisa
+fra elenco, dettaglio, selettori e associazione, inclusi centri creati e sottocentri.
 
 La migrazione `019_gestione_centri.sql` aggiunge centro superiore e autore
 del centro con chiavi esterne. Non importa dati e non modifica il ruolo delle

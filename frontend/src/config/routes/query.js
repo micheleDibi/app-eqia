@@ -6,7 +6,6 @@ export const QUERY_GESTIONE = {
   ricerca: { predefinito: "", leggi: ([valore]) => (valore ?? "").slice(0, 200) },
   ruolo: id, centro: id,
 };
-export const QUERY_ANAGRAFICA = { scheda: scelta(["dati", "account"], "dati") };
 
 // Filtri dell'elenco delle notizie: sezione (id) e i suoi argomenti scelti
 // (id ripetuto, come testo e senza doppioni).
@@ -19,6 +18,16 @@ export const QUERY_EDUNEWS24 = {
   area: scelta(AREE_EDUNEWS24),
   categoria: { predefinito: "", leggi: ([valore]) => (slugCategoriaValido(valore) ? valore : "") },
   video: scelta(["1"]),
+};
+
+// Scheda di sottoscrittori e attuatori: "centro" esiste solo per gli
+// attuatori, la pagina ripiega sulla prima scheda (lib/anagrafica.js).
+export const QUERY_ANAGRAFICA = {
+  scheda: {
+    predefinito: "dati-principali",
+    leggi: ([valore]) => ({ dati: "dati-principali", account: "utente" })[valore]
+      ?? (["dati-principali", "centro", "utente"].includes(valore) ? valore : "dati-principali"),
+  },
 };
 
 export const QUERY_PROFILO = {

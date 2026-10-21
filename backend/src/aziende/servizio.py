@@ -4,8 +4,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 
 from src.aziende.models import Azienda
-from src.aziende.schemi import CAMPI_IDENTITA, CAMPI_UNIVOCI, DatiCentro
-from src.aziende.visibilita import centro, verifica_centro
+from src.aziende.schemi import CAMPI_UNIVOCI, DatiCentro
+from src.aziende.visibilita import verifica_centro
 from src.gestione.contesto import richiedi
 from src.gestione.validazione import univoci
 
@@ -30,21 +30,6 @@ def crea_centro(ctx, dati):
     riga = Azienda(**valori, azienda_created_by=ctx.autore.utente_id,
                    azienda_codice_nazionale=secrets.token_hex(11))
     ctx.db.add(riga)
-    ctx.db.commit()
-    return riga
-
-
-def aggiorna_centro(ctx, identita, dati):
-    richiedi(bool(ctx.assegna))
-    riga = centro(ctx, identita)
-    valori = dati.model_dump()
-    if not ctx.nazionale:
-        richiedi(all(valori[k] == (getattr(riga, k) or '') for k in CAMPI_IDENTITA))
-        richiedi(valori['azienda_padre_id'] == riga.azienda_padre_id)
-    verifica_gerarchia(ctx, identita, valori['azienda_padre_id'])
-    univoci(ctx.db, Azienda, {k: valori[k] for k in CAMPI_UNIVOCI}, identita)
-    for nome, valore in valori.items():
-        setattr(riga, nome, valore)
     ctx.db.commit()
     return riga
 

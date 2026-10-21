@@ -5,7 +5,8 @@
 Base del progetto; database e migrazioni; cataloghi `shared/`; modelli account,
 anagrafiche e centri; autorizzazioni e visibilità; navigazione comune; tema,
 icone e componenti condivisi; rimozione dei moduli fuori perimetro; integrazione.
-Tranche M1/M2: elenchi e schede attuatori, sottoscrittori e centri.
+Tranche M1/M2: elenchi, creazione, associazioni e gerarchie di attuatori,
+sottoscrittori e centri. Integrazione delle schede consegnate da Vincenzo.
 
 ## Vincenzo
 
@@ -13,6 +14,8 @@ Ciclo account completo: servizio di creazione interna, attivazione e consegna
 credenziali, verifica contatti, login/logout, recupero password, profilo e 2FA;
 relative pagine, hook, servizi e prove funzionali. Nessuna registrazione pubblica.
 Area Notizie ed EduNews e relative API.
+Schede di dettaglio di attuatori, sottoscrittori e centri, relativi servizi,
+componenti e test: consegna sul ramo `schede-dettaglio`.
 
 La base comune riutilizza parti dei flussi esistenti. Questo riuso non equivale
 alla consegna funzionale dei pacchetti sotto: Vincenzo mantiene la responsabilità
@@ -31,6 +34,8 @@ Le due tranche si sviluppano sia lato frontend sia lato backend.
 | `backend/src/main.py`, `rotte.py`, `config.py`, database e bootstrap | Matteo |
 | `frontend/src/components/accesso/`, `profilo/`, `account/`; `Login.jsx`, `PasswordDimenticata.jsx`, `ReimpostaPassword.jsx`, `MioProfilo.jsx` | Vincenzo |
 | `frontend/src/components/edunews24/`, `notizie/`; hook, lib e testi/stili specifici di account, profilo, accesso e informazione | Vincenzo |
+| `backend/src/clienti/scheda*`, `aziende/scheda*`, relativi schemi; `frontend/src/components/anagrafiche/`, `aziende/` e hook/lib/testi specifici delle schede | Vincenzo |
+| Elenchi e creazione in `frontend/src/components/gestione/`; ricerca, selettori e gerarchie comuni | Matteo |
 | `frontend/src/config/routes/`, tema/token, icone, `components/shared/`, shell, `App.jsx`, trasporto HTTP `lib/api.js`, utilità comuni | Matteo |
 | `frontend/src/lib/sessione.js`, `logout.js`, `ritornoAccesso.js`, `hooks/useSessione.js`; gli altri file della shell restano comuni | Vincenzo |
 | Configurazione della suite e fixture comuni; test dei cataloghi e della base | Matteo |
@@ -63,12 +68,13 @@ V2 resta fuori dall'integrazione delle PR #1 e #2.
 
 | Pacchetto | Responsabile | Risultato verificabile |
 |---|---|---|
-| M1 | Matteo | Attuatori e sottoscrittori: elenchi e schede, riuso comune, collegamento al ciclo account |
-| M2 | Matteo | Centri, associazioni e gerarchie; permessi e visibilità coerenti su API e UI |
+| M1 | Matteo | Attuatori e sottoscrittori: elenchi e creazione, collegamento al ciclo account e alle schede |
+| M2 | Matteo | Elenco e creazione centri, associazioni e gerarchie; permessi e visibilità comuni |
 | M3 | Matteo | Controllo del perimetro, integrazione delle tranche e verifica complessiva |
 | V1 | Vincenzo | Creazione account interna e attivazione, verifica email/cellulare, consegna credenziali |
 | V2 | Vincenzo | Accesso, recupero, profilo, OTP/authenticator/passkey e casi di errore completi |
 | V3 | Vincenzo | Notizie ed EduNews, contenuti e sorgenti concordati, filtri e stati della UI |
+| Schede dettaglio | Vincenzo | Anagrafica, Centro e Utente; dettaglio centri, modifica dati, referente e account |
 
 La preparazione iniziale è una base comune. La divisione tiene insieme le
 anagrafiche, oggi accoppiate, e assegna a Vincenzo flussi completi invece di sole
@@ -109,3 +115,21 @@ Prova browser pubblica su accesso con codice precompilato, profilo/Sicurezza,
 elenco attuatori e logout. Passkey provata con autenticatore software nella
 suite; restano separate le verifiche su dispositivo fisico e l'attivazione
 dei provider reali SMTP/SMS ed EduNews. Dettagli in `deploy.md`.
+
+## Integrazione schede dettaglio del 21 ottobre 2026
+
+La consegna `b06f8b4` di Vincenzo, ramo `schede-dettaglio`, sostituisce le
+precedenti pagine di dettaglio di M1/M2. Restano suoi i componenti Anagrafica,
+Centro, Utente e il dettaglio centro, con i relativi contratti di lettura e
+salvataggio parziale. Elenchi e creazione restano in carico a Matteo.
+
+L'integrazione conserva visibilità di rete dei centri, sottocentri,
+collegamenti del sottoscrittore, ritorno ai filtri, revoca delle sessioni al
+cambio di ruolo e divieto di cambiare il proprio ruolo. Le validazioni del
+codice fiscale e dei recapiti riusano le funzioni comuni; nessuna rotta di
+dettaglio duplicata. La cronologia si aggiorna anche per i soli dati personali.
+
+Verifica completa: 301 test backend, 131 frontend, lint e build superati;
+43 test mirati ripetuti dopo la separazione delle regole account. Browser su
+servizi locali e dati sintetici: schede, salvataggi, selettori, centro associato,
+creazione centro e ritorno ai filtri, vista mobile a 390 px. Nessun nuovo deploy.

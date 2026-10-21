@@ -74,14 +74,16 @@ def test_payload_non_valido_o_campi_riservati_non_creano_utenti(db, gestore, val
 def test_modifica_non_cambia_identificativi_o_username(db, gestore):
     browser, _, _ = gestore()
     riga = crea_persona(browser)
-    dati = dati_persona() | {'cliente_nome': 'Nuovo', 'padre_utente_id': riga['padre_utente_id']}
+    dati = {'cliente_nome': 'Nuovo'}
     risposta = browser.put(f"/clienti/{riga['cliente_id']}", json=dati)
     assert risposta.status_code == 200, risposta.text
     assert risposta.json()['cliente_nome'] == 'Nuovo'
-    for campo in ('cliente_id', 'utente_id', 'username', 'cliente_codice'):
-        assert risposta.json()[campo] == riga[campo]
+    assert risposta.json()['cliente_id'] == riga['cliente_id']
+    assert risposta.json()['account']['utente_id'] == riga['utente_id']
+    assert risposta.json()['account']['username'] == riga['username']
     db.rollback()
     assert db.scalar(select(func.count()).select_from(Utente)) == 2
+    assert db.get(Cliente, riga['cliente_id']).cliente_codice == riga['cliente_codice']
 
 
 def test_creazione_api_collegata_a_verifica_contatti_attivazione_e_login(db, gestore, client):
@@ -109,16 +111,15 @@ def test_sottoscrittore_resta_senza_ruolo_e_senza_accesso(db, gestore, client):
     browser, _, _ = gestore(1)
     riga = crea_persona(browser, dati_persona(ruolo=None))
     assert riga['tipo'] == 'sottoscrittore' and riga['cliente_ruolo'] is None
-    risposta = browser.put(f"/clienti/{riga['cliente_id']}", json=dati_persona(ruolo=1) |
-                           {'padre_utente_id': riga['padre_utente_id']})
-    assert risposta.status_code == 422
+    risposta = browser.put(f"/clienti/{riga['cliente_id']}", json={'cliente_ruolo': 1})
+    assert risposta.status_code == 403
     assert client.post('/auth/login', json={'utente_username': riga['username'], 'utente_password': 'errata'}).status_code == 401
 
 
 def test_cambio_ruolo_revoca_sessione_del_destinatario(db, gestore):
     admin, _, _ = gestore()
     browser, utente, cliente = gestore(1)
-    risposta = admin.put(f'/clienti/{cliente.cliente_id}', json=dati_persona(ruolo=3))
+    risposta = admin.put(f'/clienti/{cliente.cliente_id}', json={'cliente_ruolo': 3})
     assert risposta.status_code == 200, risposta.text
     assert browser.get('/clienti/?tipo=sottoscrittore').status_code == 401
     db.rollback()
@@ -127,5 +128,5 @@ def test_cambio_ruolo_revoca_sessione_del_destinatario(db, gestore):
 
 def test_nazionale_non_puo_declassare_il_proprio_account(gestore):
     browser, _, cliente = gestore()
-    risposta = browser.put(f'/clienti/{cliente.cliente_id}', json=dati_persona(ruolo=1))
+    risposta = browser.put(f'/clienti/{cliente.cliente_id}', json={'cliente_ruolo': 1})
     assert risposta.status_code == 403
