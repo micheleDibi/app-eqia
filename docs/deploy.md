@@ -282,3 +282,40 @@ SMTP non configurato, email e SMS ancora su file, EduNews esterno disabilitato.
 Precompilazione attiva soltanto per l'accesso e assente sui contatti. Le prove
 passkey della suite usano un autenticatore software; nessuna prova su dispositivo
 fisico o invio tramite provider reale viene attestata da questa release.
+
+## Schede dettaglio — 21 ottobre 2026
+
+Il merge della consegna `schede-dettaglio` di Vincenzo è pubblicato dal commit
+`b00ea83fa35fd5b972ebc9cedc434da37ce7fff1`, nella release
+`20261021-135623-b00ea83f`, attiva dalle 13:56:49 UTC.
+Frontend e backend comprendono le nuove schede di attuatori, sottoscrittori e
+centri, insieme agli elenchi, ai collegamenti e a tutte le consegne precedenti.
+Nessuna nuova migrazione o modifica alla configurazione dei provider.
+
+Verifiche del codice prima del rilascio: 301 test backend, 131 frontend, lint
+e build superati; 43 test mirati passati dopo la separazione delle regole
+account. Il rilascio ha ricompilato entrambe le immagini sul server. Resta
+l'avviso preesistente del bundle oltre 500 kB.
+
+Backup SQL e allegati verificati, anche tramite SHA-256, con prefisso
+`20261021-135635-20261021-135623-b00ea83f.sql.gz`. Il collegamento `previous`
+conserva `20261021-094320-244c996f` per il rollback applicativo.
+
+Confermati commit e release attivi, tre container sani, database TLS,
+18 migrazioni e quattro ruoli. Il database contiene tre utenti. I container
+Università e Universo hanno gli stessi identificativi precedenti al deploy.
+HTTPS e salute API rispondono 200, HTTP reindirizza con 301 e la sessione
+anonima riceve 401. Il bundle pubblico `index-7BQP4i2s.js` coincide con quello
+locale verificato, anche per SHA-256.
+
+Cookie `__Host-eqia_sessione` Secure/HttpOnly/SameSite=Lax, percorso `/`,
+senza Domain e risposta no-store. Sessione autenticata 200; logout senza
+CSRF rifiutato con 403, logout con CSRF 204 e sessione successiva 401.
+
+Browser sul dominio pubblico: login con OTP precompilato e conferma esplicita,
+lettura delle tre linguette dell'attuatore, scheda sottoscrittore con
+collegamenti, dettaglio centro con attuatori e gerarchia, logout riuscito.
+Nessun errore JavaScript. Anagrafiche e centri non sono stati modificati nelle
+prove pubbliche; i salvataggi sono stati verificati sui dati sintetici locali.
+Email ancora su file ed EduNews esterno disabilitato. Nessuna nuova prova
+di provider reali o di passkey su dispositivo fisico.

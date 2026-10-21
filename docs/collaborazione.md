@@ -132,4 +132,5 @@ dettaglio duplicata. La cronologia si aggiorna anche per i soli dati personali.
 Verifica completa: 301 test backend, 131 frontend, lint e build superati;
 43 test mirati ripetuti dopo la separazione delle regole account. Browser su
 servizi locali e dati sintetici: schede, salvataggi, selettori, centro associato,
-creazione centro e ritorno ai filtri, vista mobile a 390 px. Nessun nuovo deploy.
+creazione centro e ritorno ai filtri, vista mobile a 390 px. La pubblicazione
+successiva è la release `20261021-135623-b00ea83f`; verifiche in `deploy.md`.

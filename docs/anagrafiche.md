@@ -1,9 +1,9 @@
 # Attuatori, sottoscrittori e centri
 
-La tranche M1/M2 iniziale è pubblicata in staging; release in `deploy.md`.
-Il 21 ottobre le schede del ramo `schede-dettaglio` sostituiscono i precedenti
-dettagli. Questa integrazione richiede un nuovo deploy con frontend e backend
-insieme: il solo merge non modifica lo staging.
+La tranche M1/M2 e le schede del ramo `schede-dettaglio` sono pubblicate in
+staging nella release `20261021-135623-b00ea83f`. Il 21 ottobre i nuovi dettagli
+sostituiscono i precedenti, con frontend e backend rilasciati insieme.
+Verifiche del dominio e riferimenti del rilascio in `deploy.md`.
 
 ## Funzioni
 
