@@ -192,3 +192,34 @@ Un solo account sintetico; nessuna nuova anagrafica.
 V1 consegna API, servizio di creazione e componente riusabile. Il ciclo
 account nelle schede anagrafiche richiede M1, fuori da questo rilascio;
 V2 e prove di authenticator/passkey su dispositivo non sono incluse.
+
+## Anagrafiche e centri - 21 ottobre 2026
+
+M1/M2 sviluppati su `matteogenna`, integrati in `main` con avanzamento lineare
+e pubblicati dal commit `8d03254ad12bf177684d4cce873fe9b46046c5e8`.
+Release attiva: `20261021-085433-8d03254a`.
+Dettaglio funzionale e prove locali in [anagrafiche.md](anagrafiche.md).
+
+Il gate locale ha superato 160 test backend, 48 test frontend, lint e build.
+Le correzioni emerse nel browser sono state ricontrollate con lint, test
+frontend e build. Preflight remoto, trasferimento, build e attivazione sono
+completati. Backup SQL e allegati verificati prima della migrazione:
+`20261021-085500-20261021-085433-8d03254a.sql.gz` e relativo archivio file.
+
+La migrazione `019_gestione_centri.sql` è applicata: 18 migrazioni totali,
+colonne `azienda_padre_id` e `azienda_created_by` presenti. È additiva;
+l'eventuale rollback applicativo conserva queste colonne e non ripristina dati.
+Database TLS, quattro ruoli e isolamento verificati dalla procedura di rilascio.
+I tre container Equia sono sani. I servizi Università e Universo preesistenti
+risultano operativi, senza riavvii dovuti a questa pubblicazione.
+
+Sul dominio pubblico: HTTPS 200 con certificato valido, redirect HTTP 301,
+salute API 200 e sessione anonima 401. Nel browser sono passati login OTP,
+elenco e scheda attuatore, sezione Account, apertura dei moduli sottoscrittore
+e centro, logout; nessun errore nuovo in console.
+
+Le scritture e il ciclo completo di creazione/attivazione sono stati provati
+sul database locale con dati sintetici, anche con ruolo Startup. In staging
+la prova delle nuove anagrafiche è stata in sola lettura: resta un solo utente,
+la relativa anagrafica preesistente e nessun centro. Email e SMS restano su
+file; EduNews esterno è disabilitato. V2 non è incluso in questa release.

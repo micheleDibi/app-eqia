@@ -1,7 +1,7 @@
 # Attuatori, sottoscrittori e centri
 
-Stato del 21 ottobre 2026: tranche M1/M2 implementata e verificata in locale.
-La pubblicazione in staging viene registrata separatamente in `deploy.md`.
+Stato del 21 ottobre 2026: tranche M1/M2 implementata, verificata e pubblicata
+in staging. Release `20261021-085433-8d03254a`; riscontri in `deploy.md`.
 
 ## Funzioni
 
