@@ -12,6 +12,8 @@ import SezioneBase from "./components/SezioneBase.jsx";
 import PaginaNotizie from "./components/notizie/PaginaNotizie.jsx";
 import SchedaNotizia from "./components/notizie/SchedaNotizia.jsx";
 import ModuloNotizia from "./components/notizie/ModuloNotizia.jsx";
+import SchedaAnagrafica from "./components/anagrafiche/SchedaAnagrafica.jsx";
+import SchedaCentro from "./components/aziende/SchedaCentro.jsx";
 import { PERCORSI } from "./config/routes/percorsi.js";
 import { ROTTE, VOCI_MENU } from "./config/routes/rotte.js";
 
@@ -29,6 +31,10 @@ export default function App() {
       <Route path={PERCORSI.notizie.nuovo} element={<ModuloNotizia />} />
       <Route path={PERCORSI.notizie.modello} element={<SchedaNotizia />} />
       <Route path={PERCORSI.notizie.modificaModello} element={<ModuloNotizia />} />
+      {/* Schede di attuatori, sottoscrittori e centri; gli elenchi restano alla sezione. */}
+      <Route path={PERCORSI.attuatori.modello} element={<SchedaAnagrafica tipo="attuatore" />} />
+      <Route path={PERCORSI.sottoscrittori.modello} element={<SchedaAnagrafica tipo="sottoscrittore" />} />
+      <Route path={PERCORSI.aziende.modello} element={<SchedaCentro />} />
       {VOCI_MENU.filter(v => v.chiave !== "edunews24").map(v => {
         const Pagina = PAGINE_SEZIONE[v.chiave] ?? SezioneBase;
         return <Route key={v.chiave} path={v.rotta} element={<Pagina titolo={v.etichetta} />} />;

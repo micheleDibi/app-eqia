@@ -16,6 +16,12 @@ export const QUERY_EDUNEWS24 = {
   video: scelta(["1"]),
 };
 
+// Scheda di sottoscrittori e attuatori: "centro" esiste solo per gli
+// attuatori, la pagina ripiega sulla prima scheda (lib/anagrafica.js).
+export const QUERY_ANAGRAFICA = {
+  scheda: scelta(["dati-principali", "centro", "utente"], "dati-principali"),
+};
+
 export const QUERY_PROFILO = {
   scheda: scelta(["dati-principali", "utente", "sicurezza"], "dati-principali"),
 };

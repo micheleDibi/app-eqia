@@ -1,6 +1,8 @@
 """Registro dei moduli. Ogni modulo conserva i propri endpoint."""
 from src.account.routers import router as account
 from src.auth.routers import router as auth
+from src.aziende.scheda import router as centri
+from src.clienti.scheda import router as anagrafiche
 from src.edunews24.routers import router as edunews
 from src.mfa.accesso import router as mfa_accesso
 from src.mfa.gestione import router as mfa_gestione
@@ -10,4 +12,4 @@ from src.notizie.routers import router as notizie
 from src.profilo.routers import router as profilo
 from src.ruolo.routers import router as ruoli
 
-ROUTER = (auth, mfa_accesso, mfa_gestione, otp_accesso, contatti, account, profilo, ruoli, edunews, notizie)
+ROUTER = (auth, mfa_accesso, mfa_gestione, otp_accesso, contatti, account, anagrafiche, centri, profilo, ruoli, edunews, notizie)
