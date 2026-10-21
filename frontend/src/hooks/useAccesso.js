@@ -41,7 +41,7 @@ export function useAccesso() {
       }
     } catch (errore) {
       setLimiteRaggiunto(errore.stato === 429);
-      setError(errore.stato === 429 ? "Troppi tentativi di accesso. Attendi prima di riprovare." : errore.message);
+      setError(errore.message);
       setAttesa(errore.attesaSecondi || 0);
     } finally {
       invio.current = false;

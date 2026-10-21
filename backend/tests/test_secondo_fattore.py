@@ -168,6 +168,18 @@ def test_il_reinvio_aspetta_un_minuto(nazionale, browsers):
     assert int(risposta.headers["Retry-After"]) > 0
 
 
+def test_codici_email_finiti_il_login_lo_dice(nazionale, browsers):
+    """Un nuovo login entro il minuto rispedirebbe il codice: il 429 deve dire
+    che il limite e' sugli invii, non far credere a una password sbagliata."""
+    utente, _ = nazionale
+    login(browsers(), utente)
+    risposta = browsers().post("/auth/login", json={"utente_username": utente.utente_username,
+                                                     "utente_password": PASSWORD})
+    assert risposta.status_code == 429
+    assert int(risposta.headers["Retry-After"]) > 0
+    assert risposta.json()["detail"] == "Troppi codici di verifica inviati. Attendi prima di richiederne un altro."
+
+
 def test_solo_il_nazionale_gestisce_il_secondo_fattore(account, browsers):
     utente, _ = account(STARTUP)
     browser = browsers()

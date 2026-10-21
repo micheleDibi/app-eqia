@@ -22,6 +22,6 @@ def prenota(db, contesto, ip, ora):
             attesa = max(attesa, int((riga.finestra + timedelta(hours=1) - ora).total_seconds()))
         if attesa > 0:
             db.rollback()
-            raise HTTPException(429, "Troppi invii. Attendi prima di richiedere un altro codice.",
+            raise HTTPException(429, "Troppi codici di verifica inviati. Attendi prima di richiederne un altro.",
                                 headers={"Retry-After": str(attesa)})
         riga.ultimo, riga.invii = ora, riga.invii + 1

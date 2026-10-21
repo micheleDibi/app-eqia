@@ -4,6 +4,7 @@ import { accedi, sessioneEsistente } from "../src/lib/accesso.js";
 import { logout } from "../src/lib/logout.js";
 import { conservaDestinazione, destinazioneDopoAccesso, percorsoSicuro } from "../src/lib/ritornoAccesso.js";
 import { leggiSessione, pulisciSessione, salvaSessione } from "../src/lib/sessione.js";
+import { TESTI_ACCESSO as testi } from "../src/config/testi/accesso.js";
 
 const CSRF = "a".repeat(64);
 const SESSIONE = { utente_id: 7, ruolo_codice: "Business", csrf_token: CSRF, utente_username: " MarioRossi ",
@@ -63,10 +64,29 @@ test("credenziali errate: messaggio generico, nessun rinvio alla pagina di acces
   assert.deepEqual(reindirizzamenti, []);
 });
 
-test("troppi tentativi: attesa letta da Retry-After", async () => {
-  risposte.push(json({}, 429, { "Retry-After": "30" }));
-  await assert.rejects(accedi("MarioRossi", "sbagliata"), { message: "Troppi tentativi. Riprova tra 30 secondi.",
+test("troppi tentativi sulla password: messaggio del server e attesa da Retry-After", async () => {
+  risposte.push(json({ detail: "Troppi tentativi di accesso. Attendi prima di riprovare." }, 429, { "Retry-After": "30" }));
+  await assert.rejects(accedi("MarioRossi", "sbagliata"), { message: "Troppi tentativi di accesso. Attendi prima di riprovare.",
     stato: 429, attesaSecondi: 30 });
+});
+
+test("codici email finiti: il blocco non si presenta come password sbagliata", async () => {
+  const detail = "Troppi codici di verifica inviati. Attendi prima di richiederne un altro.";
+  risposte.push(json({ detail }, 429, { "Retry-After": "2531" }));
+  await assert.rejects(accedi("nazionale", "Una-password-457!"), { message: detail, stato: 429, attesaSecondi: 2531 });
+});
+
+test("blocco senza testo del server: messaggio generico del login", async () => {
+  risposte.push(json(null, 429));
+  await assert.rejects(accedi("MarioRossi", "x"), { message: testi.troppiTentativi, stato: 429, attesaSecondi: 0 });
+});
+
+test("attesa mostrata in secondi, oltre il minuto e mezzo in minuti", () => {
+  assert.equal(testi.attesa(1), "Puoi riprovare tra 1 secondo.");
+  assert.equal(testi.attesa(60), "Puoi riprovare tra 60 secondi.");
+  assert.equal(testi.attesa(89), "Puoi riprovare tra 89 secondi.");
+  assert.equal(testi.attesa(90), "Puoi riprovare tra 2 minuti.");
+  assert.equal(testi.attesa(2531), "Puoi riprovare tra 43 minuti.");
 });
 
 test("risposta di accesso senza CSRF valido: nessuna sessione a meta'", async () => {
