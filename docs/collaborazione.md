@@ -96,3 +96,16 @@ render; servizi e contratti V1 restano invariati. V2 ed EduNews esterno restano
 fuori da questa tranche. Per M3 sono eseguiti i controlli di questa integrazione;
 la verifica complessiva resta subordinata alle successive consegne V2/V3.
 Integrazione e pubblicazione sono registrate in `deploy.md`.
+
+## Integrazione V2 del 21 ottobre 2026
+
+PR #3 V2 integrata su `matteogenna`, poi in `main`, e pubblicata nello staging.
+Include le prove di accesso, recupero password, profilo, contatti e secondo
+fattore, insieme ai messaggi distinti dei limiti. Il conflitto nel catalogo
+testi è risolto conservando nome Eqia e precompilazione OTP dello staging.
+
+Gate completo: 237 test backend, 112 frontend, lint e build superati.
+Prova browser pubblica su accesso con codice precompilato, profilo/Sicurezza,
+elenco attuatori e logout. Passkey provata con autenticatore software nella
+suite; restano separate le verifiche su dispositivo fisico e l'attivazione
+dei provider reali SMTP/SMS ed EduNews. Dettagli in `deploy.md`.

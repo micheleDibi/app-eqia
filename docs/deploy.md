@@ -254,3 +254,31 @@ sono stati verificati campo precompilato, reinvio dopo l'attesa, accesso con
 Login, titolo iniziale HTML e titolo delle pagine mostrano Eqia. La disattivazione
 con SMTP e i divieti negli altri ambienti sono coperti dai test locali; non è
 stato configurato un provider reale sullo staging. V2 resta escluso.
+
+## Integrazione V2
+
+Il 21 ottobre 2026 la PR #3 è stata integrata da `matteogenna` in `main` e
+pubblicata con commit applicativo `244c996fed2987f3ac2cfc31b3cc7df84c4b4148`.
+Release `20261021-094320-244c996f`, attiva dalle 09:43:45 UTC. Include anche
+tutte le precedenti consegne M1/M2, V1/Notizie, identità Eqia e OTP dimostrativo.
+Nessuna nuova migrazione.
+
+Gate locale completo: 237 test backend, 112 frontend, lint e build superati.
+Backup SQL e allegati verificati prima dell'attivazione: prefisso
+`20261021-094331-20261021-094320-244c996f.sql.gz`.
+
+HTTPS e salute API 200, redirect HTTP 301, sessione anonima 401. Tre container
+sani, MariaDB con TLS, 18 migrazioni e quattro ruoli. Restano un utente,
+un'anagrafica e nessun centro. I servizi Università e Universo mantengono le
+uptime precedenti. Il bundle pubblico `index-BSaYmi8H.js` coincide, anche per
+SHA-256, con la build locale verificata.
+
+Browser pubblico: OTP precompilato e confermato senza digitazione, accesso
+alla dashboard, profilo e Sicurezza, elenco attuatori e logout. Titolo Eqia e
+console senza errori. Il messaggio specifico del limite invii è stato provato
+nel browser locale senza bloccare l'account dimostrativo pubblico.
+
+SMTP non configurato, email e SMS ancora su file, EduNews esterno disabilitato.
+Precompilazione attiva soltanto per l'accesso e assente sui contatti. Le prove
+passkey della suite usano un autenticatore software; nessuna prova su dispositivo
+fisico o invio tramite provider reale viene attestata da questa release.

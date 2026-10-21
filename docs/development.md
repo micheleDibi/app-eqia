@@ -137,6 +137,24 @@ Corretto un errore iniziale della conferma in `SezioneAccount`; verifiche
 frontend ripetute con esito positivo dopo la correzione. Resta l'avviso sul
 bundle oltre 500 kB. Integrazione e release sono documentate in `deploy.md`.
 
+## Integrazione V2 — 21 ottobre 2026
+
+PR #3 integrata da `matteogenna`, conservando identità Eqia e precompilazione
+OTP dello staging. Il login distingue il limite dei tentativi sulla password
+dal limite degli invii del codice; l'attesa lunga viene espressa in minuti.
+I casi negativi OTP dei contatti e TOTP usano valori senza collisioni casuali.
+
+Gate completo superato: 237 test backend sul MariaDB locale alla porta 3319,
+112 test frontend, lint e build. Le prove mirate precedenti hanno superato
+77 test backend e 64 frontend. Resta l'avviso sul bundle oltre 500 kB.
+
+Nel browser locale: accesso OTP, profilo/Sicurezza, logout e messaggio 429
+specifico per gli invii, con conteggio dell'attesa. La suite verifica anche
+recupero password, isolamento delle sessioni, verifica contatti, TOTP,
+passkey con autenticatore software e cambio metodo. Non attesta una prova
+su telefono o autenticatore fisico. Release e controlli sul dominio pubblico
+sono registrati in [deploy.md](deploy.md#integrazione-v2).
+
 ## Staging
 
 Verifica del 21 ottobre per identità Eqia e precompilazione temporanea OTP
