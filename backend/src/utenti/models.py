@@ -10,7 +10,7 @@ from typing import List
 class Utente(Base):
     __tablename__ = 'utenti'
     utente_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    utente_username: Mapped[str] = mapped_column(String(255), nullable=False)
+    utente_username: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     utente_password: Mapped[str] = mapped_column(String(255), nullable=False)
     utente_ultimo_login: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     utente_ultimo_logout: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

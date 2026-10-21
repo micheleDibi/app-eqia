@@ -29,8 +29,8 @@ persone, centri, account o altri dati del gestionale di origine.
 Il comando `crea_accesso_locale.py` crea un solo account Nazionale sintetico,
 se il database di sviluppo non contiene già utenti. Le credenziali generate
 si trovano in `backend/var/accesso-locale.txt`, escluso dal versionamento.
-Questo comando serve esclusivamente allo sviluppo e non è la funzione di
-creazione interna degli account da realizzare nel pacchetto V1.
+Questo comando serve esclusivamente allo sviluppo e non è il servizio di
+creazione interna degli account del pacchetto V1.
 
 ## Servizi locali
 
@@ -115,14 +115,18 @@ indipendenti, isolamento delle migrazioni e assenza delle rotte fuori perimetro.
 La prova browser locale copre accesso OTP, dashboard, menu compatto, profilo,
 schermata sicurezza, EduNews e logout.
 
-Verifica del 20 ottobre 2026, inclusi i confini del deploy: 37 test backend e 2 test frontend
-superati, lint senza errori e build Vite completata. Prova browser eseguita
-con un account sintetico, email su file e sorgente EduNews in memoria.
+Verifica dell'integrazione V1/Notizie del 20 ottobre 2026: 119 test backend
+superati sul MariaDB locale dedicato, lint senza errori, 41 test frontend
+superati e build Vite completata. Resta l'avviso sulla dimensione dei chunk.
+Il primo avvio di `verify-local.ps1` si è fermato su due test che leggevano i
+vecchi percorsi dei componenti; corretti i riferimenti, test frontend e build
+sono stati eseguiti separatamente con esito positivo.
 
-Questi controlli non chiudono i pacchetti di sviluppo: recupero completo,
-creazione e attivazione dall'anagrafica, authenticator e passkey su dispositivo
-richiedono la consegna e le prove di Vincenzo. Elenchi e schede anagrafiche e
-Notizie sono ancora sezioni da completare.
+Notizie comprende elenco, scheda, gestione sezioni/argomenti e allegati.
+V1 fornisce il servizio di creazione interna, l'API di stato e il componente
+account riusabile. Le schermate anagrafiche M1 e il loro collegamento al ciclo
+account restano da realizzare. Queste verifiche non attestano la consegna di
+V2, né prove di authenticator/passkey su dispositivi reali.
 
 ## Staging
 

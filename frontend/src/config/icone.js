@@ -45,6 +45,7 @@ export {
   IdCard,
   // Alias ufficiale di Image: il nome semplice oscurerebbe il costruttore globale.
   ImageIcon,
+  ImagePlus,
   ImageUp,
   Info,
   KeyRound,
@@ -57,6 +58,7 @@ export {
   LogOut,
   Mail,
   MapPin,
+  Megaphone,
   Menu,
   MessageSquare,
   Monitor,
@@ -78,6 +80,7 @@ export {
   Stethoscope,
   Sun,
   Sunset,
+  Tags,
   Trash2,
   TriangleAlert,
   Upload,

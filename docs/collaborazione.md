@@ -29,7 +29,7 @@ Le due tranche si sviluppano sia lato frontend sia lato backend.
 | `backend/src/account/`, `auth/` esclusi i quattro file sopra; `security/`, `mfa/`, `otp/`, `notifiche/`, `profilo/` | Vincenzo |
 | `backend/src/edunews24/`, `backend/src/notizie/` | Vincenzo |
 | `backend/src/main.py`, `rotte.py`, `config.py`, database e bootstrap | Matteo |
-| `frontend/src/components/accesso/`, `profilo/`, futuro `account/`; `Login.jsx`, `PasswordDimenticata.jsx`, `ReimpostaPassword.jsx`, `MioProfilo.jsx` | Vincenzo |
+| `frontend/src/components/accesso/`, `profilo/`, `account/`; `Login.jsx`, `PasswordDimenticata.jsx`, `ReimpostaPassword.jsx`, `MioProfilo.jsx` | Vincenzo |
 | `frontend/src/components/edunews24/`, `notizie/`; hook, lib e testi/stili specifici di account, profilo, accesso e informazione | Vincenzo |
 | `frontend/src/config/routes/`, tema/token, icone, `components/shared/`, shell, `App.jsx`, trasporto HTTP `lib/api.js`, utilità comuni | Matteo |
 | `frontend/src/lib/sessione.js`, `logout.js`, `ritornoAccesso.js`, `hooks/useSessione.js`; gli altri file della shell restano comuni | Vincenzo |
@@ -39,22 +39,25 @@ Le due tranche si sviluppano sia lato frontend sia lato backend.
 Il modulo Notizie ha già due ingressi collegati: `backend/src/notizie/routers.py`
 (prefisso `/notizie`, autenticazione richiesta) e
 `frontend/src/components/notizie/PaginaNotizie.jsx` (URL `/notizie`).
-Non contiene ancora endpoint applicativi o contenuti: Vincenzo li aggiunge
-nel proprio modulo senza cambiare `rotte.py` o `App.jsx`.
+La PR #1 aggiunge elenco e scheda, gestione sezioni/argomenti, destinatari
+per ruolo, immagini, allegati e contatore delle notizie da leggere.
+Il riquadro della dashboard è disponibile come componente, ma la dashboard
+resta vuota. EduNews esterno non viene abilitato da questa consegna.
 
 Per una variazione a contratti, modello dati o file comuni, aprire prima una
 PR piccola di contratto e farla integrare a Matteo; non introdurre copie
 alternative delle policy. I router di nuovi moduli passano dallo stesso
 responsabile dell'integrazione.
 
-Ogni sviluppatore usa il proprio checkout e un branch per intervento.
+Ogni sviluppatore usa il proprio checkout. Matteo lavora su `matteogenna`
+e integra su `main`; i rami delle PR di Vincenzo restano separati.
 Una PR deve contenere un modulo coerente, relativi test e limiti conosciuti.
 Matteo integra le PR verificate. Nessun deploy implicito nel merge.
 
-Il primo passo di Vincenzo è leggere `development.md` e avviare il proprio
-database locale, poi fissare la firma del servizio V1 nel contratto account.
-Può sviluppare V2 e V3 sulle superfici già collegate. Matteo intanto completa
-elenchi, schede e centri senza riscrivere i servizi account.
+La PR #2 consegna la firma V1 documentata nel contratto account, il cambio di
+stato e la sezione account riusabile. Matteo collega queste superfici alle
+anagrafiche M1 nella relativa tranche, senza duplicare i servizi.
+V2 resta fuori dall'integrazione delle PR #1 e #2.
 
 ## Pacchetti di consegna
 
@@ -75,3 +78,10 @@ Il [contratto account/anagrafica](contratti-account.md) è il primo punto di inc
 Per il ruolo Business si applica il catalogo condiviso: gestisce i due tipi Startup
 nella propria rete; l'assegnazione di Business e Nazionale resta al Nazionale.
 Non reintrodurre distinzioni Provinciale/Regionale all'interno dei moduli.
+
+## Consegna del 20 ottobre 2026
+
+PR #1 Notizie e #2 V1 account integrate su `main` e pubblicate nello staging;
+release e prove in [deploy.md](deploy.md#integrazione-v1-e-notizie).
+Il contratto V1 è disponibile per M1. Questo esito non completa le schermate
+anagrafiche, il pacchetto V2 o l'attivazione di EduNews esterno.

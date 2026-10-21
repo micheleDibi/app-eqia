@@ -47,7 +47,7 @@ try {
         try {
             Write-Host "Equia: $($bundle.Id), commit $($bundle.Sha)"
             Invoke-Remote "prepare"
-            & scp -o BatchMode=yes -o ConnectTimeout=15 $bundle.Path "$($contract.sshHost):$($contract.base)/incoming/$($bundle.Id).tar.gz"
+            & scp -O -o BatchMode=yes -o ConnectTimeout=15 $bundle.Path "$($contract.sshHost):$($contract.base)/incoming/$($bundle.Id).tar.gz"
             if ($LASTEXITCODE -ne 0) { throw "Trasferimento archivio fallito." }
             Invoke-Remote $Action $bundle.Id $bundle.Sha $bundle.Hash
         } finally {
