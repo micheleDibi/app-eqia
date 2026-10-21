@@ -139,6 +139,14 @@ bundle oltre 500 kB. Integrazione e release sono documentate in `deploy.md`.
 
 ## Staging
 
+Verifica del 21 ottobre per identità Eqia e precompilazione temporanea OTP
+dello staging: 190 test backend, 51 test frontend, lint e build superati.
+Le 30 prove aggiunte sul backend coprono i confini di ambiente/provider,
+password errata, scadenza, consumo, reinvio ed errore di salvataggio email.
+Nel browser locale il codice resta vuoto: accesso con OTP manuale e logout
+verificati, nome e titolo Eqia corretti. Resta il solo avviso sulla dimensione
+del bundle. Policy in [ADR 0003](adr/0003-accesso-dimostrativo-staging.md).
+
 Destinazione: `https://eqiastaging.ersaf.it`. Il contratto operativo unico è
 `deploy/staging.json`; i file contenenti segreti vengono generati sul server.
 Comandi di rilascio, isolamento, provider e ripristino in [deploy.md](deploy.md).

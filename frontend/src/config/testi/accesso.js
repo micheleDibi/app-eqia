@@ -1,7 +1,9 @@
 // Catalogo italiano del flusso di accesso; il nome del prodotto resta in routes/rotte.
+import { NOME_APPLICAZIONE } from "../routes/rotte.js";
+
 export const TESTI_ACCESSO = {
   titolo: "Accedi all’area riservata",
-  descrizione: "Usa le credenziali del tuo account Equia.",
+  descrizione: `Usa le credenziali del tuo account ${NOME_APPLICAZIONE}.`,
   username: "Nome utente",
   password: "Password",
   entra: "Accedi",
@@ -17,15 +19,17 @@ export const TESTI_ACCESSO = {
   riprova: "Riprova",
   // Passo del secondo fattore, per metodo in corso (lo dice il server).
   passi: {
-    email: { titolo: "Verifica il tuo accesso", descrizione: "Inserisci il codice che ti abbiamo inviato via email." },
+    email: { titolo: "Verifica il tuo accesso", descrizione: "Conferma il codice di verifica per accedere." },
     email_accesso: {
       titolo: "Verifica la tua email",
-      descrizione: "Il tuo account non ha ancora un metodo di verifica: ti abbiamo inviato un codice all’indirizzo in anagrafica. Confermandolo, l’email risulterà verificata e potrai entrare.",
+      descrizione: "Conferma il codice per verificare l’email associata al tuo account e accedere.",
     },
     totp: { titolo: "Verifica il tuo accesso", descrizione: "Inserisci il codice mostrato dall’app di autenticazione." },
     passkey: { titolo: "Verifica il tuo accesso", descrizione: "Conferma con la passkey sul tuo telefono." },
   },
   notaTotp: "Il codice cambia ogni 30 secondi: inserisci quello mostrato adesso.",
+  codicePronto: (minuti) => `Codice già compilato. Conferma per accedere. È valido per ${minuti} minuti.`,
+  codiceInviato: (destinatario, minuti) => `Codice inviato a ${destinatario}. È valido per ${minuti} minuti.`,
   passkey: {
     riprova: "Riprova con il telefono",
     inCorso: "In attesa del telefono…",

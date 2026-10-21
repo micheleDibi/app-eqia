@@ -1,4 +1,4 @@
-# Staging Equia
+# Staging Eqia
 
 ## Destinazione e isolamento
 
@@ -96,6 +96,16 @@ TLS MariaDB viene comunque richiesto e verificato, anche in questa modalità.
 EduNews esterno è inizialmente disabilitato; nessun dato inventato è presentato
 come notizia reale. SMTP, SMS ed eventuale uscita verso provider vanno
 configurati e verificati in una successiva attività dedicata.
+
+Finché il provider email resta su file e host/utente/password SMTP sono vuoti,
+il solo staging precompila il codice email di login dopo la password corretta.
+Resta necessario premere «Conferma codice»; limiti, scadenza e uso singolo
+restano attivi. Non è un secondo fattore indipendente in questa modalità.
+Impostare `EMAIL_BACKEND=smtp` e i parametri SMTP in `shared/api.env`, quindi
+ridistribuire l'API, disattiva la precompilazione senza modifiche frontend.
+Anche la sola presenza di host o credenziali SMTP la disabilita. La policy non
+si estende a contatti, recupero password, authenticator o passkey; vedere
+[ADR 0003](adr/0003-accesso-dimostrativo-staging.md).
 
 Il deploy inizializza schema, template e quattro ruoli, senza utenti.
 Per il solo collaudo iniziale di un database vuoto:

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { codicePrecompilato } from "../lib/otp.js";
 
 export function useOtp({ iniziale, operazioni, onVerificato }) {
   const [sfida, setSfida] = useState(iniziale ?? null);
-  const [codice, setCodice] = useState("");
+  const [codice, setCodice] = useState(() => codicePrecompilato(iniziale));
   const [errore, setErrore] = useState("");
   const [occupato, setOccupato] = useState(false);
   const [attesa, setAttesa] = useState(iniziale?.reinvia_tra ?? 0);
@@ -24,7 +25,7 @@ export function useOtp({ iniziale, operazioni, onVerificato }) {
       else {
         const nuova = await operazioni.invia(sfida);
         setSfida(nuova);
-        setCodice("");
+        setCodice(codicePrecompilato(nuova));
         setAttesa(nuova.reinvia_tra);
       }
     } catch (erroreApi) {

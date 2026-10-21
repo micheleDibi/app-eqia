@@ -1,4 +1,4 @@
-# Equia
+# Eqia
 
 Gestionale derivato da Università ERSAF. Base sorgente: `e2401a006c6dde7ab6320433ba8c25baacf019fd`.
 Repository autonomo, database nuovo, nessuna importazione di dati del gestionale di origine.
@@ -9,6 +9,9 @@ Dashboard vuota, attuatori, sottoscrittori, centri, notizie ed EduNews.
 Accesso, recupero password, sessioni, verifica contatti e secondo fattore riutilizzano
 i flussi del gestionale di origine. Creazione account interna: nessuna iscrizione pubblica.
 Nazionale conserva il secondo fattore obbligatorio; gli altri ruoli accedono con password.
+Eccezione temporanea dello staging senza SMTP: il codice email di accesso è
+precompilato, con conferma esplicita; non offre un secondo fattore indipendente.
+Confini e disattivazione automatica in [ADR 0003](adr/0003-accesso-dimostrativo-staging.md).
 
 La base rende utilizzabili accesso, profilo e sicurezza e conserva EduNews.
 V1 aggiunge servizio di creazione e componente account, collegati alle schede

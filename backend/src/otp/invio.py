@@ -7,6 +7,7 @@ from src.notifiche.email import carica_template, componi, rendi_html, rendi_ogge
 from src.notifiche.sms import get_sms
 from src.otp.identita import destinazione
 from src.otp.servizio import genera
+from src.otp.precompilazione import codice_per_collaudo
 
 logger = logging.getLogger("ersaf.otp")
 
@@ -34,4 +35,4 @@ def genera_e_invia(db, contesto, tipo, richiedente):
         raise HTTPException(503, "Invio del codice non riuscito. Attendi un minuto e riprova.", headers={"Retry-After": "60"}) from None
     db.execute(update(Sfida).where(Sfida.impronta == riga.impronta, Sfida.stato == "invio").values(stato="inviato"))
     db.commit()
-    return esito
+    return {**esito, **codice_per_collaudo(tipo, codice)}

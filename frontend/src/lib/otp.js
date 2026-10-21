@@ -2,6 +2,13 @@ import { apiFetch, leggiJson } from "./api.js";
 import { descriviErrore, ErroreApi, secondiAttesa } from "./erroriApi.js";
 import { salvaSessione } from "./sessione.js";
 
+/** Il server concede la precompilazione soltanto alle sfide email di collaudo. */
+export function codicePrecompilato(sfida) {
+  const codice = sfida?.codice_precompilato;
+  return ["email", "email_accesso"].includes(sfida?.metodo)
+    && typeof codice === "string" && /^[0-9]{6}$/.test(codice) ? codice : "";
+}
+
 export async function richiestaOtp(url, corpo, accesso = false) {
   const risposta = await apiFetch(url, {
     method: corpo ? "POST" : "GET", auth: !accesso, gestisci401: !accesso,

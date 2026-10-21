@@ -1,5 +1,7 @@
 import { useId } from "react";
 import { useOtp } from "../../hooks/useOtp.js";
+import { codicePrecompilato } from "../../lib/otp.js";
+import { TESTI_ACCESSO as testi } from "../../config/testi/accesso.js";
 import { STILI_ACCESSO as stili } from "../../config/styles/accesso.js";
 import { pulsante } from "../../config/styles/pulsante.js";
 import AlertMessage from "../AlertMessage.jsx";
@@ -22,7 +24,8 @@ export default function ModuloOtp({ iniziale, operazioni, onVerificato, onAnnull
       onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); void otp.esegui(Boolean(otp.sfida)); }}>
       <AlertMessage message={otp.errore ? { type: "error", text: otp.errore } : null} separato={false} />
       {otp.sfida ? <>
-        <p className={stili.nota}>{nota ?? `Codice inviato a ${otp.sfida.destinatario}. È valido per ${minuti(otp.sfida)} minuti.`}</p>
+        <p className={stili.nota}>{nota ?? (codicePrecompilato(otp.sfida)
+          ? testi.codicePronto(minuti(otp.sfida)) : testi.codiceInviato(otp.sfida.destinatario, minuti(otp.sfida)))}</p>
         <div>
           <label className={stili.etichetta} htmlFor={id}>Codice di verifica</label>
           <input id={id} autoFocus autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}"
