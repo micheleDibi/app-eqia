@@ -233,3 +233,24 @@ sul database locale con dati sintetici, anche con ruolo Startup. In staging
 la prova delle nuove anagrafiche è stata in sola lettura: resta un solo utente,
 la relativa anagrafica preesistente e nessun centro. Email e SMS restano su
 file; EduNews esterno è disabilitato. V2 non è incluso in questa release.
+
+## Accesso dimostrativo e nome Eqia — 21 ottobre 2026
+
+Commit applicativo `c656addd2d36dabbd1a749b9e3f405c684d6a815`, sviluppato su
+`matteogenna`, integrato in `main` e pubblicato nella release
+`20261021-091442-c656addd`, attiva dalle 09:15 UTC. Nessuna nuova migrazione.
+Backup SQL e allegati verificati: prefisso
+`20261021-091453-20261021-091442-c656addd.sql.gz`.
+
+Gate locale: 190 test backend, 51 frontend, lint e build superati.
+HTTPS e salute API 200, sessione anonima 401, tre container sani, database TLS,
+18 migrazioni e quattro ruoli verificati. Restano un utente, un'anagrafica e
+nessun centro. I servizi Università/Universo mantengono le uptime precedenti.
+
+La configurazione effettiva ha provider email su file e nessun parametro SMTP:
+precompilazione attiva per l'accesso, esclusa per i contatti. Nel browser reale
+sono stati verificati campo precompilato, reinvio dopo l'attesa, accesso con
+«Conferma codice» senza digitare il valore e logout. Nessun errore in console.
+Login, titolo iniziale HTML e titolo delle pagine mostrano Eqia. La disattivazione
+con SMTP e i divieti negli altri ambienti sono coperti dai test locali; non è
+stato configurato un provider reale sullo staging. V2 resta escluso.
