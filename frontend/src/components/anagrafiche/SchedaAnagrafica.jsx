@@ -98,7 +98,6 @@ export default function SchedaAnagrafica({ tipo }) {
                 onScegliRelazione={pagina.scegliRelazione}
                 onCopiaResidenza={pagina.copiaResidenza}
                 ruoli={salvata.permessi.ruoli}
-                versione={pagina.versione}
                 onStatoAccount={pagina.aggiornaAccount}
               />
             )}

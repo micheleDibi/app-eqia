@@ -7,7 +7,7 @@ import { PERCORSI, ROTTA_INIZIALE, ROTTE, idValido } from "../config/routes/perc
 import { TESTI_ANAGRAFICA as testi } from "../config/testi/anagrafica.js";
 import {
   ANAGRAFICA_VUOTA, accediCome, copiaResidenza, datiModulo, leggiAnagrafica, modificheAnagrafica,
-  rotteTipo, salvaAnagrafica, schedaAttiva, schedeAnagrafica,
+  salvaAnagrafica, schedaAttiva, schedeAnagrafica,
 } from "../lib/anagrafica.js";
 
 const NON_TROVATA = Object.assign(new Error(testi.erroreLettura), { stato: 404 });
@@ -15,9 +15,9 @@ const NON_TROVATA = Object.assign(new Error(testi.erroreLettura), { stato: 404 }
 /**
  * Lettura e salvataggio della scheda di un sottoscrittore o di un attuatore.
  * `tipo` viene dall'indirizzo: un'anagrafica dell'altro tipo non si apre
- * qui, come un id inesistente. Un salvataggio che cambia il tipo (ruolo dato
- * a un sottoscrittore o tolto a un attuatore) porta alla scheda dell'altro
- * tipo, con l'esito nello stato della navigazione.
+ * qui, come un id inesistente. Dopo un salvataggio riuscito si torna da dove
+ * si era arrivati (l'elenco con i suoi filtri, o il centro), con l'esito
+ * nello stato della navigazione.
  */
 export default function useSchedaAnagrafica(tipo) {
   const { clienteId } = useParams();
@@ -25,9 +25,15 @@ export default function useSchedaAnagrafica(tipo) {
   const location = useLocation();
   const elenco = tipo === "attuatore" ? ROTTE.attuatori : ROTTE.sottoscrittori;
   const { ritorno: ritornoElenco } = useNavigazioneElenco(elenco);
-  const avvisoArrivato = location.state?.avviso ?? null;
   const [{ scheda: richiesta }, aggiornaQuery] = useQueryPagina(QUERY_ANAGRAFICA);
   const valido = idValido(clienteId);
+
+  // Un attuatore aperto dalla sezione Attuatori di un centro torna a quel
+  // centro; il resto torna all'elenco.
+  const centroDiPartenza = tipo === "attuatore" && idValido(location.state?.centro) ? location.state.centro : null;
+  const ritorno = centroDiPartenza
+    ? { rotta: PERCORSI.aziende.dettaglio(centroDiPartenza), etichetta: testi.ritornoCentro }
+    : { rotta: ritornoElenco, etichetta: testi.ritorno(tipo) };
 
   const [lettura, setLettura] = useState({ caricamento: valido, errore: valido ? null : NON_TROVATA });
   // La scheda come l'ha restituita il server l'ultima volta (testata, Centro,
@@ -35,11 +41,8 @@ export default function useSchedaAnagrafica(tipo) {
   const [salvata, setSalvata] = useState(null);
   const [dati, setDati] = useState(ANAGRAFICA_VUOTA);
   const [attivazione, setAttivazione] = useState(null);
-  const [avviso, setAvviso] = useState(avvisoArrivato);
+  const [avviso, setAvviso] = useState(null);
   const [salvataggio, setSalvataggio] = useState(false);
-  // Cresce a ogni salvataggio riuscito: la sezione account si rimonta e
-  // rilegge i contatti salvati.
-  const [versione, setVersione] = useState(0);
 
   // Cambio di id o di tipo senza smontare la pagina: si riparte durante il
   // render, non in un effetto, per non mostrare un render con i dati vecchi.
@@ -49,7 +52,7 @@ export default function useSchedaAnagrafica(tipo) {
     setChiaveLetta(chiave);
     setLettura({ caricamento: valido, errore: valido ? null : NON_TROVATA });
     setSalvata(null);
-    setAvviso(avvisoArrivato);
+    setAvviso(null);
   }
 
   useEffect(() => {
@@ -84,17 +87,10 @@ export default function useSchedaAnagrafica(tipo) {
     setSalvataggio(true);
     try {
       const scheda = await salvaAnagrafica(clienteId, modifiche);
-      if (scheda.tipo !== tipo) {
-        navigate(`${rotteTipo(scheda.tipo).dettaglio(clienteId)}${location.search}`, {
-          replace: true, state: { ...location.state, avviso: { type: "success", text: testi.salvataggioRiuscito } },
-        });
-        return;
-      }
-      setSalvata(scheda);
-      setDati(datiModulo(scheda));
-      setAttivazione(scheda.account.attivazione);
-      setVersione((prec) => prec + 1);
-      setAvviso({ type: "success", text: testi.salvataggioRiuscito });
+      // Un salvataggio che cambia il tipo (ruolo dato a un sottoscrittore o
+      // tolto a un attuatore) lo dice: l'anagrafica lascia l'elenco di partenza.
+      const text = scheda.tipo === tipo ? testi.salvataggioRiuscito : testi.cambioTipo(scheda.tipo);
+      navigate(ritorno.rotta, { state: { avviso: { type: "success", text } } });
     } catch (errore) {
       setAvviso({ type: "error", text: errore.message });
     } finally {
@@ -112,12 +108,6 @@ export default function useSchedaAnagrafica(tipo) {
     }
   };
 
-  // Un attuatore aperto dalla sezione Attuatori di un centro torna a quel
-  // centro; il resto torna all'elenco.
-  const centroDiPartenza = tipo === "attuatore" && idValido(location.state?.centro) ? location.state.centro : null;
-  const ritorno = centroDiPartenza
-    ? { rotta: PERCORSI.aziende.dettaglio(centroDiPartenza), etichetta: testi.ritornoCentro }
-    : { rotta: ritornoElenco, etichetta: testi.ritorno(tipo) };
   return {
     clienteId: Number(clienteId),
     lettura,
@@ -140,7 +130,6 @@ export default function useSchedaAnagrafica(tipo) {
     })),
     avviso,
     salvataggio,
-    versione,
     salva,
     annulla: () => navigate(ritorno.rotta),
     accedi,

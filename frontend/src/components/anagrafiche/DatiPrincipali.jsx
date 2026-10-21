@@ -19,14 +19,11 @@ import CollegamentiSottoscrittore from "./CollegamentiSottoscrittore.jsx";
  *   onCambia: Function,
  *   onCopiaResidenza: Function,
  *   ruoli: number[],
- *   versione: number,
  *   onStatoAccount: Function,
  * }} props
- *   versione: cresce a ogni salvataggio, i contatti rileggono i valori
- *   salvati e la loro verifica.
  */
 export default function DatiPrincipali({
-  tipo, clienteId, dati, onCambia, onCopiaResidenza, ruoli, versione, onStatoAccount, onScegliRelazione,
+  tipo, clienteId, dati, onCambia, onCopiaResidenza, ruoli, onStatoAccount, onScegliRelazione,
 }) {
   return (
     <div>
@@ -41,7 +38,7 @@ export default function DatiPrincipali({
         </SezioneModulo>
       )}
 
-      <ContattiAnagrafica key={versione} clienteId={clienteId} dati={dati} onCambia={onCambia}
+      <ContattiAnagrafica clienteId={clienteId} dati={dati} onCambia={onCambia}
         onStato={onStatoAccount} />
       <DocumentoAnagrafica dati={dati} onCambia={onCambia} />
       <ResidenzaDomicilio dati={dati} onCambia={onCambia} onCopiaResidenza={onCopiaResidenza} />

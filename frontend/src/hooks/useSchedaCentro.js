@@ -3,15 +3,21 @@ import { useNavigate, useParams } from "react-router";
 import { ROTTE, idValido } from "../config/routes/percorsi.js";
 import { TESTI_AZIENDA as testi } from "../config/testi/azienda.js";
 import { CENTRO_VUOTO, datiCentro, leggiCentro, modificheCentro, salvaCentro } from "../lib/azienda.js";
+import useAvvisoArrivato from "./useAvvisoArrivato.js";
 import useNavigazioneElenco from "./useNavigazioneElenco.js";
 
 const NON_TROVATO = Object.assign(new Error(testi.erroreLettura), { stato: 404 });
 
-/** Lettura e salvataggio della scheda di un centro. */
+/**
+ * Lettura e salvataggio della scheda di un centro. Dopo un salvataggio
+ * riuscito si torna all'elenco, con i suoi filtri e l'esito.
+ */
 export default function useSchedaCentro() {
   const { aziendaId } = useParams();
   const navigate = useNavigate();
   const { ritorno } = useNavigazioneElenco(ROTTE.aziende);
+  // Al ritorno dalla scheda di un attuatore salvata: il suo esito.
+  const avvisoArrivato = useAvvisoArrivato();
   const valido = idValido(aziendaId);
 
   const [lettura, setLettura] = useState({ caricamento: valido, errore: valido ? null : NON_TROVATO });
@@ -19,7 +25,7 @@ export default function useSchedaCentro() {
   // attuatori, permessi) e il modulo come e' a video.
   const [salvata, setSalvata] = useState(null);
   const [dati, setDati] = useState(CENTRO_VUOTO);
-  const [avviso, setAvviso] = useState(null);
+  const [avviso, setAvviso] = useState(avvisoArrivato);
   const [salvataggio, setSalvataggio] = useState(false);
 
   // Cambio di id senza smontare la pagina: si riparte durante il render,
@@ -61,10 +67,8 @@ export default function useSchedaCentro() {
     }
     setSalvataggio(true);
     try {
-      const scheda = await salvaCentro(aziendaId, modifiche);
-      setSalvata(scheda);
-      setDati(datiCentro(scheda));
-      setAvviso({ type: "success", text: testi.salvataggioRiuscito });
+      await salvaCentro(aziendaId, modifiche);
+      navigate(ritorno, { state: { avviso: { type: "success", text: testi.salvataggioRiuscito } } });
     } catch (errore) {
       setAvviso({ type: "error", text: errore.message });
     } finally {

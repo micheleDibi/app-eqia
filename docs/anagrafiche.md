@@ -72,7 +72,9 @@ i dati completi sono letti dalla scheda.
 in `components/anagrafiche` e `components/aziende`, con gli stessi controlli comuni.
 Definizioni dei campi, testi, endpoint, rotte, colonne e stili sono in `config`;
 il trasporto passa da `lib/api.js`. Ricerca, filtri e scheda attiva sono nell'URL.
-Il ritorno dalla scheda conserva i filtri dell'elenco. Tabella su schermi ampi,
+Il ritorno dalla scheda conserva i filtri dell'elenco. "Salva modifiche" riuscito
+riporta da dove si è aperta la scheda (l'elenco filtrato, o il centro per un
+attuatore aperto dalla sua scheda) con l'esito in testa. Tabella su schermi ampi,
 lista continua su schermi stretti, senza avatar o schede decorative ripetute.
 
 GET/PUT `/clienti/{id}` e `/aziende/{id}` hanno un solo gestore, in `scheda.py`.

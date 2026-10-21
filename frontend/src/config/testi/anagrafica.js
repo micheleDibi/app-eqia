@@ -25,6 +25,9 @@ export const TESTI_ANAGRAFICA = {
   salva: "Salva modifiche",
   salvataggio: "Salvataggio…",
   salvataggioRiuscito: "Modifiche salvate.",
+  // Il salvataggio ha cambiato il tipo: `tipo` e' quello nuovo.
+  cambioTipo: (tipo) =>
+    `Modifiche salvate. L’anagrafica ora è tra ${tipo === "attuatore" ? "gli attuatori" : "i sottoscrittori"}.`,
   nessunaModifica: "Nessuna modifica da salvare.",
   erroreSalvataggio: "Impossibile salvare l’anagrafica. Riprova.",
   // Sezione Ruolo, solo per gli attuatori: stessa scelta della scheda Utente.
