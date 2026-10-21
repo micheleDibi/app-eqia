@@ -1,6 +1,7 @@
 import { apiFetch, caricaSessione, leggiJson } from "./api.js";
 import { descriviErrore, ErroreApi, secondiAttesa } from "./erroriApi.js";
 import { salvaSessione } from "./sessione.js";
+import { TESTI_ACCESSO } from "../config/testi/accesso.js";
 
 export async function accedi(username, password) {
   const risposta = await apiFetch("/auth/login", {
@@ -9,8 +10,14 @@ export async function accedi(username, password) {
   });
   const dati = await leggiJson(risposta);
   if (!risposta.ok) {
+    const attesa = secondiAttesa(risposta.headers.get("Retry-After"));
+    // Due limiti diversi rispondono 429 al login: i tentativi sulla password e
+    // gli invii del codice email del Nazionale. Il testo del server dice quale.
+    if (risposta.status === 429) {
+      throw new ErroreApi(typeof dati?.detail === "string" ? dati.detail : TESTI_ACCESSO.troppiTentativi, 429, attesa);
+    }
     const ripiego = risposta.status === 401 ? "Username o password errati" : "Risposta del server non valida. Riprova.";
-    throw new ErroreApi(descriviErrore(risposta, dati, ripiego), risposta.status, secondiAttesa(risposta.headers.get("Retry-After")));
+    throw new ErroreApi(descriviErrore(risposta, dati, ripiego), risposta.status, attesa);
   }
   if (dati?.requires_2fa) return dati;
   salvaSessione(dati ?? {});

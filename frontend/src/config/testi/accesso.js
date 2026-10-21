@@ -1,6 +1,10 @@
 // Catalogo italiano del flusso di accesso; il nome del prodotto resta in routes/rotte.
 import { NOME_APPLICAZIONE } from "../routes/rotte.js";
 
+// Il blocco per i codici email dura fino a un'ora: dai 90 secondi si conta in
+// minuti, arrotondati per eccesso.
+const durata = (n) => (n >= 90 ? `${Math.ceil(n / 60)} minuti` : n === 1 ? "1 secondo" : `${n} secondi`);
+
 export const TESTI_ACCESSO = {
   titolo: "Accedi all’area riservata",
   descrizione: `Usa le credenziali del tuo account ${NOME_APPLICAZIONE}.`,
@@ -12,7 +16,8 @@ export const TESTI_ACCESSO = {
   torna: "Torna all’accesso",
   scaduta: "La sessione è scaduta o non è più valida. Accedi di nuovo per riprendere dalla pagina che avevi aperto.",
   aggiornata: "Password aggiornata. Accedi con le nuove credenziali.",
-  attesa: (secondi) => `Puoi riprovare tra ${secondi} s.`,
+  attesa: (secondi) => `Puoi riprovare tra ${durata(secondi)}.`,
+  troppiTentativi: "Troppi tentativi di accesso. Attendi prima di riprovare.",
   attesaTerminata: "Ora puoi riprovare ad accedere.",
   verificaSessione: "Verifica dell’accesso",
   verificaInCorso: "Verifica della sessione in corso…",
