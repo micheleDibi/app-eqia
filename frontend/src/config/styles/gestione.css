@@ -1,0 +1,21 @@
+.gestione-elenco { container-type: inline-size; }
+.gestione-elenco__tabella { @apply hidden w-full table-fixed text-left; }
+.gestione-elenco__tabella th { @apply border-b border-divisore bg-superficie-tenue px-5 py-3 text-etichetta font-semibold text-testo-tenue; }
+.gestione-elenco__tabella td { @apply border-b border-divisore px-5 py-4 text-sm text-testo-secondario wrap-anywhere; }
+.gestione-elenco__tabella tr:last-child td { border-bottom: 0; }
+.gestione-elenco__tabella tr:hover td { @apply bg-riga-hover; }
+.gestione-elenco__tabella th:first-child { width: 30%; }
+.gestione-elenco__tabella th:last-child { width: calc(var(--spacing) * 16); }
+.gestione-elenco__nome { @apply block font-semibold text-primario wrap-anywhere; }
+.gestione-elenco__nome:focus-visible { @apply outline-2 outline-fuoco outline-offset-2; }
+.gestione-elenco__apri { @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-controllo text-testo-tenue hover:text-primario focus-visible:outline-fuoco; }
+.gestione-elenco__lista { @apply m-0 list-none divide-y divide-divisore p-0; }
+.gestione-elenco__riga { @apply flex min-w-0 items-start justify-between gap-4 px-5 py-4 hover:bg-riga-hover focus-visible:outline-fuoco; }
+.gestione-elenco__riga > div { @apply min-w-0; }
+.gestione-elenco__riga dl { @apply mt-2 flex flex-wrap gap-x-5 gap-y-2; }
+.gestione-elenco__riga dt { @apply text-xs text-testo-tenue; }
+.gestione-elenco__riga dd { @apply text-sm text-testo-secondario wrap-anywhere; }
+@container (min-width: 52rem) {
+  .gestione-elenco__tabella { display: table; }
+  .gestione-elenco__lista { display: none; }
+}

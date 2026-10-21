@@ -68,11 +68,11 @@ export default function SezioneAccount({ clienteId, valori, permessi = {} }) {
       </div>
       {account.selezionato && <DialogoVerifica clienteId={clienteId} contatto={account.selezionato}
         onVerificato={account.completato} onChiudi={() => account.setSelezionato(null)} />}
-      <DialogoConferma aperto={Boolean(conferma)} titolo={conferma?.conferma.titolo ?? ""}
-        messaggio={conferma?.conferma.messaggio ?? ""} conferma={conferma?.conferma.conferma ?? ""}
-        pericolo={conferma?.attivo === false}
+      {conferma && <DialogoConferma aperto titolo={conferma.conferma.titolo}
+        messaggio={conferma.conferma.messaggio} conferma={conferma.conferma.conferma}
+        pericolo={conferma.attivo === false}
         onConferma={() => { const attivo = conferma.attivo; setConferma(null); void account.cambiaStato(attivo); }}
-        onAnnulla={() => setConferma(null)} />
+        onAnnulla={() => setConferma(null)} />}
     </SezioneModulo>
   );
 }

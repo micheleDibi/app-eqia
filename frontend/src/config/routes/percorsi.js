@@ -38,5 +38,8 @@ function conModifica(base) {
 
 /** Le pagine sotto una voce del menu: nuovo, dettaglio e modifica. */
 export const PERCORSI = Object.freeze({
+  attuatori: risorsa(ROTTE.attuatori, "clienteId", "nuovo"),
+  sottoscrittori: risorsa(ROTTE.sottoscrittori, "clienteId", "nuovo"),
+  aziende: risorsa(ROTTE.aziende, "aziendaId", "nuovo"),
   notizie: conModifica(risorsa(ROTTE.notizie, "notiziaId", "nuova")),
 });

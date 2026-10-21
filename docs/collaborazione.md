@@ -5,7 +5,7 @@
 Base del progetto; database e migrazioni; cataloghi `shared/`; modelli account,
 anagrafiche e centri; autorizzazioni e visibilità; navigazione comune; tema,
 icone e componenti condivisi; rimozione dei moduli fuori perimetro; integrazione.
-Successiva tranche: elenchi e schede attuatori, sottoscrittori e centri.
+Tranche M1/M2: elenchi e schede attuatori, sottoscrittori e centri.
 
 ## Vincenzo
 
@@ -85,3 +85,14 @@ PR #1 Notizie e #2 V1 account integrate su `main` e pubblicate nello staging;
 release e prove in [deploy.md](deploy.md#integrazione-v1-e-notizie).
 Il contratto V1 è disponibile per M1. Questo esito non completa le schermate
 anagrafiche, il pacchetto V2 o l'attivazione di EduNews esterno.
+
+## Tranche del 21 ottobre 2026
+
+M1/M2 implementati su `matteogenna` e verificati localmente:
+[anagrafiche e centri](anagrafiche.md). Le schede richiamano il servizio di
+creazione e il componente account di V1. Un intervento circoscritto in
+`SezioneAccount` corregge la lettura della conferma assente durante il primo
+render; servizi e contratti V1 restano invariati. V2 ed EduNews esterno restano
+fuori da questa tranche. Per M3 sono eseguiti i controlli di questa integrazione;
+la verifica complessiva resta subordinata alle successive consegne V2/V3.
+Integrazione e pubblicazione sono registrate in `deploy.md`.

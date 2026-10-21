@@ -10,11 +10,15 @@ Accesso, recupero password, sessioni, verifica contatti e secondo fattore riutil
 i flussi del gestionale di origine. Creazione account interna: nessuna iscrizione pubblica.
 Nazionale conserva il secondo fattore obbligatorio; gli altri ruoli accedono con password.
 
-La base rende utilizzabili accesso, profilo e sicurezza; predispone la navigazione
-delle anagrafiche e conserva EduNews. V1 aggiunge servizio di creazione e componente
-account, da collegare alle schede M1. Notizie consente al Nazionale di gestire
+La base rende utilizzabili accesso, profilo e sicurezza e conserva EduNews.
+V1 aggiunge servizio di creazione e componente account, collegati alle schede
+M1 nella tranche del 21 ottobre. Notizie consente al Nazionale di gestire
 sezioni, argomenti, destinatari per ruolo, immagini e allegati; gli altri ruoli
 vedono i contenuti loro assegnati e il conteggio delle notizie da leggere.
+
+La tranche M1/M2 del 21 ottobre aggiunge elenchi, schede e collegamenti
+di attuatori, sottoscrittori e centri, riusando V1. Specifiche e stato delle
+verifiche in [anagrafiche.md](anagrafiche.md); release in [deploy.md](deploy.md).
 
 ## Struttura
 

@@ -4,16 +4,7 @@ from src.database import Base
 from typing import List, Optional
 
 class Azienda(Base):
-    """Le 206 aziende della piattaforma legacy.
-
-    Le colonne rispecchiano la DDL reale (`SHOW CREATE TABLE aziende`), non
-    quella che il modello dichiarava prima. Le differenze non erano teoriche:
-    tre `unique=True` su colonne che nel database non hanno alcuna UNIQUE e che
-    contengono gia' duplicati (4 gruppi su ragione sociale, 7 su partita IVA,
-    7 su codice fiscale), una partita IVA dichiarata nullable ma NOT NULL, un
-    codice nazionale dichiarato obbligatorio ma NULL su tutte e 205 le righe, e
-    un longblob mappato come String.
-    """
+    """Centro, dati amministrativi e collegamento al centro superiore."""
     __tablename__ = 'aziende'
     azienda_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     azienda_ragione_sociale: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -33,4 +24,8 @@ class Azienda(Base):
     azienda_codice_nazionale: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
     azienda_iban: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     azienda_codice_bic: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    azienda_padre_id: Mapped[Optional[int]] = mapped_column(ForeignKey('aziende.azienda_id'), nullable=True)
+    azienda_created_by: Mapped[Optional[int]] = mapped_column(ForeignKey('utenti.utente_id'), nullable=True)
+    padre: Mapped[Optional['Azienda']] = relationship(remote_side=[azienda_id],
+        foreign_keys=[azienda_padre_id], lazy='joined', join_depth=1)
     clienti: Mapped[List['Cliente']] = relationship(back_populates='azienda')

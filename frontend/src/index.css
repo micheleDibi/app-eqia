@@ -24,6 +24,7 @@
 @import "./config/styles/edunews24.css";
 @import "./config/styles/bandofit.css";
 @import "./config/styles/notizie.css";
+@import "./config/styles/gestione.css";
 
 /* Distanza e rientro dei pannelli ancorati: registrate, getComputedStyle le
  * restituisce in px anche quando sono scritte con calc() o --spacing().

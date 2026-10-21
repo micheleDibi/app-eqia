@@ -125,8 +125,17 @@ sono stati eseguiti separatamente con esito positivo.
 Notizie comprende elenco, scheda, gestione sezioni/argomenti e allegati.
 V1 fornisce il servizio di creazione interna, l'API di stato e il componente
 account riusabile. Le schermate anagrafiche M1 e il loro collegamento al ciclo
-account restano da realizzare. Queste verifiche non attestano la consegna di
+account erano ancora da realizzare in quella consegna. Queste verifiche non attestano la consegna di
 V2, né prove di authenticator/passkey su dispositivi reali.
+
+Tranche del 21 ottobre: [anagrafiche e centri](anagrafiche.md) implementati e
+verificati. `verify-local.ps1` superato: 160 test backend sul MariaDB locale
+alla porta 3319, lint, 48 test frontend e build. Prove browser sui servizi reali
+locali, con dati sintetici, a 390 e 1440 px: creazione/modifica, gerarchie,
+selettori, ricerca/filtri, linguette e attivazione V1 tramite email/SMS su file.
+Corretto un errore iniziale della conferma in `SezioneAccount`; verifiche
+frontend ripetute con esito positivo dopo la correzione. Resta l'avviso sul
+bundle oltre 500 kB. Integrazione e release sono documentate in `deploy.md`.
 
 ## Staging
 

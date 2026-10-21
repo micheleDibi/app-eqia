@@ -1,0 +1,16 @@
+export const STILI_GESTIONE = Object.freeze({
+  modulo: "overflow-clip schede",
+  campi: "contents",
+  azioni: "ml-auto flex flex-wrap items-center justify-end gap-3",
+  testo: "text-sm text-testo-tenue",
+  valore: "text-sm font-medium text-testo wrap-anywhere",
+  barraRicerca: "w-full",
+  elenco: "overflow-clip border border-bordo rounded-b-superficie bg-superficie",
+  scelta: "flex w-full items-center justify-between gap-3 text-left",
+  selezione: "flex min-w-0 flex-col gap-2",
+  dialogo: "dialogo__contenuto gap-4 overflow-y-auto",
+  risultati: "flex flex-col divide-y divide-divisore",
+  opzione: "w-full py-3 text-left text-sm text-testo hover:text-primario focus-visible:outline-fuoco",
+  collegamenti: "flex flex-col gap-3",
+  lettura: "grid grid-cols-6 gap-x-5 gap-y-4.5",
+});

@@ -12,6 +12,9 @@ import SezioneBase from "./components/SezioneBase.jsx";
 import PaginaNotizie from "./components/notizie/PaginaNotizie.jsx";
 import SchedaNotizia from "./components/notizie/SchedaNotizia.jsx";
 import ModuloNotizia from "./components/notizie/ModuloNotizia.jsx";
+import PaginaPersona from "./components/gestione/PaginaPersona.jsx";
+import PaginaCentro from "./components/gestione/PaginaCentro.jsx";
+import PaginaElencoGestione from "./components/gestione/PaginaElencoGestione.jsx";
 import { PERCORSI } from "./config/routes/percorsi.js";
 import { ROTTE, VOCI_MENU } from "./config/routes/rotte.js";
 
@@ -25,11 +28,20 @@ export default function App() {
     <Route element={<RichiediSessione><GuscioApplicazione /></RichiediSessione>}>
       <Route path={ROTTE.profilo} element={<MioProfilo />} />
       <Route path={ROTTE.edunews24} element={<PaginaEduNews24 />} />
+      <Route path={ROTTE.attuatori} element={<PaginaElencoGestione key="attuatori" tipo="attuatore" />} />
+      <Route path={ROTTE.sottoscrittori} element={<PaginaElencoGestione key="sottoscrittori" tipo="sottoscrittore" />} />
+      <Route path={ROTTE.aziende} element={<PaginaElencoGestione key="centri" tipo="centro" />} />
+      <Route path={PERCORSI.attuatori.nuovo} element={<PaginaPersona tipo="attuatore" />} />
+      <Route path={PERCORSI.attuatori.modello} element={<PaginaPersona tipo="attuatore" />} />
+      <Route path={PERCORSI.sottoscrittori.nuovo} element={<PaginaPersona tipo="sottoscrittore" />} />
+      <Route path={PERCORSI.sottoscrittori.modello} element={<PaginaPersona tipo="sottoscrittore" />} />
+      <Route path={PERCORSI.aziende.nuovo} element={<PaginaCentro />} />
+      <Route path={PERCORSI.aziende.modello} element={<PaginaCentro />} />
       {/* Le notizie: "Nuova notizia", scheda e modifica, accanto all'elenco. */}
       <Route path={PERCORSI.notizie.nuovo} element={<ModuloNotizia />} />
       <Route path={PERCORSI.notizie.modello} element={<SchedaNotizia />} />
       <Route path={PERCORSI.notizie.modificaModello} element={<ModuloNotizia />} />
-      {VOCI_MENU.filter(v => v.chiave !== "edunews24").map(v => {
+      {VOCI_MENU.filter(v => !["edunews24", "attuatori", "sottoscrittori", "aziende"].includes(v.chiave)).map(v => {
         const Pagina = PAGINE_SEZIONE[v.chiave] ?? SezioneBase;
         return <Route key={v.chiave} path={v.rotta} element={<Pagina titolo={v.etichetta} />} />;
       })}

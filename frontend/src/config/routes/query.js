@@ -2,6 +2,11 @@ import { AREE_EDUNEWS24, SEZIONI_EDUNEWS24, SEZIONE_PREDEFINITA, slugCategoriaVa
 import { idValido } from "./percorsi.js";
 const scelta = (valori, predefinito = "") => ({ predefinito, leggi: ([valore]) => valori.includes(valore) ? valore : predefinito });
 const id = { predefinito: "", leggi: ([valore]) => (idValido(valore) ? valore : "") };
+export const QUERY_GESTIONE = {
+  ricerca: { predefinito: "", leggi: ([valore]) => (valore ?? "").slice(0, 200) },
+  ruolo: id, centro: id,
+};
+export const QUERY_ANAGRAFICA = { scheda: scelta(["dati", "account"], "dati") };
 
 // Filtri dell'elenco delle notizie: sezione (id) e i suoi argomenti scelti
 // (id ripetuto, come testo e senza doppioni).
